@@ -7,10 +7,10 @@ import Logo from "./Logo";
 export default function Layout({ children }) {
   const { user } = useContext(AuthContext);
   return (
-    <>
+    <div className="flex flex-col min-h-screen">
       {user ? <Nav /> : <Logo />}
       <Outlet />
       {children}
-    </>
+    </div>
   );
 }
