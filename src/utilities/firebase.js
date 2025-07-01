@@ -1,5 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
+import { getDatabase } from "firebase/database";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDsdAfAdrlQbshpDNV3hd5LwMHhoGkAU3g",
@@ -8,6 +9,8 @@ const firebaseConfig = {
   storageBucket: "waves-27b13.firebasestorage.app",
   messagingSenderId: "633092157591",
   appId: "1:633092157591:web:e835b798fd0124cf6579d2",
+  databaseURL:
+    "https://waves-27b13-default-rtdb.europe-west1.firebasedatabase.app/",
 };
 
 // apiKey	Identifie ton projet Firebase, utilisée par les SDK Firebase pour faire des requêtes
@@ -16,11 +19,14 @@ const firebaseConfig = {
 // storageBucket	L'URL de ton service de stockage Firebase (pour les fichiers)
 // messagingSenderId	ID pour Firebase Cloud Messaging (notifications push)
 // appId	ID unique de ton app Firebase
+//databaseURL est l'URL de la RealTime Database qui contient les données
 
 // Initialiser firebase avec la configuration du projet
 const app = initializeApp(firebaseConfig);
 
 // Initialiser Firebase Authentification pour utiliser les fonctions d'inscription, connexion/deconnexion, changement d'état
 export const auth = getAuth(app);
+// Initialiser la database de FIrebase pour utiliser ses fonctions
+export const database = getDatabase(app);
 
 export default app;

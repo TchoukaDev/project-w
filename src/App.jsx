@@ -1,19 +1,30 @@
 import "./App.css";
-import { createBrowserRouter, RouterProvider } from "react-router";
+import { createBrowserRouter, Navigate, RouterProvider } from "react-router";
 import { lazy, Suspense, useContext } from "react";
 import Layout from "./components/layout/Layout";
 import ErrorElement from "./components/layout/ErrorElement";
+import { UserContext } from "./contexts/userContext";
+import Home from "./pages/Home";
+import SignIn from "./pages/SignIn";
+import SignUp from "./pages/SignUp";
+import Loader from "./components/Loader";
 
-import PrivateRoute from "./components/PrivateRoute";
-import { AuthContext } from "./contexts/authContext";
-import { RiseLoader } from "react-spinners";
-
-const Home = lazy(() => import("./pages/Home"));
-const SignUp = lazy(() => import("./pages/SignUp"));
-const SignIn = lazy(() => import("./pages/SignIn"));
+const SettingsLayout = lazy(() => import("./components/layout/SettingsLayout"));
+const SettingsIndex = lazy(() => import("./pages/SettingsIndex"));
+const Language = lazy(() => import("./pages/Language"));
+const UsersInfos = lazy(() => import("./pages/UserInfos"));
 
 function App() {
-  const { user } = useContext(AuthContext);
+  const { user, loading } = useContext(UserContext);
+
+  if (loading) {
+    return (
+      <div className="h-screen flex justify-center items-center">
+        <Loader />
+      </div>
+    );
+  }
+
   const router = createBrowserRouter([
     {
       path: "/",
@@ -22,19 +33,37 @@ function App() {
       children: [
         {
           index: true,
-          element: (
-            <Suspense
-              fallback={
-                <RiseLoader color="white" margin={5} speedMultiplier={0.9} />
-              }
-            >
-              {user ? <Home /> : <SignIn />}
-            </Suspense>
-          ),
+          element: user ? <Home /> : <Navigate to="signIn" replace />,
         },
         {
-          path: "/signUp",
-          element: !user ? <SignUp /> : <Home />,
+          path: "settings",
+          element: user ? <SettingsLayout /> : <Navigate to="/" replace />,
+          children: [
+            {
+              index: true,
+              element: (
+                <Suspense>
+                  <SettingsIndex />
+                </Suspense>
+              ),
+            },
+            {
+              path: "infos",
+              element: <UsersInfos />,
+            },
+            {
+              path: "langage",
+              element: <Language />,
+            },
+          ],
+        },
+        {
+          path: "signIn",
+          element: !user ? <SignIn /> : <Navigate to="/" replace />,
+        },
+        {
+          path: "signUp",
+          element: !user ? <SignUp /> : <Navigate to="/" replace />,
         },
       ],
     },

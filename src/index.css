@@ -9,7 +9,26 @@
     --shadow-custom: 0px 4px 12px rgba(255, 255, 255, 0.3);
   }
 }
+* {
+  font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+    "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
 
 .input {
   @apply w-full border border-gray-400 rounded-md px-4 pt-7 pb-2 text-sm placeholder-transparent outline-none focus:border-2 focus:border-blue-500;
+}
+
+/* Neutraliser le comportement d'autofill */
+input:-webkit-autofill,
+input:-webkit-autofill:focus {
+  transition: background-color 600000s 0s, color 600000s 0s;
+}
+input[data-autocompleted] {
+  background-color: transparent !important;
 }

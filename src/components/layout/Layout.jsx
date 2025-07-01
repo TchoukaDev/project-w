@@ -1,14 +1,13 @@
 import { Outlet } from "react-router";
-import Nav from "../Nav";
-import { AuthContext } from "../../contexts/authContext";
+import { UserContext } from "../../contexts/userContext";
 import { useContext } from "react";
-import Logo from "./Logo";
+import Header from "../Header";
 
 export default function Layout({ children }) {
-  const { user } = useContext(AuthContext);
+  const { user } = useContext(UserContext);
   return (
-    <div className="flex flex-col min-h-screen">
-      {user ? <Nav /> : <Logo />}
+    <div className={`min-h-screen flex flex-col`}>
+      {user && <Header />}
       <Outlet />
       {children}
     </div>

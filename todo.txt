@@ -1,4 +1,4 @@
-supprimer comportement de validation apr défaut des inputs. 
+ 
 home.jsx
 profil.jsx
 authentification
