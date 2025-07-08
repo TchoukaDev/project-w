@@ -3,8 +3,8 @@ import Logo from "../components/Logo";
 
 export default function Error() {
   return (
-    <div className="flex flex-col justify-evenly min-h-screen items-center ">
-      <Logo small />
+    <div className="flex flex-col justify-evenly min-h-[80vh] items-center ">
+      <Logo size="md" />
       <div className="flex flex-col justify-evenly items-center">
         <p className="text-8xl italic font-bold font-pompiere opacity-30">
           OUPS!

@@ -7,7 +7,7 @@ export default function useUpdateUser(uid) {
     const response = await fetch(
       `https://waves-27b13-default-rtdb.europe-west1.firebasedatabase.app/users/${uid}.json`,
       {
-        method: "PUT",
+        method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updatedData),
       }
@@ -34,13 +34,14 @@ export default function useUpdateUser(uid) {
 
       return { previousUserData };
     },
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["userData", uid] });
+    },
     onError: (error, context) => {
       if (context?.previousUserData) {
         queryClient.setQueryData(["userData", uid], context.previousUserData);
       }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["userData", uid] });
     },
   });
 }

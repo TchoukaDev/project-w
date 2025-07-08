@@ -4,6 +4,8 @@ import Button from "./Button";
 import { UserContext } from "../contexts/userContext";
 import { toast } from "react-toastify";
 import { motion } from "framer-motion";
+import Logo from "./Logo";
+import anonymeImage from "/src/assets/images/anonyme.png";
 
 export default function Header() {
   const { logOut } = useContext(UserContext);
@@ -12,6 +14,10 @@ export default function Header() {
   const { user } = useContext(UserContext);
 
   const navigate = useNavigate();
+
+  const LogoClickHandler = () => {
+    navigate("/");
+  };
 
   const handleClick = () => {
     if (loading) {
@@ -36,12 +42,12 @@ export default function Header() {
     Amis: "amis",
     Notifications: "/notifications",
     Messages: "/messages",
-    Paramètres: "/settings",
+    Préférences: "/settings",
   };
 
   return (
-    <nav className="flex justify-between items-center h-[100px] shadow-custom py-5 px-10 relative">
-      <img className="h-full object-contain" src="/logo.svg" alt="logo W"></img>
+    <nav className="flex justify-between items-center h-[100px] py-5 px-10 relative">
+      <Logo onClick={LogoClickHandler} size="sm" canBeClicked />
       <button className="lg:hidden" onClick={() => setShowNav((prev) => !prev)}>
         <svg
           className="w-6 h-6"
@@ -104,7 +110,7 @@ export default function Header() {
       <div className="flex gap-9">
         <div className="flex flex-row-reverse items-center gap-2">
           <img
-            src={user.photo ? user.photo : "./src/assets/images/anonyme.png"}
+            src={user.photo ? user.photo : anonymeImage}
             className="rounded-full w-[50px]"
             alt="Photo de profil"
           />

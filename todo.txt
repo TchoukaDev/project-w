@@ -1,10 +1,15 @@
- 
-home.jsx
+responsive
 profil.jsx
-authentification
-userContext
-waveContext
 theme jour/nuit
 langage français/anglais
-
-
+animations
+spinners vaidation formulaire
+emoji mart
+Connexion google    
+reinitialisation mot de passe
+onclick sur pseudo des commentaire poru afficher profil
+images dans waveContext
+photo de profilphoto de profil dans waves et réposne
+Messagerie instantanée
+Recherche d'ami
+Abonnés

@@ -7,7 +7,10 @@ import UserProvider from "./contexts/userContext.jsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Loader from "./components/Loader.jsx";
 
+import Modal from "react-modal";
+
 const queryClient = new QueryClient();
+Modal.setAppElement("#root");
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -25,7 +28,7 @@ createRoot(document.getElementById("root")).render(
           <ToastContainer
             theme="colored"
             autoClose={2500}
-            position="top-right"
+            position="bottom-right"
           />
         </UserProvider>
       </Suspense>

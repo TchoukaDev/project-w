@@ -12,6 +12,7 @@
 * {
   font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
     "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+  box-sizing: border-box;
 }
 
 html,
@@ -20,8 +21,16 @@ body,
   height: 100%;
 }
 
+.container {
+  @apply my-9 w-[90%] mx-auto rounded shadow-custom h-full grow;
+}
+
 .input {
   @apply w-full border border-gray-400 rounded-md px-4 pt-7 pb-2 text-sm placeholder-transparent outline-none focus:border-2 focus:border-blue-500;
+}
+
+.inputSettings {
+  @apply bg-gray-900 py-1 px-2 rounded text-sm outline-none focus:border-2 focus:border-blue-600 w-[250px];
 }
 
 /* Neutraliser le comportement d'autofill */
@@ -31,4 +40,8 @@ input:-webkit-autofill:focus {
 }
 input[data-autocompleted] {
   background-color: transparent !important;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  @apply bg-white rounded-full cursor-pointer;
 }

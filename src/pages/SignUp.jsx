@@ -56,7 +56,7 @@ export default function SignUp() {
 
   return (
     <div className="flex grow justify-evenly items-center">
-      <Logo />
+      <Logo size="lg" />
       <main className="flex flex-col justify-center items-center ">
         <div className="flex flex-col items-center justify-between  w-[500px] h-[500px] shadow-lg/10 shadow-white p-9 rounded">
           <p className="text-center underline text-2xl font-semibold mb-6">

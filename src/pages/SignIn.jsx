@@ -13,8 +13,7 @@ export default function SignIn() {
     watch,
     formState: { errors },
   } = useForm();
-  const { loginUser } = useContext(UserContext);
-  const { loading, setLoading } = useContext(UserContext);
+  const { loginUser, loading, setLoading } = useContext(UserContext);
   const emailValue = watch("email", "");
   const passwordValue = watch("password", "");
 
@@ -53,7 +52,7 @@ export default function SignIn() {
   };
   return (
     <div className="flex grow justify-evenly items-center">
-      <Logo />
+      <Logo size="lg" />
       <main className="flex flex-col justify-center items-center ">
         <div className="flex flex-col items-center justify-between  w-[500px] h-[500px] shadow-lg/10 shadow-white p-9 rounded">
           <p className="text-center underline text-2xl font-semibold mb-6">
