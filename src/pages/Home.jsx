@@ -1,48 +1,70 @@
+/**
+ * Page d'accueil principale de l'application.
+ * Permet à l'utilisateur connecté de publier un message ("Wave"), de voir le fil d'actualité,
+ * de répondre aux messages, de supprimer ses propres messages et d'interagir avec les publications.
+ */
+
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../contexts/userContext";
 import WelcomeModal from "../components/WelcomeModal";
 import { useForm } from "react-hook-form";
 import Button from "../components/Button";
-import { useCreateWave } from "../hooks/useCreateWave";
+import { useCreateWave } from "../hooks/waves/useCreateWave";
 import { toast } from "react-toastify";
-import { motion, AnimatePresence, animate } from "framer-motion";
-import { Reply, ThumbsUp, ChevronUp, X, ChevronDown } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Reply, ChevronUp, X, ChevronDown } from "lucide-react";
 import Modal from "react-modal";
-import { useDeleteWave } from "../hooks/UseDeleteWave";
-import { useReplies } from "../hooks/useReplies";
+import { useDeleteWave } from "../hooks/waves/useDeleteWave";
+import { useReplies } from "../hooks/waves/useReplies";
 import MakeReply from "../components/MakeReply";
 import ShowReply from "../components/ShowReply";
-import { useWaves } from "../hooks/useWaves";
+import { useWaves } from "../hooks/waves/useWaves";
 import { Link } from "react-router";
+import LikeButton from "../components/LikeButton";
+import { useCounterLike } from "../hooks/waves/useCounterLike";
 
 export default function Home() {
-  // States
+  // État pour afficher la modale de bienvenue si l'utilisateur n'a pas de pseudo
   const [showModal, setShowModal] = useState(false);
+  // État pour gérer l'ouverture du formulaire de réponse à un message
   const [activeReplyId, setActiveReplyId] = useState(null);
+  // État pour afficher ou masquer les réponses d'un message
   const [showReply, setShowReply] = useState(null);
-  const [wavetoDelete, setWavetoDelete] = useState(null); //Récupérer wave à supprimer
+  // État pour stocker le message à supprimer
+  const [wavetoDelete, setWavetoDelete] = useState(null);
 
-  // Variables
+  // Récupération de l'utilisateur depuis le contexte global
   const { user } = useContext(UserContext);
+
+  // Récupération de la liste des messages ("waves")
   const { data: waves = [] } = useWaves(null);
-  const { mutate, isLoading, error } = useCreateWave(user?.uid, user?.pseudo);
+
+  // Hook pour créer un nouveau message
+  const { mutate, isLoading } = useCreateWave(user?.uid, user?.pseudo);
+
+  // Gestion du formulaire de création de message
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
   } = useForm();
-  const {
-    mutate: mutateDeletePost,
-    isLoading: isLoadingDelete,
-    errors: errorDelete,
-  } = useDeleteWave(null);
 
-  // Functions
+  // Hook pour supprimer un message
+  const { mutate: mutateDeletePost, isLoading: isLoadingDelete } =
+    useDeleteWave(null);
+
+  /**
+   * Ferme la modale de bienvenue
+   */
   const handleCloseModal = () => {
     setShowModal(false);
   };
 
+  /**
+   * Soumission du formulaire de création de message
+   * @param {object} data - Données du formulaire
+   */
   const onSubmit = (data) => {
     if (isLoading) {
       return;
@@ -58,6 +80,9 @@ export default function Home() {
     });
   };
 
+  /**
+   * Suppression d'un message sélectionné
+   */
   const onDeleteClick = () => {
     if (isLoadingDelete) {
       return;
@@ -73,14 +98,24 @@ export default function Home() {
     setWavetoDelete(null);
   };
 
+  /**
+   * Ferme le formulaire de réponse
+   */
   const onCloseReviewForm = () => {
     setActiveReplyId(false);
   };
 
+  /**
+   * Affiche ou masque les réponses d'un message
+   * @param {string} id - ID du message
+   */
   const onClickShowReplies = (id) => {
     setShowReply(id);
   };
 
+  /**
+   * Composant interne pour afficher le nombre de réponses à un message
+   */
   function RepliesCount({ wid, onClickShowReplies }) {
     const { data: replies = [] } = useReplies(wid);
     return (
@@ -88,6 +123,7 @@ export default function Home() {
         onClick={onClickShowReplies}
         className="hover:text-blue-600 hover:cursor-pointer text-xs text-gray-400 flex items-center gap-2"
       >
+        {/* Affiche le nombre de réponses */}
         💬 {replies.length} {replies.length === 1 ? "réponse" : "réponses"}{" "}
         {showReply === wid ? (
           <ChevronUp size={16} strokeWidth={2.75} />
@@ -98,35 +134,38 @@ export default function Home() {
     );
   }
 
-  // UseEffect pour ouverture de la modale si pas de pseudo défini (1ère connexion)
+  // Affiche la modale de bienvenue si l'utilisateur n'a pas encore de pseudo (première connexion)
   useEffect(() => {
-    {
-      if (user && !user.pseudo) {
-        setShowModal(true);
-      }
+    if (user && !user.pseudo) {
+      setShowModal(true);
     }
   }, []);
 
   return (
     <>
+      {/* Animation d'entrée de la page */}
       <motion.div
         initial={{ opacity: 0, x: -30 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.2 }}
         className="container flex items-stretch"
       >
-        {" "}
+        {/* Modale de bienvenue si besoin */}
         {showModal && <WelcomeModal onCloseModal={handleCloseModal} />}
+
+        {/* Colonne de gauche : publication d'un nouveau message */}
         <div className="flex flex-col justify-evenly px-16 border-r basis-1/3 shrink-0 border-gray-600 ">
           <div className="flex justify-center items-center text-gray-300  my-5 font-semibold !font-pompiere text-3xl">
             Avez vous quelque chose à partager aujourd'hui?{" "}
           </div>
+          {/* Formulaire de publication */}
           <form
             onSubmit={handleSubmit(onSubmit, (errors) =>
               toast.error(errors.message.message)
             )}
           >
             <div className="flex flex-col gap-12 items-center">
+              {/* Zone de texte pour le message */}
               <textarea
                 className="border focus:border-2 focus:border-blue-600 outline-none rounded p-3 w-full"
                 rows={10}
@@ -137,6 +176,7 @@ export default function Home() {
                     "Vous ne pouvez pas envoyer une Wave vide!",
                 })}
               ></textarea>
+              {/* Bouton de publication */}
               <Button
                 type="submit"
                 disabled={isLoading}
@@ -145,39 +185,50 @@ export default function Home() {
             </div>
           </form>
         </div>
+
+        {/* Colonne de droite : fil d'actualité */}
         <div className=" flex flex-col items-center py-5 px-16 gap-10 grow">
-          <div
+          {/* Titre du fil */}
+          <h1
             className="text-center
-       w-full underline font-semibold text-gray-300 text-3xl !font-pompiere"
+       w-ful"
           >
             Fil d'actualités:
-          </div>
+          </h1>
+          {/* Liste des messages */}
           <div className="flex flex-col w-full">
             {waves?.length == 0 ? (
+              // Aucun message à afficher
               <p className=" flex flex-col justify-center text-xl  items-center grow">
                 Aucune actualité pour le moment.
               </p>
             ) : (
+              // Affichage des messages triés par date décroissante
               [...waves]
                 .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
                 .map((wave) => (
                   <div key={wave.wid} className="flex flex-col mb-6 relative">
+                    {/* En-tête du message */}
                     <div className=" flex flex-col gap-5 border border-gray-300/20 w-full rounded-t py-3 px-6">
-                      {" "}
                       <div className="flex gap-5 items-center">
                         <div className="flex justify-between items-center grow">
+                          {/* Lien vers le profil de l'auteur */}
                           <Link
                             className="underline text-xl text-blue-600 !font-pompiere"
-                            to={`/profile/${wave.uid}`}
+                            to={
+                              wave.pseudo === user.pseudo
+                                ? "/profile"
+                                : `/profile/${wave.pseudo}`
+                            }
                           >
-                            {" "}
                             {wave.pseudo}
                           </Link>
-
+                          {/* Date de publication */}
                           <div className="text-white/50 !font-pompiere">
                             {wave.createdAt}
                           </div>
                         </div>
+                        {/* Bouton de suppression si c'est le message de l'utilisateur */}
                         {wave.uid === user.uid && (
                           <div className="flex items-start">
                             <X
@@ -187,19 +238,22 @@ export default function Home() {
                               strokeWidth={2.75}
                             />
                           </div>
-                        )}{" "}
+                        )}
                       </div>
+                      {/* Contenu du message */}
                       <p>{wave.message}</p>
-                    </div>{" "}
+                    </div>
+                    {/* Actions sous le message */}
                     <div className=" bg-gray-900/40  p-1 rounded-b flex justify-evenly items-center">
-                      <button
-                        type="button"
-                        className="hover:text-blue-600 hover:cursor-pointer text-xs flex gap-2 items-center text-gray-400 p-1 transition-colors duration-300"
-                      >
-                        {" "}
-                        <p>J'aime</p>
-                        <ThumbsUp size={16} strokeWidth={2.75} />
-                      </button>
+                      {/* Bouton "J'aime" */}
+
+                      <LikeButton
+                        uid={user.uid}
+                        wid={wave.wid}
+                        wuid={wave.uid}
+                      />
+
+                      {/* Bouton pour répondre */}
                       <div
                         onClick={() => {
                           if (showReply) {
@@ -211,7 +265,6 @@ export default function Home() {
                         }}
                         className="hover:text-blue-600 hover:cursor-pointer text-xs flex gap-2 items-center  text-gray-400 p-1 transition-colors duration-300"
                       >
-                        {" "}
                         <p>Répondre</p>
                         {activeReplyId === wave.wid ? (
                           <ChevronUp size={16} strokeWidth={2.75} />
@@ -219,6 +272,7 @@ export default function Home() {
                           <Reply size={16} strokeWidth={2.75} />
                         )}
                       </div>
+                      {/* Affichage du nombre de réponses */}
                       <RepliesCount
                         onClickShowReplies={() => {
                           if (activeReplyId) {
@@ -231,9 +285,11 @@ export default function Home() {
                         wid={wave.wid}
                       />
                     </div>
+                    {/* Affichage des réponses si demandé */}
                     <AnimatePresence>
                       {showReply === wave.wid && <ShowReply wid={wave.wid} />}
                     </AnimatePresence>
+                    {/* Affichage du formulaire de réponse si demandé */}
                     <AnimatePresence>
                       {activeReplyId === wave.wid && (
                         <MakeReply
@@ -248,6 +304,8 @@ export default function Home() {
           </div>
         </div>
       </motion.div>
+
+      {/* Modale de confirmation de suppression */}
       {wavetoDelete && (
         <Modal
           isOpen={true}

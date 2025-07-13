@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { useReplies } from "../hooks/useReplies";
+import { useReplies } from "../hooks/waves/useReplies";
 
 export default function ShowReply({ wid, onClose }) {
   const { data: replies = [], isLoading, error } = useReplies(wid);
@@ -19,17 +19,19 @@ export default function ShowReply({ wid, onClose }) {
           Aucun commentaire pour l'instant
         </div>
       ) : (
-        replies.map((reply) => (
-          <div className="flex border border-gray-700 rounded flex-col px-5 gap-3 p-3">
-            <div className="flex text-lg  gap-4  text-gray-400/70 ">
-              <div className="text-blue-600 underline !font-pompiere">
-                {reply.pseudo}
+        [...replies]
+          .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+          .map((reply) => (
+            <div className="flex border border-gray-700 rounded flex-col px-5 gap-3 p-3">
+              <div className="flex text-lg  gap-4  text-gray-400/70 ">
+                <div className="text-blue-600 underline !font-pompiere">
+                  {reply.pseudo}
+                </div>
+                <div className="!font-pompiere">{reply.createdAt}</div>
               </div>
-              <div className="!font-pompiere">{reply.createdAt}</div>
+              <p className="text-sm text-gray-300">{reply.reply}</p>
             </div>
-            <p className="text-sm text-gray-300">{reply.reply}</p>
-          </div>
-        ))
+          ))
       )}
     </motion.div>
   );

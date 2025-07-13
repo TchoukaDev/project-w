@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
-import { useReplies } from "../hooks/useReplies";
+import { useReplies } from "../hooks/waves/useReplies";
 import { motion } from "framer-motion";
-import { useCreateReply } from "../hooks/useCreateReply";
+import { useCreateReply } from "../hooks/waves/useCreateReply";
 import { toast } from "react-toastify";
 import { useContext, useState } from "react";
 import { UserContext } from "../contexts/userContext";

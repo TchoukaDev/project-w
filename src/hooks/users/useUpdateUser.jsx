@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-export default function useUpdateUser(uid) {
+export function useUpdateUser(uid) {
   const queryClient = useQueryClient();
 
   const mutationFn = async (updatedData) => {

@@ -1,30 +1,30 @@
 import { useContext, useState } from "react";
 import { NavLink, useNavigate } from "react-router";
-import Button from "./Button";
-import { UserContext } from "../contexts/userContext";
 import { toast } from "react-toastify";
-import { motion } from "framer-motion";
+import { UserContext } from "../contexts/userContext";
+import { useSearchUser } from "../hooks/users/useSearchUser";
+import { useDebounce } from "../hooks/utilities/useDebounce";
+import Button from "./Button";
 import Logo from "./Logo";
 import anonymeImage from "/src/assets/images/anonyme.png";
+import SearchBar from "./SearchBar";
 
 export default function Header() {
-  const { logOut } = useContext(UserContext);
-  const [loading, setLoading] = useState(false);
-  const [showNav, setShowNav] = useState(false);
-  const { user } = useContext(UserContext);
+  const [research, setResearch] = useState(""); // Champ de recherche
+  const debouncedResearch = useDebounce(research, 400); // Anti-rebond de la recherche (400ms)
+  const { usersFounded } = useSearchUser(debouncedResearch); // Résultats de recherche
 
-  const navigate = useNavigate();
+  const { logOut, user } = useContext(UserContext); // Récupération des infos utilisateur
+  const navigate = useNavigate(); // Pour les redirections
 
-  const LogoClickHandler = () => {
-    navigate("/");
-  };
+  const [loading, setLoading] = useState(false); // État de chargement pour le bouton de déconnexion
+  const [showNav, setShowNav] = useState(false); // Contrôle l'affichage du menu en version mobile
 
+  // Fonction de déconnexion
   const handleClick = () => {
-    if (loading) {
-      return;
-    }
-    setLoading(true);
+    if (loading) return;
 
+    setLoading(true);
     logOut()
       .then(() => {
         toast.success("Déconnexion réussie");
@@ -39,15 +39,17 @@ export default function Header() {
   const navLinks = {
     Accueil: "/",
     Profil: "/profile",
-    Amis: "amis",
-    Notifications: "/notifications",
+    Abonnements: "/followers",
     Messages: "/messages",
     Préférences: "/settings",
   };
 
   return (
     <nav className="flex justify-between items-center h-[100px] py-5 px-10 relative">
-      <Logo onClick={LogoClickHandler} size="sm" canBeClicked />
+      {/* Logo cliquable */}
+      <Logo onClick={() => navigate("/")} size="sm" canBeClicked />
+
+      {/* Bouton menu mobile */}
       <button className="lg:hidden" onClick={() => setShowNav((prev) => !prev)}>
         <svg
           className="w-6 h-6"
@@ -72,41 +74,36 @@ export default function Header() {
           )}
         </svg>
       </button>
+
+      {/* Navigation principale */}
       <div
         className={`${
           showNav
-            ? "absolute top-full left-0 mt-6 lg:mt-0 flex flex-col justify-end z-10 lg:static lg:flex-row lg:justify-between bg-gray-900/30 p-2 rounded lg:items-center md:gap-3"
-            : "hidden lg:flex lg:justify-between  lg:items-center md:gap-3"
-        }`}
+            ? "absolute top-full left-0 mt-6 flex flex-col justify-end z-10 bg-gray-900/30 p-2 rounded"
+            : "hidden lg:flex"
+        } lg:static lg:flex-row lg:justify-between lg:items-center md:gap-3`}
       >
         <div className="relative flex gap-2 p-2 rounded-full bg-gray-900">
           {Object.entries(navLinks).map(([label, path]) => (
             <NavLink
               key={label}
               to={path}
-              className="relative z-10 px-4 py-2 rounded-3xl font-semibold text-white" //Container de la navbar
+              className={({ isActive }) =>
+                `relative px-4 py-2 rounded-3xl font-semibold text-white ${
+                  isActive ? "bg-blue-500/30" : "hover:bg-blue-400/10"
+                }`
+              }
             >
-              {({ isActive }) => (
-                <>
-                  {isActive && (
-                    <motion.div
-                      layoutId="nav-indicator" //layoutId dit à Framer Motion : “ce bloc <motion.div> est le même élément que dans le composant précédent, même si son emplacement ou sa taille a changé. Anime sa transition entre les deux.” Le nom entre guiellement n'a pas d'importance
-                      className="absolute inset-0 bg-blue-400/40 rounded-3xl"
-                      transition={{
-                        type: "spring", // Animation type ressort
-                        stiffness: 500, // Raideur du ressort : plus élevé = plus rapide
-                        damping: 60, // Amortissement : contrôle les oscillations
-                      }}
-                    />
-                  )}
-                  <span className="relative z-10">{label}</span>
-                </>
-              )}
+              {label}
             </NavLink>
           ))}
         </div>
       </div>
 
+      {/* Zone de recherche */}
+      <SearchBar usersFounded={usersFounded} setResearch={setResearch} />
+
+      {/* Profil utilisateur + bouton déconnexion */}
       <div className="flex gap-9">
         <div className="flex flex-row-reverse items-center gap-2">
           <img
@@ -115,7 +112,6 @@ export default function Header() {
             alt="Photo de profil"
           />
           <div className="font-semibold">
-            {" "}
             {user.pseudo ? user.pseudo : "Inconnu"}
           </div>
         </div>

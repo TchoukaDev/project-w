@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { database } from "../utilities/firebase";
+import { database } from "../../utilities/firebase";
 import { get, ref } from "firebase/database";
 
 export function useUserById(uid) {

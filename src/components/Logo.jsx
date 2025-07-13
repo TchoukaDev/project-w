@@ -23,7 +23,7 @@ export default function Logo({ size = "lg", onClick, canBeClicked }) {
         canBeClicked && "cursor-pointer"
       }`}
     >
-      <img className={`${selected.img}`} src="/public/logo.svg" />
+      <img className={`${selected.img}`} src="/logo.svg" />
       <span className={`${selected.text} font-bold italic !font-pompiere`}>
         aves
       </span>

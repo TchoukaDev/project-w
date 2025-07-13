@@ -1,6 +1,6 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { ref, onValue } from "firebase/database";
-import { database } from "../utilities/firebase";
+import { database } from "../../utilities/firebase";
 import { useEffect } from "react";
 
 export function useUserRealTime(uid) {

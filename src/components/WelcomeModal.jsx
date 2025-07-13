@@ -4,7 +4,7 @@ import Button from "./Button";
 import { UserContext } from "../contexts/userContext";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
-import useUpdateUser from "../hooks/useUpdateUser";
+import { useUpdateUser } from "../hooks/users/useUpdateUser";
 
 export default function WelcomeModal({ onCloseModal }) {
   const [isBrowser, setIsBrowser] = useState(false);

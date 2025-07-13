@@ -9,10 +9,10 @@ export default function SettingsLayout() {
       transition={{ duration: 0.2 }}
       className="container px-16 py-8"
     >
-      <div className="font-semibold text-xl mb-8">
+      <h1 className=" mb-8 ">
         Préférences
         <hr className="mt-5 text-gray-500" />
-      </div>
+      </h1>
       <Outlet />
     </motion.div>
   );
