@@ -40,34 +40,44 @@ export function useToggleFollowing(currentUserId, followedUserId) {
       );
 
       // Récupère la liste actuelle des utilisateurs suivis depuis le cache
-      const previousFollowing = queryClient.getQueryData([
-        "allFollowing",
-        currentUserId,
-      ]);
+      const previousFollowing =
+        queryClient.getQueryData(["allFollowing", currentUserId]) || [];
 
-      const previousFollowers = queryClient.getQueryData([
-        "allFollowers",
-        followedUserId,
-      ]);
+      const previousFollowers =
+        queryClient.getQueryData(["allFollowers", followedUserId]) || [];
 
       // Crée une version "optimiste" de la liste des suivis :
       // - si on suit déjà (currentFollowing = true), on retire l'utilisateur de la liste
       // - sinon, on ajoute un objet représentant un utilisateur en cours d'identification
       const optimistic = currentFollowing
-        ? previousFollowing.filter((user) => !user[followedUserId]) // filtre les objets qui n'ont pas la clé followedUserId
+        ? previousFollowing.filter(
+            (user) => Object.keys(user)[0] !== followedUserId
+          )
         : [
             ...previousFollowing,
-            { [followedUserId]: { pseudo: "Identification en cours..." } },
+            {
+              [followedUserId]: {
+                pseudo: "Identification en cours...",
+                photo: "/src/assets/images/anonyme.png",
+              },
+            },
           ];
 
       // Met à jour le cache avec la liste optimiste
       queryClient.setQueryData(["allFollowing", currentUserId], optimistic);
 
       const optimistic2 = currentFollowing
-        ? previousFollowers.filter((user) => !user[currentUserId])
+        ? previousFollowers.filter(
+            (user) => Object.keys(user)[0] !== currentUserId
+          )
         : [
             ...previousFollowers,
-            { [currentUserId]: { pseudo: "Identification en cours..." } },
+            {
+              [currentUserId]: {
+                pseudo: "Identification en cours...",
+                photo: "/src/assets/images/anonyme.png",
+              },
+            },
           ];
 
       queryClient.setQueryData(["allFollowers", followedUserId], optimistic2);

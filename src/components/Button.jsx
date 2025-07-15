@@ -1,4 +1,4 @@
-export default function Button({ value, disabled, type, margin, onClick }) {
+export default function Button({ children, disabled, type, margin, onClick }) {
   return (
     <button
       onClick={onClick}
@@ -6,7 +6,7 @@ export default function Button({ value, disabled, type, margin, onClick }) {
       type={type}
       className={`bg-gray-300/30 rounded-3xl px-4 py-2 font-semibold text-sm  hover:bg-blue-600 cursor-pointer transition-color duration-300 ${margin}`}
     >
-      {value}
+      {children}
     </button>
   );
 }

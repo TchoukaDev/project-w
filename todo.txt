@@ -3,10 +3,8 @@ Sécurité base de données
 theme jour/nuit
 langage français/anglais
 animations
-spinners vaidation formulaire
 emoji mart
 Connexion google    
 reinitialisation mot de passe
-photo de profil dans waves et réposne
 Messagerie instantanée
-Abonnés
+

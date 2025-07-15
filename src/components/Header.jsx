@@ -8,6 +8,7 @@ import Button from "./Button";
 import Logo from "./Logo";
 import anonymeImage from "/src/assets/images/anonyme.png";
 import SearchBar from "./SearchBar";
+import { ClipLoader } from "react-spinners";
 
 export default function Header() {
   const [research, setResearch] = useState(""); // Champ de recherche
@@ -117,11 +118,19 @@ export default function Header() {
         </div>
         <Button
           onClick={handleClick}
-          value={loading ? "Déconnexion..." : "Se déconnecter"}
           disabled={loading}
           type="button"
           margin="my-2"
-        />
+        >
+          {loading ? (
+            <div>
+              Déconnexion...
+              <ClipLoader size={10} color="white" />
+            </div>
+          ) : (
+            "Se déconnecter"
+          )}
+        </Button>
       </div>
     </nav>
   );

@@ -16,6 +16,8 @@ import { Link } from "react-router";
 import Button from "../components/Button";
 import LikeButton from "../components/LikeButton";
 import FollowingButton from "../components/FollowingButton";
+import { dateToFr } from "../utilities/functions";
+import { ClipLoader } from "react-spinners";
 
 export default function Profile() {
   // States
@@ -112,9 +114,6 @@ export default function Profile() {
     );
   }
 
-  if (!profileUid || loadingUser || loadingWaves) return <p>Chargement...</p>;
-  if (!userData) return <p>Utilisateur non trouvé</p>;
-
   return (
     <>
       <motion.main
@@ -124,6 +123,10 @@ export default function Profile() {
         transition={{ duration: 0.2 }}
       >
         <div className="basis-1/3 p-5 border-r flex flex-col justify-center items-center">
+          {(!profileUid || loadingUser || loadingWaves) && (
+            <p>Chargement en cours...</p>
+          )}
+          {!userData && <p>Utilisateur non trouvé</p>}
           <div>
             <img
               className="w-[200px] h-[200px] rounded mb-5"
@@ -171,7 +174,7 @@ export default function Profile() {
                   currentUserId={user.uid}
                   followedUserId={profileUid}
                 />
-                <Button value="Envoyer un message"></Button>
+                <Button>Envoyer un message</Button>
               </div>
             )}
           </div>
@@ -205,18 +208,23 @@ export default function Profile() {
                         <div className="flex justify-between items-center grow">
                           {/* Lien vers le profil de l'auteur */}
                           <Link
-                            className="underline text-xl text-blue-600 !font-pompiere"
                             to={
                               wave.pseudo === user.pseudo
                                 ? "/profile"
                                 : `/profile/${wave.pseudo}`
                             }
                           >
-                            {wave.pseudo}
+                            <div className="flex items-center gap-3 underline text-xl text-blue-600 !font-pompiere">
+                              <img
+                                src={wave.photo}
+                                className="w-[30px] rounded-full"
+                              />{" "}
+                              {wave.pseudo}
+                            </div>
                           </Link>
                           {/* Date de publication */}
                           <div className="text-white/50 !font-pompiere">
-                            {wave.createdAt}
+                            {dateToFr(wave.createdAt)}
                           </div>
                         </div>
                         {/* Bouton de suppression si c'est le message de l'utilisateur */}
@@ -309,16 +317,19 @@ export default function Profile() {
               Voulez-vous vraiment supprimer ce post?{" "}
             </p>
             <div className="flex gap-10 items-center">
-              <Button
-                onClick={onDeleteClick}
-                type="button"
-                value="Valider"
-              ></Button>
-              <Button
-                onClick={() => setWavetoDelete(null)}
-                type="button"
-                value="Annuler"
-              ></Button>
+              <Button onClick={onDeleteClick} type="button">
+                {isLoadingDelete ? (
+                  <div>
+                    Suppression en cours...
+                    <ClipLoader size={10} color="white" />
+                  </div>
+                ) : (
+                  "Valider"
+                )}
+              </Button>
+              <Button onClick={() => setWavetoDelete(null)} type="button">
+                Annuler
+              </Button>
             </div>
           </div>
         </Modal>

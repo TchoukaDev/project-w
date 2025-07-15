@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-export function useCreateWave(uid, pseudo) {
+export function useCreateWave(uid, pseudo, photo) {
   const queryClient = useQueryClient();
 
   const mutationFn = async (data) => {
@@ -8,13 +8,8 @@ export function useCreateWave(uid, pseudo) {
       ...data,
       uid,
       pseudo,
-      createdAt: new Date().toLocaleString("fr-FR", {
-        hour: "2-digit",
-        minute: "2-digit",
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-      }),
+      photo,
+      createdAt: new Date(),
     };
 
     const response = await fetch(
@@ -52,6 +47,7 @@ export function useCreateWave(uid, pseudo) {
         ...data,
         wid: Date.now(),
         pseudo,
+        photo,
         uid,
         createdAt: new Date().toLocaleString("fr-FR", {
           hour: "2-digit",

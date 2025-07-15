@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import Button from "../components/Button";
 import { toast } from "react-toastify";
 import { motion } from "framer-motion";
+import { ClipLoader } from "react-spinners";
 
 export default function UpdatePassword() {
   const { user, changeUserCredential } = useContext(UserContext);
@@ -107,11 +108,16 @@ export default function UpdatePassword() {
             />
           </p>
           <div className="flex gap-6 items-center">
-            <Button
-              type="submit"
-              disabled={loading}
-              value={loading ? "Validation en cours..." : "Valider"}
-            />{" "}
+            <Button type="submit" disabled={loading}>
+              {loading ? (
+                <div>
+                  Validation en cours...
+                  <ClipLoader size={10} color="white" />
+                </div>
+              ) : (
+                "Valider"
+              )}
+            </Button>
             <Link
               className="bg-gray-500/30 rounded-3xl px-4 py-2 font-semibold text-sm  hover:bg-blue-500/30 cursor-pointer transition-color duration-300"
               to="/settings"

@@ -14,9 +14,10 @@ export default function FollowingButton({ currentUserId, followedUserId }) {
   } = useToggleFollowing(currentUserId, followedUserId);
   return (
     <Button
-      value={isFollowing ? "Se désabonner" : "S'abonner"}
-      disabled={mutationLoading || isLoading}
+      disabled={mutationLoading}
       onClick={() => toggleFollowing(isFollowing)}
-    />
+    >
+      {isFollowing ? "Se désabonner" : "S'abonner"}
+    </Button>
   );
 }

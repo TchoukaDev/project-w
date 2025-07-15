@@ -5,6 +5,7 @@ import { useNavigate, Link } from "react-router";
 import { UserContext } from "../contexts/userContext";
 import { toast } from "react-toastify";
 import Logo from "../components/Logo";
+import { ClipLoader } from "react-spinners";
 
 export default function SignUp() {
   const {
@@ -90,7 +91,7 @@ export default function SignUp() {
         emailValue && "top-1 text-sm text-gray-400"
       }`}
                 // peer-placeholder-shown : quand le placeholder (vide et recouvert par label) est actif, ce style s'applique
-                // le style s'applique lors du focus de l'input
+                // peer-focus: le style s'applique lors du focus de l'input
               >
                 Adresse e-mail
               </label>
@@ -127,12 +128,17 @@ export default function SignUp() {
             {errors.password && (
               <p className="text-red-400">{errors.password.message}</p>
             )}
-            <Button
-              margin="my-6"
-              type="submit"
-              disabled={loading}
-              value={loading ? "Inscription en cours..." : "S'inscrire"}
-            />
+            <Button margin="my-6" type="submit" disabled={loading}>
+              {" "}
+              {loading ? (
+                <div>
+                  Inscription en cours...
+                  <ClipLoader size={10} color="white" />
+                </div>
+              ) : (
+                "S'inscrire"
+              )}
+            </Button>
           </form>
           <div>
             Vous avez déjà un compte?{" "}

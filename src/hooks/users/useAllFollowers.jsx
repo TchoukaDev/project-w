@@ -13,6 +13,7 @@ export function useAllFollowers(uid) {
         throw new Error("Une erreur est survenue");
       }
       const data = await response.json();
+      if (!data) return [];
       const result = Object.keys(data);
 
       const fetchAll = result.map(async (userId) => {

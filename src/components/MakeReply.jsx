@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import { useContext, useState } from "react";
 import { UserContext } from "../contexts/userContext";
 import Button from "./Button";
+import { ClipLoader } from "react-spinners";
 
 export default function MakeReply({ wid, onCloseReviewForm }) {
   const {
@@ -16,10 +17,14 @@ export default function MakeReply({ wid, onCloseReviewForm }) {
   } = useForm();
   const { user } = useContext(UserContext);
   const { data: replies = [], isLoading, error } = useReplies(wid);
-  const { mutate } = useCreateReply(wid, user.uid, user.pseudo);
+  const { mutate, isLoading: mutateLoading } = useCreateReply(
+    wid,
+    user.uid,
+    user.pseudo
+  );
 
   const onSubmit = (data) => {
-    if (isLoading) {
+    if (isLoading || mutateLoading) {
       return;
     }
     mutate(data, {
@@ -50,7 +55,13 @@ export default function MakeReply({ wid, onCloseReviewForm }) {
         className="w-full border p-2 rounded outline-0 focus:border-2 focus:border-blue-600 text-sm"
       />
       <p className="text-center">
-        <Button type="submit" value="Envoyer" />
+        <Button type="submit">
+          {isLoading || mutateLoading ? (
+            <ClipLoader size={10} color="white" />
+          ) : (
+            "Envoyer"
+          )}
+        </Button>
       </p>
     </motion.form>
   );

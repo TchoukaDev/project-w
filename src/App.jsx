@@ -16,6 +16,7 @@ import Loader from "./components/Loader";
 import UpdatePassword from "./pages/UpdatePassword";
 import Profile from "./pages/Profile";
 import Followers from "./pages/Followers";
+import EmojiTest from "./pages/Messages";
 
 // Importation des pages et layouts en lazy loading pour optimiser le chargement
 const SettingsLayout = lazy(() => import("./components/layout/SettingsLayout"));
@@ -67,6 +68,11 @@ function App() {
         {
           path: "followers",
           element: user ? <Followers /> : <Navigate to="/" replace />,
+        },
+        // Messagerie
+        {
+          path: "messages",
+          element: <EmojiTest />,
         },
 
         // Pages de paramètres (layout imbriqué)

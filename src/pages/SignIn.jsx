@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router";
 import Button from "../components/Button";
 import Logo from "../components/Logo";
+import { ClipLoader } from "react-spinners";
 
 export default function SignIn() {
   const {
@@ -35,6 +36,7 @@ export default function SignIn() {
     if (loading) {
       return;
     }
+    setLoading(true);
     loginUser(data.email, data.password)
       .then((userCredential) => {
         toast.success("Connexion réussie!");
@@ -115,11 +117,17 @@ export default function SignIn() {
                 Mot de passe
               </label>
             </div>
-            <Button
-              margin="my-6"
-              type="submit"
-              value={loading ? "Connexion..." : "Se connecter"}
-            />
+            <Button margin="my-6" type="submit">
+              {" "}
+              {loading ? (
+                <div>
+                  Connexion...
+                  <ClipLoader size={10} color="white" />
+                </div>
+              ) : (
+                "Se connecter"
+              )}
+            </Button>
           </form>
           <div>
             Pas encore de compte?{" "}
