@@ -1,14 +1,19 @@
 import { motion } from "framer-motion";
 import { useReplies } from "../hooks/waves/useReplies";
+import { useRef } from "react";
+import { useClickOutside } from "../hooks/utilities/useClickOutside";
 
 export default function ShowReply({ wid, onClose }) {
   const { data: replies = [], isLoading, error } = useReplies(wid);
-  console.log(replies);
+
+  const showReplyRef = useRef();
+  // Hook pour fermer les commentaires quand on clique en dehors
+  useClickOutside(showReplyRef, null, onClose);
   return (
     <motion.div
       key={wid}
+      ref={showReplyRef}
       className="absolute border border-gray-600 flex flex-col gap-5 max-h-[400px] overflow-auto bg-gray-800 z-1 p-3 top-full mt-1 w-full rounded"
-      onClick={onClose}
       initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -10 }}
@@ -22,7 +27,10 @@ export default function ShowReply({ wid, onClose }) {
         [...replies]
           .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
           .map((reply) => (
-            <div className="flex border border-gray-700 rounded flex-col px-5 gap-3 p-3">
+            <div
+              key={reply.rid}
+              className="flex border border-gray-700 rounded flex-col px-5 gap-3 p-3"
+            >
               <div className="flex text-lg  gap-4  text-gray-400/70 ">
                 <div className="text-blue-600 underline !font-pompiere">
                   {reply.pseudo}

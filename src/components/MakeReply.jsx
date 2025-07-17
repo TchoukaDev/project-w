@@ -10,10 +10,12 @@ import { ClipLoader } from "react-spinners";
 import { insertEmoji } from "../utilities/functions";
 import { Smile } from "lucide-react";
 import EmojiPicker from "emoji-picker-react";
+import { useClickOutside } from "../hooks/utilities/useClickOutside";
 
 export default function MakeReply({ wid, onCloseReviewForm }) {
   const [showEmoji, setShowEmoji] = useState(false);
   const [mountEmoji, setMountEmoji] = useState(false);
+  const ReviewFormRef = useRef();
 
   const {
     register,
@@ -23,18 +25,22 @@ export default function MakeReply({ wid, onCloseReviewForm }) {
     formState: { errors },
   } = useForm();
   const { user } = useContext(UserContext);
-  const { data: replies = [], isLoading, error } = useReplies(wid);
   const { mutate, isLoading: mutateLoading } = useCreateReply(
     wid,
     user.uid,
     user.pseudo
   );
+  const replyFormRef = useRef();
+  useClickOutside(replyFormRef, null, onCloseReviewForm);
 
   const { ref: registerRef, ...registerRest } = register("reply");
 
   const replyRef = useRef(null);
   const emojiRef = useRef();
   const emojiBtnRef = useRef();
+  useClickOutside(emojiRef, emojiBtnRef, () => {
+    setShowEmoji(false);
+  });
 
   // Fusion des refs useRef et registerRef
   const replyCombinedRef = (element) => {
@@ -42,28 +48,13 @@ export default function MakeReply({ wid, onCloseReviewForm }) {
     registerRef(element);
   };
 
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (
-        emojiRef.current &&
-        !emojiRef.current.contains(event.target) &&
-        emojiBtnRef.current &&
-        !emojiBtnRef.current.contains(event.target)
-      ) {
-        setShowEmoji(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
   // Monter le Picker une fois que le composant est monté pour éviter bug d'animation
   useEffect(() => {
     setMountEmoji(true);
   }, []);
 
   const onSubmit = (data) => {
-    if (isLoading || mutateLoading) {
+    if (mutateLoading) {
       return;
     }
     mutate(data, {
@@ -80,6 +71,7 @@ export default function MakeReply({ wid, onCloseReviewForm }) {
 
   return (
     <motion.form
+      ref={replyFormRef}
       key={wid}
       className="absolute bg-gray-800 p-3 border border-gray-600 top-full z-1 mt-1 w-full rounded"
       onSubmit={handleSubmit(onSubmit)}
@@ -130,11 +122,7 @@ export default function MakeReply({ wid, onCloseReviewForm }) {
       )}
       <p className="text-center">
         <Button margin={"mt-3"} type="submit">
-          {isLoading || mutateLoading ? (
-            <ClipLoader size={10} color="white" />
-          ) : (
-            "Envoyer"
-          )}
+          {mutateLoading ? <ClipLoader size={10} color="white" /> : "Envoyer"}
         </Button>
       </p>
     </motion.form>

@@ -25,6 +25,7 @@ import Loader from "../components/Loader";
 import { dateToFr, insertEmoji } from "../utilities/functions";
 import { ClipLoader } from "react-spinners";
 import EmojiPicker from "emoji-picker-react";
+import { useClickOutside } from "../hooks/utilities/useClickOutside";
 
 export default function Home() {
   // État pour afficher la modale de bienvenue si l'utilisateur n'a pas de pseudo
@@ -60,6 +61,11 @@ export default function Home() {
   // Référence du bouton d'ouverture/fermeture du picker
   const emojiBtnRef = useRef();
 
+  // Hook pour fermer le Picker Emoji si on clique en dehors
+  useClickOutside(emojiRef, emojiBtnRef, () => {
+    setShowEmoji(false);
+  });
+
   // Gestion du formulaire via react-hook-form
   const {
     register,
@@ -93,22 +99,6 @@ export default function Home() {
     waveContentRef.current = element; // Notre ref perso
     registerRef(element); // ref react-hook-form
   };
-
-  // Effet pour fermer la popup emoji si clic en dehors
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (
-        emojiRef.current &&
-        !emojiRef.current.contains(event.target) &&
-        emojiBtnRef.current &&
-        !emojiBtnRef.current.contains(event.target)
-      ) {
-        setShowEmoji(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
 
   // Ferme la modale de bienvenue
   const handleCloseModal = () => {
@@ -189,8 +179,11 @@ export default function Home() {
 
         {/* Colonne de gauche : publication d'un nouveau message */}
         <div className="flex flex-col justify-evenly px-16 border-r basis-1/3 shrink-0 border-gray-600 ">
+          <div className="flex justify-center items-center text-gray-300 my-5 font-semibold !font-pompiere underline text-4xl">
+            Salut {user?.firstName || "toi"}!{" "}
+          </div>
           <div className="flex justify-center items-center text-gray-300 my-5 font-semibold !font-pompiere text-3xl">
-            Avez vous quelque chose à partager aujourd'hui?{" "}
+            Souhaites-tu partager quelque chose aujourd'hui?{" "}
           </div>
 
           {/* Formulaire de publication */}
@@ -225,14 +218,7 @@ export default function Home() {
 
                 {/* Popup emoji */}
                 {showEmoji && (
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.3 }}
-                    ref={emojiRef}
-                    className="absolute z-50"
-                  >
+                  <motion.div ref={emojiRef} className="absolute z-50">
                     <EmojiPicker
                       theme="dark"
                       skinTonesDisabled={true}
@@ -375,7 +361,12 @@ export default function Home() {
 
                     {/* Affichage des réponses si demandé */}
                     <AnimatePresence>
-                      {showReply === wave.wid && <ShowReply wid={wave.wid} />}
+                      {showReply === wave.wid && (
+                        <ShowReply
+                          onClose={() => setShowReply(null)}
+                          wid={wave.wid}
+                        />
+                      )}
                     </AnimatePresence>
 
                     {/* Affichage du formulaire de réponse si demandé */}
