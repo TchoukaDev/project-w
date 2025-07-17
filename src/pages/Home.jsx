@@ -22,7 +22,7 @@ import { useWaves } from "../hooks/waves/useWaves";
 import { Link } from "react-router";
 import LikeButton from "../components/LikeButton";
 import Loader from "../components/Loader";
-import { dateToFr } from "../utilities/functions";
+import { dateToFr, insertEmoji } from "../utilities/functions";
 import { ClipLoader } from "react-spinners";
 import EmojiPicker from "emoji-picker-react";
 
@@ -42,7 +42,7 @@ export default function Home() {
   const { user, loading: userLoading } = useContext(UserContext);
 
   // Récupération de la liste des messages ("waves")
-  const { data: waves = [] } = useWaves(null);
+  const { data: waves = [], isLoading: loadingWaves } = useWaves(null);
 
   // Hook pour créer un nouveau message
   const { mutate, isLoading } = useCreateWave(
@@ -56,6 +56,9 @@ export default function Home() {
 
   // Référence pour détecter les clics en dehors de la popup emoji
   const emojiRef = useRef();
+
+  // Référence du bouton d'ouverture/fermeture du picker
+  const emojiBtnRef = useRef();
 
   // Gestion du formulaire via react-hook-form
   const {
@@ -91,57 +94,15 @@ export default function Home() {
     registerRef(element); // ref react-hook-form
   };
 
-  /**
-   * Fonction pour insérer un emoji dans le textarea à la position actuelle du curseur
-   * Elle utilise waveContentRef pour manipuler la sélection et le focus directement dans le DOM.
-   */
-  const insertEmoji = (emoji) => {
-    // On récupère la référence vers le textarea via useRef
-    const waveContent = waveContentRef.current;
-
-    // Position du curseur ou début de la sélection dans le textarea
-    // C'est un nombre entier qui indique l'index du caractère où commence la sélection
-    // Si aucun texte n'est sélectionné, start correspond à la position actuelle du curseur
-    const start = waveContent.selectionStart;
-
-    // Position de la fin de la sélection dans le textarea
-    // C'est un nombre entier indiquant l'index juste après le dernier caractère sélectionné
-    // Si aucun texte n'est sélectionné, end est égal à start
-    const end = waveContent.selectionEnd;
-
-    // Texte actuel dans le textarea
-    const currentText = waveContent.value;
-
-    // Construction du nouveau texte après insertion de l'emoji
-    // - On garde la partie avant la sélection/cursor : currentText.slice(0, start)
-    // - On ajoute l'emoji sélectionné
-    // - On ajoute la partie après la sélection : currentText.slice(end)
-    // Cela remplace la sélection par l'emoji, ou insère l'emoji à la position du curseur
-    const newText =
-      currentText.slice(0, start) + emoji + currentText.slice(end);
-
-    // Mise à jour de la valeur du champ "message" dans react-hook-form,
-    // afin que le formulaire prenne en compte ce nouveau contenu
-    setValue("message", newText);
-
-    // Après la mise à jour du DOM (asynchrone),
-    // on repositionne le curseur juste après l'emoji inséré
-    setTimeout(() => {
-      // On remet le focus sur le textarea (utile si on l'a perdu en cliquant sur l'emoji)
-      waveContent.focus();
-
-      // On positionne le curseur juste après l'emoji :
-      // start correspond à la position où on a inséré l'emoji,
-      // emoji.length correspond au nombre de caractères de l'emoji (souvent 2 pour les emojis complexes),
-      // donc on place le curseur à start + emoji.length pour que la saisie reprenne après l'emoji
-      waveContent.setSelectionRange(start + emoji.length, start + emoji.length);
-    }, 0);
-  };
-
   // Effet pour fermer la popup emoji si clic en dehors
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (emojiRef.current && !emojiRef.current.contains(event.target)) {
+      if (
+        emojiRef.current &&
+        !emojiRef.current.contains(event.target) &&
+        emojiBtnRef.current &&
+        !emojiBtnRef.current.contains(event.target)
+      ) {
         setShowEmoji(false);
       }
     };
@@ -253,6 +214,7 @@ export default function Home() {
                   <div className="w-full -mt-2 px-2 pt-2 border border-t-0 peer-focus:border-2 peer-focus:border-t-0 peer-focus:border-blue-600 ">
                     <button
                       type="button"
+                      ref={emojiBtnRef}
                       onClick={() => setShowEmoji((prev) => !prev)}
                       className=" hover:scale-110 transition "
                     >
@@ -263,15 +225,30 @@ export default function Home() {
 
                 {/* Popup emoji */}
                 {showEmoji && (
-                  <div ref={emojiRef} className="absolute z-50">
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.3 }}
+                    ref={emojiRef}
+                    className="absolute z-50"
+                  >
                     <EmojiPicker
                       theme="dark"
+                      skinTonesDisabled={true}
+                      searchDisabled={true}
+                      previewConfig={{ showPreview: false }}
                       onEmojiClick={(emojiObject) => {
-                        insertEmoji(emojiObject.emoji);
+                        insertEmoji(
+                          emojiObject.emoji,
+                          waveContentRef,
+                          setValue,
+                          "message"
+                        );
                         setShowEmoji(false);
                       }}
                     />
-                  </div>
+                  </motion.div>
                 )}
               </div>
 
@@ -296,7 +273,12 @@ export default function Home() {
           <h1 className="text-center w-full">Fil d'actualités:</h1>
           {/* Liste des messages */}
           <div className="flex flex-col w-full">
-            {waves?.length === 0 ? (
+            {loadingWaves ? (
+              <p className="flex flex-col justify-center text-xl items-center grow">
+                Chargement en cours...
+                <ClipLoader color="blue" />
+              </p>
+            ) : waves?.length === 0 ? (
               // Aucun message à afficher
               <p className="flex flex-col justify-center text-xl items-center grow">
                 Aucune actualité pour le moment.

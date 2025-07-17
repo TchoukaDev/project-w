@@ -7,4 +7,4 @@ emoji mart
 Connexion google    
 reinitialisation mot de passe
 Messagerie instantanée
-
+useEffect pour fermer la fenetre de réponse au clic en dehors
