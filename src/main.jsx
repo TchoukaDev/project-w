@@ -8,6 +8,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Loader from "./components/Loader.jsx";
 
 import Modal from "react-modal";
+import ThemeProvider from "./contexts/themeContext.jsx";
 
 const queryClient = new QueryClient();
 Modal.setAppElement("#root");
@@ -22,15 +23,17 @@ createRoot(document.getElementById("root")).render(
           </div>
         }
       >
-        <UserProvider>
-          {" "}
-          <App />
-          <ToastContainer
-            theme="colored"
-            autoClose={2500}
-            position="bottom-right"
-          />
-        </UserProvider>
+        <ThemeProvider>
+          <UserProvider>
+            {" "}
+            <App />
+            <ToastContainer
+              theme="colored"
+              autoClose={2500}
+              position="bottom-right"
+            />
+          </UserProvider>
+        </ThemeProvider>
       </Suspense>
     </QueryClientProvider>
   </StrictMode>

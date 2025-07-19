@@ -2,10 +2,10 @@ import { Link } from "react-router";
 import { motion } from "framer-motion";
 
 export default function SettingsIndex() {
+  // liens avec clés pour mapper dessus
   const links = {
     "Informations personnelles": "infos",
     "Modifier le mot de passe": "changePassword",
-    Langue: "langage",
   };
   return (
     <motion.main
@@ -16,6 +16,7 @@ export default function SettingsIndex() {
       <ul>
         {Object.entries(links).map(([label, path]) => (
           <li key={label} className="mb-5">
+            {/* Liste de Liens */}
             <Link
               className=" text-gray-500 hover:text-white transition-colors duration-300"
               to={path}

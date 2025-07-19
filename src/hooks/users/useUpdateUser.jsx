@@ -22,25 +22,51 @@ export function useUpdateUser(uid) {
 
   return useMutation({
     mutationFn,
+
     onMutate: async (updatedData) => {
-      await queryClient.cancelQueries({ queryKey: ["userData", uid] });
+      // Annuler les requêtes en cours sur user et waves
+      await queryClient.cancelQueries({ queryKey: ["user", uid] });
+      await queryClient.cancelQueries({ queryKey: ["waves"] });
+      await queryClient.cancelQueries({ queryKey: ["waves", uid] });
 
-      const previousUserData = queryClient.getQueryData(["userData", uid]);
+      // Sauvegarder l'ancien user data pour rollback en cas d'erreur
+      const previousUserData = queryClient.getQueryData(["user", uid]);
 
-      queryClient.setQueryData(["userData", uid], (prev) => ({
-        ...prev,
+      // Optimistic update user
+      queryClient.setQueryData(["user", uid], (old) => ({
+        ...old,
         ...updatedData,
       }));
+
+      // Optimistic update waves : mettre à jour pseudo/photo dans toutes les waves de cet utilisateur
+      const wavesKeys = [["waves"], ["waves", uid]];
+
+      wavesKeys.forEach((key) => {
+        queryClient.setQueryData(key, (old) => {
+          if (!old) return old;
+          // old est un tableau de waves
+          return old.map((wave) =>
+            wave.uid === uid
+              ? { ...wave, ...updatedData } // Met à jour pseudo, photo, etc.
+              : wave
+          );
+        });
+      });
 
       return { previousUserData };
     },
 
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["userData", uid] });
+      // Invalider les caches user et waves pour recharger les données fraîches
+      queryClient.invalidateQueries({ queryKey: ["user", uid] });
+      queryClient.invalidateQueries({ queryKey: ["waves"] });
+      queryClient.invalidateQueries({ queryKey: ["waves", uid] });
     },
+
     onError: (error, context) => {
+      // Rollback en cas d'erreur
       if (context?.previousUserData) {
-        queryClient.setQueryData(["userData", uid], context.previousUserData);
+        queryClient.setQueryData(["user", uid], context.previousUserData);
       }
     },
   });

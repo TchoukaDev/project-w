@@ -1,9 +1,3 @@
 responsive
 Sécurité base de données
-theme jour/nuit
-langage français/anglais
-animations
-Connexion google    
-reinitialisation mot de passe
 Messagerie instantanée
-

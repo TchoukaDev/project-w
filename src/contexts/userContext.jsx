@@ -6,13 +6,14 @@ import {
   EmailAuthProvider,
   reauthenticateWithCredential,
   updatePassword,
+  signInWithPopup,
 } from "firebase/auth";
 
 import { createContext, useState, useEffect } from "react";
-import { auth } from "../utilities/firebase";
-import { useQuery } from "@tanstack/react-query";
+import { auth, googleProvider } from "../utilities/firebase";
 import { useUserRealTime } from "../hooks/users/useUserRealTime";
 import { toast } from "react-toastify";
+import { useUserById } from "../hooks/users/useUserById";
 
 // Création du context
 export const UserContext = createContext(null);
@@ -46,21 +47,7 @@ const UserProvider = ({ children }) => {
     isLoading: userLoading,
     isError,
     error,
-  } = useQuery({
-    queryKey: ["userData", uid],
-    enabled: !!uid, //Lance la requête uniquement si uid existe (si un utilisateur est connecté)
-    queryFn: async () => {
-      const response = await fetch(
-        `https://waves-27b13-default-rtdb.europe-west1.firebasedatabase.app/users/${uid}.json`
-      );
-      if (!response.ok) {
-        throw new Error(
-          "Une erreur est survenue lors du chargement des données utilisateur."
-        );
-      }
-      return await response.json();
-    },
-  });
+  } = useUserById(uid);
 
   // Fusion des données de connexion et des données de la database. Si pas de données, on garde uniquement les données de connexion
   const user =
@@ -96,10 +83,59 @@ const UserProvider = ({ children }) => {
     );
   };
 
-  // Connexion
+  // Connexion classique avec mail + mot de passe
   const loginUser = (email, password) => {
     setAuthLoading(true);
     return signInWithEmailAndPassword(auth, email, password);
+  };
+
+  // Fonction asynchrone pour gérer la connexion via Google
+  const loginWithGoogle = async () => {
+    // Active le chargement (pour afficher un spinner ou bloquer un bouton, par exemple)
+    setAuthLoading(true);
+
+    try {
+      // 1. Lance la popup de connexion Google avec Firebase Auth
+      const result = await signInWithPopup(auth, googleProvider);
+
+      // 2. Récupère les informations du compte utilisateur connecté
+      const user = result.user;
+
+      // 3. Vérifie si l'utilisateur existe déjà dans la Realtime Database
+      const res = await fetch(
+        `https://waves-27b13-default-rtdb.europe-west1.firebasedatabase.app/users/${user.uid}.json`
+      );
+
+      // 4. Convertit la réponse en objet JSON
+      const userExists = await res.json();
+
+      // 5. Si aucune donnée n'existe pour cet utilisateur (nouvel utilisateur)
+      if (!userExists) {
+        // On crée une "fiche" utilisateur dans la base, avec son ID et son e-mail
+        await fetch(
+          `https://waves-27b13-default-rtdb.europe-west1.firebasedatabase.app/users/${user.uid}.json`,
+          {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              id: user.uid, // ID Firebase
+              email: user.email, // Email Google
+              photo: user.photoURL || "/src/assets/images/anonyme.png", // Photo Google, ou image par défaut
+            }),
+          }
+        );
+      }
+      toast.success("Connexion réussie");
+      // ✅ onAuthStateChanged (déjà présent dans le contexte) s'exécutera automatiquement
+      // et mettra à jour `authUser` => `user` sera mis à jour avec userData fusionné
+    } catch (error) {
+      // En cas d'erreur (ex : popup fermée, problème réseau, etc.)
+      console.error("Erreur lors de la connexion avec Google :", error);
+      toast.error("Échec de la connexion avec Google");
+    } finally {
+      // Quel que soit le résultat, on stoppe le chargement
+      setAuthLoading(false);
+    }
   };
 
   // Déconnexion
@@ -154,6 +190,7 @@ const UserProvider = ({ children }) => {
     logOut,
     createUser,
     loginUser,
+    loginWithGoogle,
     changeUserCredential,
   };
 

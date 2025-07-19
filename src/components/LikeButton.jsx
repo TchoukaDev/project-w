@@ -3,13 +3,14 @@ import { useLike } from "../hooks/waves/useLike";
 import { useToggleLike } from "../hooks/waves/useToggleLike";
 import { useCounterLike } from "../hooks/waves/useCounterLike";
 
+// Bouton pour liker/deliker
 export default function LikeButton({ wid, uid, wuid }) {
   const { data: liked, loadingLikes } = useLike(wid, uid);
   const { mutate: toggleLike, isLoading } = useToggleLike(wid, uid);
   const { data: counterLike, isLoading: counterLoading } = useCounterLike(wid);
 
   return wuid === uid ? (
-    <span className="text-xs text-gray-400">
+    <span className="text-xs text-gray-600 dark:text-gray-400">
       Nombre de like ({counterLike})
     </span>
   ) : (
@@ -17,7 +18,7 @@ export default function LikeButton({ wid, uid, wuid }) {
       onClick={() => toggleLike(liked)}
       disabled={loadingLikes || isLoading}
       className={`hover:text-blue-600 hover:cursor-pointer text-xs flex gap-2 items-center  p-1 transition-colors duration-300 ${
-        liked ? "text-blue-600" : "text-gray-400"
+        liked ? "text-blue-600" : "text-gray-600: dark:text-gray-400"
       }`}
     >
       {" "}

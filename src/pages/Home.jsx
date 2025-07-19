@@ -1,9 +1,3 @@
-/**
- * Page d'accueil principale de l'application.
- * Permet à l'utilisateur connecté de publier un message ("Wave"), de voir le fil d'actualité,
- * de répondre aux messages, de supprimer ses propres messages et d'interagir avec les publications.
- */
-
 import { useContext, useEffect, useRef, useState } from "react";
 import { UserContext } from "../contexts/userContext";
 import WelcomeModal from "../components/WelcomeModal";
@@ -12,10 +6,10 @@ import Button from "../components/Button";
 import { useCreateWave } from "../hooks/waves/useCreateWave";
 import { toast } from "react-toastify";
 import { motion, AnimatePresence } from "framer-motion";
-import { Reply, ChevronUp, X, ChevronDown, Smile } from "lucide-react";
+import { Reply, Smile, X, ChevronUp } from "lucide-react";
 import Modal from "react-modal";
 import { useDeleteWave } from "../hooks/waves/useDeleteWave";
-import { useReplies } from "../hooks/waves/useReplies";
+import RepliesCount from "../components/RepliesCount";
 import MakeReply from "../components/MakeReply";
 import ShowReply from "../components/ShowReply";
 import { useWaves } from "../hooks/waves/useWaves";
@@ -30,43 +24,55 @@ import { useClickOutside } from "../hooks/utilities/useClickOutside";
 export default function Home() {
   // État pour afficher la modale de bienvenue si l'utilisateur n'a pas de pseudo
   const [showModal, setShowModal] = useState(false);
+
   // État pour gérer l'ouverture du formulaire de réponse à un message
   const [activeReplyId, setActiveReplyId] = useState(null);
+
   // État pour afficher ou masquer les réponses d'un message
   const [showReply, setShowReply] = useState(null);
+
   // État pour stocker le message à supprimer
   const [wavetoDelete, setWavetoDelete] = useState(null);
-  // Etat pour afficher ou masquer le picker d'emoji
+
+  // État pour afficher ou masquer le picker d'emojis
   const [showEmoji, setShowEmoji] = useState(false);
 
-  // Récupération de l'utilisateur depuis le contexte global
+  // Récupère l'utilisateur via le contexte
   const { user, loading: userLoading } = useContext(UserContext);
 
-  // Récupération de la liste des messages ("waves")
+  // Récupération des waves
   const { data: waves = [], isLoading: loadingWaves } = useWaves(null);
 
-  // Hook pour créer un nouveau message
+  // Hook de mutation pour créer une wave
   const { mutate, isLoading } = useCreateWave(
     user?.uid,
     user?.pseudo,
     user?.photo
   );
 
-  // Référence pour accéder directement au DOM du textarea de Wave
+  // Référence au champ de texte du message
   const waveContentRef = useRef(null);
 
-  // Référence pour détecter les clics en dehors de la popup emoji
+  // Références pour le picker d'emoji
   const emojiRef = useRef();
-
-  // Référence du bouton d'ouverture/fermeture du picker
   const emojiBtnRef = useRef();
 
-  // Hook pour fermer le Picker Emoji si on clique en dehors
+  // Fermer le picker emoji si clic en dehors
   useClickOutside(emojiRef, emojiBtnRef, () => {
     setShowEmoji(false);
   });
 
-  // Gestion du formulaire via react-hook-form
+  // Références pour le formulaire de réponse
+  const makeReplyRef = useRef();
+  const makeReplyBtn = useRef();
+  useClickOutside(makeReplyRef, makeReplyBtn, () => setActiveReplyId(false));
+
+  // Références pour l'affichage des réponses
+  const showReplyRef = useRef();
+  const showReplyBtnRef = useRef();
+  useClickOutside(showReplyRef, showReplyBtnRef, () => setShowReply(false));
+
+  // Formulaire avec react-hook-form
   const {
     register,
     handleSubmit,
@@ -75,29 +81,20 @@ export default function Home() {
     formState: { errors },
   } = useForm();
 
-  // Hook pour supprimer un message
+  // Hook de suppression de wave
   const { mutate: mutateDeletePost, isLoading: isLoadingDelete } =
     useDeleteWave(null);
 
-  /**
-   * Fusion des refs :
-   * - react-hook-form a besoin d'une ref pour suivre l'élément et faire la validation
-   * - on veut aussi garder une ref perso (waveContentRef) pour manipuler directement le DOM (ex: gestion curseur pour emoji)
-   *
-   * On récupère la ref de react-hook-form dans `registerRef` et le reste des props dans `registerRest`.
-   * On crée la fonction `combinedRef` qui, à l'assignation du textarea DOM, affecte l'élément à
-   * la fois à waveContentRef.current ET à la ref de react-hook-form.
-   * Ainsi, on évite le conflit entre les deux refs et on garde toutes les fonctionnalités.
-   */
+  // Récupère les props du champ message
   const { ref: registerRef, ...registerRest } = register("message", {
     validate: (value) =>
       value.trim().length > 0 || "Vous ne pouvez pas envoyer une Wave vide!",
   });
 
-  // Fonction qui combine les deux refs (react-hook-form et waveContentRef)
+  // Fonction qui combine la ref de react-hook-form et une ref perso
   const combinedRef = (element) => {
-    waveContentRef.current = element; // Notre ref perso
-    registerRef(element); // ref react-hook-form
+    waveContentRef.current = element;
+    registerRef(element);
   };
 
   // Ferme la modale de bienvenue
@@ -105,7 +102,7 @@ export default function Home() {
     setShowModal(false);
   };
 
-  // Soumission du formulaire de création de message
+  // Soumission du formulaire
   const onSubmit = (data) => {
     if (isLoading) return;
     mutate(data, {
@@ -119,7 +116,7 @@ export default function Home() {
     });
   };
 
-  // Suppression d'un message sélectionné
+  // Suppression de la wave sélectionnée
   const onDeleteClick = () => {
     if (isLoadingDelete) return;
     mutateDeletePost(wavetoDelete.wid, {
@@ -132,57 +129,37 @@ export default function Home() {
   // Ferme le formulaire de réponse
   const onCloseReviewForm = () => setActiveReplyId(false);
 
-  // Affiche ou masque les réponses d'un message
+  // Gère l'affichage des réponses à un message
   const onClickShowReplies = (id) => setShowReply(id);
 
-  /**
-   * Composant interne pour afficher le nombre de réponses à un message
-   */
-  function RepliesCount({ wid, onClickShowReplies }) {
-    const { data: replies = [] } = useReplies(wid);
-    return (
-      <div
-        onClick={onClickShowReplies}
-        className="hover:text-blue-600 hover:cursor-pointer text-xs text-gray-400 flex items-center gap-2"
-      >
-        {/* Affiche le nombre de réponses */}
-        💬 {replies.length} {replies.length === 1 ? "réponse" : "réponses"}{" "}
-        {showReply === wid ? (
-          <ChevronUp size={16} strokeWidth={2.75} />
-        ) : (
-          <ChevronDown size={16} strokeWidth={2.75} />
-        )}
-      </div>
-    );
-  }
-  // Affiche la modale de bienvenue si l'utilisateur n'a pas encore de pseudo (première connexion)
+  // Affiche la modale si l'utilisateur n'a pas encore de pseudo
   useEffect(() => {
     if (user && !user.pseudo) {
       setShowModal(true);
     }
   }, [user]);
 
-  // Affiche un loader pendant le chargement des données utilisateur
-  if (userLoading) return <Loader />;
+  // Affiche un loader si les données sont encore en chargement
+  if (userLoading || loadingWaves) return <Loader />;
 
   return (
     <>
-      {/* Animation d'entrée de la page */}
+      {/* Animation principale de la page */}
       <motion.div
         initial={{ opacity: 0, x: -30 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.2 }}
         className="container flex items-stretch"
       >
-        {/* Modale de bienvenue si besoin */}
+        {/* Modale de bienvenue */}
         {showModal && <WelcomeModal onCloseModal={handleCloseModal} />}
 
-        {/* Colonne de gauche : publication d'un nouveau message */}
+        {/* Colonne de gauche - création d'une Wave */}
         <div className="flex flex-col justify-evenly px-16 border-r basis-1/3 shrink-0 border-gray-600 ">
-          <div className="flex justify-center items-center text-gray-300 my-5 font-semibold !font-pompiere underline text-4xl">
+          <div className="flex justify-center items-center text-gray-600 dark:text-gray-300 my-5 font-semibold !font-pompiere underline text-4xl">
             Salut {user?.firstName || "toi"}!{" "}
           </div>
-          <div className="flex justify-center items-center text-gray-300 my-5 font-semibold !font-pompiere text-3xl">
+          <div className="flex justify-center items-center text-gray-600 dark:text-gray-300 my-5 font-semibold !font-pompiere text-3xl">
             Souhaites-tu partager quelque chose aujourd'hui?{" "}
           </div>
 
@@ -193,8 +170,7 @@ export default function Home() {
             )}
           >
             <div className="flex flex-col gap-12 items-center">
-              {/* Zone de texte pour le message */}
-
+              {/* Zone de saisie du message */}
               <div className=" w-full">
                 <div>
                   <textarea
@@ -238,7 +214,7 @@ export default function Home() {
                 )}
               </div>
 
-              {/* Bouton de publication */}
+              {/* Bouton de soumission */}
               <Button type="submit" disabled={isLoading}>
                 {isLoading ? (
                   <div>
@@ -253,11 +229,9 @@ export default function Home() {
           </form>
         </div>
 
-        {/* Colonne de droite : fil d'actualité */}
+        {/* Colonne de droite - affichage des messages */}
         <div className="flex flex-col items-center py-5 px-16 gap-10 grow">
-          {/* Titre du fil */}
           <h1 className="text-center w-full">Fil d'actualités:</h1>
-          {/* Liste des messages */}
           <div className="flex flex-col w-full">
             {loadingWaves ? (
               <p className="flex flex-col justify-center text-xl items-center grow">
@@ -265,21 +239,18 @@ export default function Home() {
                 <ClipLoader color="blue" />
               </p>
             ) : waves?.length === 0 ? (
-              // Aucun message à afficher
               <p className="flex flex-col justify-center text-xl items-center grow">
                 Aucune actualité pour le moment.
               </p>
             ) : (
-              // Affichage des messages triés par date décroissante
               [...waves]
                 .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
                 .map((wave) => (
                   <div key={wave.wid} className="flex flex-col mb-6 relative">
                     {/* En-tête du message */}
-                    <div className="flex flex-col gap-5 border border-gray-300/20 w-full rounded-t py-3 px-6">
+                    <div className="flex flex-col gap-5 border border-gray-300 transition-all dark:border-gray-300/20 rounded-t py-3 px-6">
                       <div className="flex gap-5 items-center">
                         <div className="flex justify-between items-center grow">
-                          {/* Lien vers le profil de l'auteur */}
                           <Link
                             to={
                               wave.pseudo === user.pseudo
@@ -295,12 +266,10 @@ export default function Home() {
                               {wave.pseudo}
                             </div>
                           </Link>
-                          {/* Date de publication */}
                           <div className="text-white/50 !font-pompiere">
                             {dateToFr(wave.createdAt)}
                           </div>
                         </div>
-                        {/* Bouton de suppression si c'est le message de l'utilisateur */}
                         {wave.uid === user.uid && (
                           <div className="flex items-start">
                             <X
@@ -312,21 +281,19 @@ export default function Home() {
                           </div>
                         )}
                       </div>
-                      {/* Contenu du message */}
                       <p>{wave.message}</p>
                     </div>
 
-                    {/* Actions sous le message */}
+                    {/* Zone d'interaction : like, répondre, voir réponses */}
                     <div className="bg-gray-900/40 p-1 rounded-b flex justify-evenly items-center">
-                      {/* Bouton "J'aime" */}
                       <LikeButton
                         uid={user.uid}
                         wid={wave.wid}
                         wuid={wave.uid}
                       />
 
-                      {/* Bouton pour répondre */}
                       <div
+                        ref={makeReplyBtn}
                         onClick={() => {
                           if (showReply) {
                             setShowReply(null);
@@ -335,7 +302,7 @@ export default function Home() {
                             prev === wave.wid ? null : wave.wid
                           );
                         }}
-                        className="hover:text-blue-600 hover:cursor-pointer text-xs flex gap-2 items-center text-gray-400 p-1 transition-colors duration-300"
+                        className="hover:text-blue-600 hover:cursor-pointer text-xs flex gap-2 items-center text-gray-600 dark:text-gray-400 p-1 transition-colors duration-300"
                       >
                         <p>Répondre</p>
                         {activeReplyId === wave.wid ? (
@@ -345,8 +312,19 @@ export default function Home() {
                         )}
                       </div>
 
-                      {/* Affichage du nombre de réponses */}
+                      <AnimatePresence>
+                        {activeReplyId === wave.wid && (
+                          <MakeReply
+                            ref={makeReplyRef}
+                            wid={wave.wid}
+                            onCloseReviewForm={onCloseReviewForm}
+                          />
+                        )}
+                      </AnimatePresence>
+
                       <RepliesCount
+                        ref={showReplyBtnRef}
+                        showReply={showReply}
                         onClickShowReplies={() => {
                           if (activeReplyId) {
                             setActiveReplyId(null);
@@ -359,23 +337,9 @@ export default function Home() {
                       />
                     </div>
 
-                    {/* Affichage des réponses si demandé */}
                     <AnimatePresence>
                       {showReply === wave.wid && (
-                        <ShowReply
-                          onClose={() => setShowReply(null)}
-                          wid={wave.wid}
-                        />
-                      )}
-                    </AnimatePresence>
-
-                    {/* Affichage du formulaire de réponse si demandé */}
-                    <AnimatePresence>
-                      {activeReplyId === wave.wid && (
-                        <MakeReply
-                          wid={wave.wid}
-                          onCloseReviewForm={onCloseReviewForm}
-                        />
+                        <ShowReply ref={showReplyRef} wid={wave.wid} />
                       )}
                     </AnimatePresence>
                   </div>
@@ -389,7 +353,7 @@ export default function Home() {
       {wavetoDelete && (
         <Modal
           isOpen={true}
-          className="bg-black border shadow shadow-custom p-6 rounded w-1/3 h-1/3 mx-auto mt-40"
+          className="bg-gray-600 border shadow-custom p-6 text-gray-200 dark:text-white rounded w-1/3 h-1/3 mx-auto mt-40"
           overlayClassName="fixed inset-0 z-10 bg-black/60 flex justify-center items-center"
           onRequestClose={() => setWavetoDelete(null)}
         >
@@ -408,11 +372,9 @@ export default function Home() {
                   "Valider"
                 )}
               </Button>
-              <Button
-                onClick={() => setWavetoDelete(null)}
-                type="button"
-                value="Annuler"
-              ></Button>
+              <Button onClick={() => setWavetoDelete(null)} type="button">
+                Annuler
+              </Button>
             </div>
           </div>
         </Modal>

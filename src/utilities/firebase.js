@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
+import { getAuth, GoogleAuthProvider } from "firebase/auth";
 import { getDatabase } from "firebase/database";
 
 const firebaseConfig = {
@@ -29,4 +29,9 @@ export const auth = getAuth(app);
 // Initialiser la database de FIrebase pour utiliser ses fonctions
 export const database = getDatabase(app);
 
-export default app;
+const googleProvider = new GoogleAuthProvider();
+googleProvider.setCustomParameters({
+  prompt: "select_account", // forcer la sélection du compte Google à chaque connexion
+});
+
+export { app, googleProvider };

@@ -2,11 +2,13 @@ import { useFollowing } from "../hooks/users/useFollowing";
 import { useToggleFollowing } from "../hooks/users/useToggleFollowing";
 import Button from "./Button";
 
+// Bouton pour s'abonner ou se désabonner
 export default function FollowingButton({ currentUserId, followedUserId }) {
   const { data: isFollowing, isLoading } = useFollowing(
     currentUserId,
     followedUserId
   );
+
   const {
     mutate: toggleFollowing,
     isLoading: mutationLoading,

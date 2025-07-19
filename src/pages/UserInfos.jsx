@@ -5,16 +5,29 @@ import { useContext, useState, useEffect } from "react";
 import { UserContext } from "../contexts/userContext";
 import { useUpdateUser } from "../hooks/users/useUpdateUser";
 import { toast } from "react-toastify";
-import { animate, AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import { ClipLoader } from "react-spinners";
 
 export default function UserInfos() {
+  // État qui permet de rediriger après la mise à jour des infos
   const [shouldNavigate, setShouldNavigate] = useState(false);
+
+  // Récupération des infos de l'utilisateur via le contexte
   const { user } = useContext(UserContext);
-  const [preview, setPreview] = useState(user.photo); //Prévisulation d'image
+
+  // État local pour la prévisualisation de la photo de profil
+  const [preview, setPreview] = useState(user.photo);
+
+  // Fichier sélectionné par l'utilisateur pour remplacer la photo actuelle
   const [selectedFile, setSelectedFile] = useState(null);
+
+  // Hook custom pour mettre à jour les infos utilisateur dans la base
   const { mutate, isLoading } = useUpdateUser(user.uid);
+
+  // Hook de navigation
   const navigate = useNavigate();
+
+  // Initialisation de react-hook-form avec les valeurs actuelles de l'utilisateur
   const {
     register,
     handleSubmit,
@@ -30,12 +43,13 @@ export default function UserInfos() {
       country: user?.country || "",
     },
   });
-  console.log(user.birthday);
+
+  // Met à jour le fichier sélectionné dans l'état
   const onFileChange = (e) => {
     setSelectedFile(e.target.files[0]);
   };
 
-  // Envoie de la photo vers PHP pour téléchargement sur serveur
+  // Envoie la photo sur le serveur PHP via fetch et retourne son URL
   const uploadPhoto = async () => {
     const formData = new FormData();
     formData.append("photo", selectedFile);
@@ -52,11 +66,12 @@ export default function UserInfos() {
     if (!response.ok) {
       throw new Error("Erreur lors du téléchargement de la photo");
     }
+
     const data = await response.json();
     return data.photoUrl;
   };
 
-  // URL temporaire poru prévisualiser l'image
+  // Affiche un aperçu temporaire de la photo sélectionnée (avant upload)
   const showPreview = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -64,17 +79,23 @@ export default function UserInfos() {
     }
   };
 
+  // Gestion de la soumission du formulaire
   const onSubmit = async (data) => {
     let photoUrl = user.photo;
 
+    // Si un nouveau fichier est sélectionné, on l'envoie sur le serveur
     if (selectedFile) {
       photoUrl = await uploadPhoto();
     }
+
+    // Préparation des données à envoyer
     const updatedData = { photo: photoUrl, ...data };
+
+    // Envoie les données via le hook mutate
     mutate(updatedData, {
       onSuccess: () => {
         toast.success("Vos informations ont été modifiées avec succès");
-        setShouldNavigate(true);
+        setShouldNavigate(true); // active la redirection via useEffect
       },
       onError: () => {
         toast.error(
@@ -84,12 +105,13 @@ export default function UserInfos() {
     });
   };
 
-  // Evite de faire un navigate directement dans onSuccess, car cela ne fonctionne pas correctement
+  // Redirection manuelle après succès (évite les bugs en redirigeant dans onSuccess directement)
   useEffect(() => {
     if (shouldNavigate) {
       navigate("/settings");
     }
   }, [shouldNavigate, navigate]);
+
   return (
     <motion.main
       initial={{ y: 30, opacity: 0 }}
@@ -98,7 +120,9 @@ export default function UserInfos() {
     >
       <div className="mb-8">Saisissez vos informations personnelles:</div>
 
+      {/* Formulaire principal */}
       <form className="flex justify-between" onSubmit={handleSubmit(onSubmit)}>
+        {/* Colonne de gauche avec les champs texte */}
         <div className=" ml-5 flex flex-col justify-between gap-5 items-start">
           {/* Pseudo */}
           <p className="flex flex-col">
@@ -121,6 +145,7 @@ export default function UserInfos() {
               </p>
             )}
           </p>
+
           {/* First Name */}
           <p className="flex flex-col">
             <label className="text-gray-500 mr-3" htmlFor="firstName">
@@ -132,6 +157,7 @@ export default function UserInfos() {
               {...register("firstName")}
             />
           </p>
+
           {/* Name */}
           <p className="flex flex-col">
             <label className="text-gray-500 mr-3" htmlFor="name">
@@ -139,12 +165,12 @@ export default function UserInfos() {
             </label>
             <input className="inputSettings" id="name" {...register("name")} />
           </p>
+
           {/* Email */}
           <p className="flex flex-col">
             <label className="text-gray-500 mr-3" htmlFor="name">
               Email
             </label>
-
             <input
               className="inputSettings opacity-50 cursor-not-allowed"
               id="email"
@@ -152,6 +178,7 @@ export default function UserInfos() {
               disabled
             />
           </p>
+
           {/* Birthday */}
           <p className="flex flex-col">
             <label className="text-gray-500 mr-3" htmlFor="birthday">
@@ -164,6 +191,7 @@ export default function UserInfos() {
               {...register("birthday")}
             />
           </p>
+
           {/* City */}
           <p className="flex flex-col">
             <label className="text-gray-500 mr-3" htmlFor="city">
@@ -171,6 +199,7 @@ export default function UserInfos() {
             </label>
             <input className="inputSettings" id="city" {...register("city")} />
           </p>
+
           {/* Country */}
           <p className="flex flex-col">
             <label className="text-gray-500 mr-3" htmlFor="country">
@@ -183,6 +212,7 @@ export default function UserInfos() {
             />
           </p>
 
+          {/* Boutons de validation et retour */}
           <div className="flex gap-6 items-center">
             <Button type="submit" disabled={isLoading}>
               {isLoading ? (
@@ -203,16 +233,20 @@ export default function UserInfos() {
           </div>
         </div>
 
-        {/* Photo de profil */}
+        {/* Colonne droite : Photo de profil */}
         <div className="flex flex-col gap-5 items-center">
+          {/* Affiche la photo actuelle ou sa prévisualisation */}
           <img className="w-[150px] h-[150px] rounded" src={preview} />
 
+          {/* Label déclencheur pour choisir un fichier */}
           <label
             htmlFor="file-upload"
             className="hover:cursor-pointer hover:text-blue-600 hover:underline border border-gray-600 rounded p-2"
           >
             Modifier la photo de profil
           </label>
+
+          {/* Input de type fichier (caché mais déclenché par le label) */}
           <input
             id="file-upload"
             name="photo"

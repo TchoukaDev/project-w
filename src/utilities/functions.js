@@ -1,3 +1,4 @@
+// Conversion de la date en formation fr
 export const dateToFr = (wavedate) => {
   const date = new Date(wavedate); //Conversion en objet date
 

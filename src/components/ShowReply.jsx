@@ -1,14 +1,11 @@
 import { motion } from "framer-motion";
 import { useReplies } from "../hooks/waves/useReplies";
-import { useRef } from "react";
-import { useClickOutside } from "../hooks/utilities/useClickOutside";
+import { forwardRef } from "react";
 
-export default function ShowReply({ wid, onClose }) {
+const ShowReply = forwardRef(function ShowReply({ wid }, showReplyRef) {
+  // Appel du hook personnalisé pour récupérer les réponses associées à un identifiant de publication (wid)
   const { data: replies = [], isLoading, error } = useReplies(wid);
 
-  const showReplyRef = useRef();
-  // Hook pour fermer les commentaires quand on clique en dehors
-  useClickOutside(showReplyRef, null, onClose);
   return (
     <motion.div
       key={wid}
@@ -20,10 +17,12 @@ export default function ShowReply({ wid, onClose }) {
       transition={{ duration: 0.2 }}
     >
       {replies?.length === 0 ? (
+        // Affichage si aucune réponse n'est trouvée
         <div className="text-center text-sm text-gray-300">
           Aucun commentaire pour l'instant
         </div>
       ) : (
+        // Affichage des réponses triées par date décroissante
         [...replies]
           .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
           .map((reply) => (
@@ -31,16 +30,20 @@ export default function ShowReply({ wid, onClose }) {
               key={reply.rid}
               className="flex border border-gray-700 rounded flex-col px-5 gap-3 p-3"
             >
-              <div className="flex text-lg  gap-4  text-gray-400/70 ">
+              {/* Pseudo et date de création */}
+              <div className="flex text-lg gap-4 text-gray-400/70">
                 <div className="text-blue-600 underline !font-pompiere">
                   {reply.pseudo}
                 </div>
                 <div className="!font-pompiere">{reply.createdAt}</div>
               </div>
+              {/* Contenu de la réponse */}
               <p className="text-sm text-gray-300">{reply.reply}</p>
             </div>
           ))
       )}
     </motion.div>
   );
-}
+});
+
+export default ShowReply;

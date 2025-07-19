@@ -1,14 +1,13 @@
 import { useUserById } from "../hooks/users/useUserById";
 import { useUserByPseudo } from "../hooks/users/useUserByPseudo";
 import { useParams } from "react-router";
-import { useContext, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import { UserContext } from "../contexts/userContext";
 import { toast } from "react-toastify";
 import { motion, AnimatePresence } from "framer-motion";
 import { Reply, ChevronUp, X, ChevronDown } from "lucide-react";
 import Modal from "react-modal";
 import { useDeleteWave } from "../hooks/waves/useDeleteWave";
-import { useReplies } from "../hooks/waves/useReplies";
 import MakeReply from "../components/MakeReply";
 import ShowReply from "../components/ShowReply";
 import { useWaves } from "../hooks/waves/useWaves";
@@ -18,6 +17,8 @@ import LikeButton from "../components/LikeButton";
 import FollowingButton from "../components/FollowingButton";
 import { dateToFr } from "../utilities/functions";
 import { ClipLoader } from "react-spinners";
+import { useClickOutside } from "../hooks/utilities/useClickOutside";
+import RepliesCount from "../components/RepliesCount";
 
 export default function Profile() {
   // States
@@ -26,33 +27,36 @@ export default function Profile() {
   const [activeReplyId, setActiveReplyId] = useState(null);
   // État pour afficher ou masquer les réponses d'un message
   const [showReply, setShowReply] = useState(null);
-  // État pour stocker le message à supprimer
+  // État pour stocker le message à supprimer (utilisé dans la modale de confirmation)
   const [wavetoDelete, setWavetoDelete] = useState(null);
 
   // Variables
+  // Récupération de l'utilisateur connecté depuis le contexte global
   const { user } = useContext(UserContext);
+  // Récupération du paramètre "pseudo" dans l'URL (profil à afficher)
   const { pseudo } = useParams();
 
   // Si aucun pseudo n'est dans l'URL, on affiche le profil connecté
   const isOwnProfile = !pseudo;
 
-  // Si on regarde un autre profil, on récupère les données depuis Firebase
+  // Si on regarde un autre profil, on récupère les données depuis Firebase via le pseudo
   const { data: userFromPseudo, isLoading: loadingPseudoUser } =
     useUserByPseudo(pseudo);
 
-  // UID du profil à afficher (celui du pseudo ou celui de l'utilisateur connecté)
+  // UID du profil à afficher : celui du pseudo ou celui de l'utilisateur connecté
   const profileUid = isOwnProfile ? user.uid : userFromPseudo?.uid;
 
-  // Récupération des données utilisateur et de ses waves
+  // Récupération des données utilisateur (profil) via l'UID
   const { data: userData = {}, isLoading: loadingUser } =
     useUserById(profileUid);
+  // Récupération des messages ("waves") de l'utilisateur affiché
   const { data: waves = [], isLoading: loadingWaves } = useWaves(profileUid);
 
-  // Hook pour supprimer un message
+  // Hook pour supprimer un message (wave)
   const { mutate: mutateDeletePost, isLoading: isLoadingDelete } =
     useDeleteWave(null);
 
-  // Transformer la date en français
+  // Transformer la date de naissance en format français lisible
   const date = new Date(userData.birthday);
   const dateInFr = date.toLocaleDateString("fr-FR", {
     day: "2-digit",
@@ -62,10 +66,12 @@ export default function Profile() {
 
   /**
    * Suppression d'un message sélectionné
+   * Vérifie que la suppression n'est pas déjà en cours, puis appelle la mutation.
+   * Affiche un toast de succès ou d'erreur selon le résultat.
    */
   const onDeleteClick = () => {
     if (isLoadingDelete) {
-      return;
+      return; // Ne rien faire si déjà en cours de suppression
     }
     mutateDeletePost(wavetoDelete.wid, {
       onSuccess: () => {
@@ -75,11 +81,11 @@ export default function Profile() {
         toast.error(error.message);
       },
     });
-    setWavetoDelete(null);
+    setWavetoDelete(null); // Ferme la modale après la demande
   };
 
   /**
-   * Ferme le formulaire de réponse
+   * Ferme le formulaire de réponse (en réinitialisant l'id actif)
    */
   const onCloseReviewForm = () => {
     setActiveReplyId(false);
@@ -93,26 +99,15 @@ export default function Profile() {
     setShowReply(id);
   };
 
-  /**
-   * Composant interne pour afficher le nombre de réponses à un message
-   */
-  function RepliesCount({ wid, onClickShowReplies }) {
-    const { data: replies = [] } = useReplies(wid);
-    return (
-      <div
-        onClick={onClickShowReplies}
-        className="hover:text-blue-600 hover:cursor-pointer text-xs text-gray-400 flex items-center gap-2"
-      >
-        {/* Affiche le nombre de réponses */}
-        💬 {replies.length} {replies.length === 1 ? "réponse" : "réponses"}{" "}
-        {showReply === wid ? (
-          <ChevronUp size={16} strokeWidth={2.75} />
-        ) : (
-          <ChevronDown size={16} strokeWidth={2.75} />
-        )}
-      </div>
-    );
-  }
+  // Gérer la fermeture du formulaire de réponse lorsqu'on clique en dehors
+  const makeReplyRef = useRef();
+  const makeReplyBtn = useRef();
+  useClickOutside(makeReplyRef, makeReplyBtn, () => setActiveReplyId(false));
+
+  // Gérer la fermeture de l'affichage des réponses lorsqu'on clique en dehors
+  const showReplyRef = useRef();
+  const showReplyBtnRef = useRef();
+  useClickOutside(showReplyRef, showReplyBtnRef, () => setShowReply(false));
 
   return (
     <>
@@ -122,21 +117,26 @@ export default function Profile() {
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.2 }}
       >
-        <div className="basis-1/3 p-5 border-r flex flex-col justify-center items-center">
+        {/* Colonne de gauche : informations personnelles du profil */}
+        <div className="basis-1/3 p-5 border-r border-gray-600 flex flex-col justify-center items-center">
+          {/* Affiche un message de chargement si UID manquant ou données en cours de chargement */}
           {(!profileUid || loadingUser || loadingWaves) && (
             <p>Chargement en cours...</p>
           )}
+          {/* Si l'utilisateur n'existe pas, affiche un message d'erreur */}
           {!userData && <p>Utilisateur non trouvé</p>}
           <div>
+            {/* Photo de profil */}
             <img
               className="w-[200px] h-[200px] rounded mb-5"
               src={userData.photo}
             />
           </div>{" "}
+          {/* Pseudo */}
           <p className="text-lg font-semibold mb-9">{userData.pseudo}</p>
           <div>
-            {" "}
             <p className="underline mb-5">Informations personnelles:</p>
+            {/* Liste des infos personnelles, affichage conditionnel si données présentes */}
             <div className="flex flex-col gap-3 items-start">
               {userData.firstName && (
                 <p>
@@ -168,6 +168,7 @@ export default function Profile() {
                 </p>
               )}
             </div>
+            {/* Si ce n'est pas le profil de l'utilisateur connecté, afficher les boutons suivre et message */}
             {!isOwnProfile && (
               <div className="flex gap-2 mt-7">
                 <FollowingButton
@@ -179,11 +180,10 @@ export default function Profile() {
             )}
           </div>
         </div>
+
+        {/* Colonne de droite : liste des publications (waves) */}
         <div className=" flex flex-col items-center py-5 px-16 gap-10 grow">
-          <h1
-            className="text-center
-       w-full"
-          >
+          <h1 className="text-center w-full">
             {isOwnProfile
               ? "Vos publications récentes:"
               : "Publications récentes:"}
@@ -203,7 +203,7 @@ export default function Profile() {
                 .map((wave) => (
                   <div key={wave.wid} className="flex flex-col mb-6 relative">
                     {/* En-tête du message */}
-                    <div className=" flex flex-col gap-5 border border-gray-300/20 w-full rounded-t py-3 px-6">
+                    <div className=" flex flex-col gap-5 border border-gray-300 transition-all dark:border-gray-300/20 w-full rounded-t py-3 px-6">
                       <div className="flex gap-5 items-center">
                         <div className="flex justify-between items-center grow">
                           {/* Lien vers le profil de l'auteur */}
@@ -242,18 +242,18 @@ export default function Profile() {
                       {/* Contenu du message */}
                       <p>{wave.message}</p>
                     </div>
+
                     {/* Actions sous le message */}
                     <div className=" bg-gray-900/40  p-1 rounded-b flex justify-evenly items-center">
                       {/* Bouton "J'aime" */}
-
                       <LikeButton
                         uid={user.uid}
                         wid={wave.wid}
                         wuid={wave.uid}
                       />
-
                       {/* Bouton pour répondre */}
                       <div
+                        ref={makeReplyBtn}
                         onClick={() => {
                           if (showReply) {
                             setShowReply(null);
@@ -270,9 +270,21 @@ export default function Profile() {
                         ) : (
                           <Reply size={16} strokeWidth={2.75} />
                         )}
-                      </div>
+                      </div>{" "}
+                      {/* Affichage du formulaire de réponse si demandé */}
+                      <AnimatePresence>
+                        {activeReplyId === wave.wid && (
+                          <MakeReply
+                            ref={makeReplyRef}
+                            wid={wave.wid}
+                            onCloseReviewForm={onCloseReviewForm}
+                          />
+                        )}
+                      </AnimatePresence>
                       {/* Affichage du nombre de réponses */}
                       <RepliesCount
+                        ref={showReplyBtnRef}
+                        showReply={showReply}
                         onClickShowReplies={() => {
                           if (activeReplyId) {
                             setActiveReplyId(null);
@@ -286,15 +298,8 @@ export default function Profile() {
                     </div>
                     {/* Affichage des réponses si demandé */}
                     <AnimatePresence>
-                      {showReply === wave.wid && <ShowReply wid={wave.wid} />}
-                    </AnimatePresence>
-                    {/* Affichage du formulaire de réponse si demandé */}
-                    <AnimatePresence>
-                      {activeReplyId === wave.wid && (
-                        <MakeReply
-                          wid={wave.wid}
-                          onCloseReviewForm={onCloseReviewForm}
-                        />
+                      {showReply === wave.wid && (
+                        <ShowReply ref={showReplyRef} wid={wave.wid} />
                       )}
                     </AnimatePresence>
                   </div>
@@ -308,7 +313,7 @@ export default function Profile() {
       {wavetoDelete && (
         <Modal
           isOpen={true}
-          className="bg-black border shadow shadow-custom p-6 rounded  w-1/3 h-1/3 mx-auto mt-40"
+          className="bg-black border  shadow-custom p-6 rounded  w-1/3 h-1/3 mx-auto mt-40"
           overlayClassName="fixed inset-0 z-10 bg-black/60 flex justify-center items-center"
           onRequestClose={() => setWavetoDelete(null)}
         >
@@ -317,6 +322,7 @@ export default function Profile() {
               Voulez-vous vraiment supprimer ce post?{" "}
             </p>
             <div className="flex gap-10 items-center">
+              {/* Bouton de confirmation de suppression */}
               <Button onClick={onDeleteClick} type="button">
                 {isLoadingDelete ? (
                   <div>
@@ -327,6 +333,7 @@ export default function Profile() {
                   "Valider"
                 )}
               </Button>
+              {/* Bouton d'annulation */}
               <Button onClick={() => setWavetoDelete(null)} type="button">
                 Annuler
               </Button>

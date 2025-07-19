@@ -8,9 +8,13 @@ import { motion } from "framer-motion";
 import { ClipLoader } from "react-spinners";
 
 export default function UpdatePassword() {
+  // Récupération de l'utilisateur et de la fonction pour changer son mot de passe via le contexte
   const { user, changeUserCredential } = useContext(UserContext);
+
+  // État pour afficher un loader pendant la soumission
   const [loading, setLoading] = useState(false);
 
+  // Initialisation de react-hook-form avec l'email prérempli
   const {
     register,
     getValues,
@@ -19,35 +23,46 @@ export default function UpdatePassword() {
     formState: { errors },
   } = useForm({ defaultValues: { email: user.email } });
 
+  // Pour rediriger l'utilisateur après la mise à jour
   const navigate = useNavigate();
 
+  // Gestion des erreurs de validation du formulaire
   const onError = (errors) => {
     if (errors.oldPassword) {
       toast.error(errors.oldPassword.message);
-      reset();
+      reset(); // Réinitialise tous les champs
     }
     if (errors.newPassword) {
       toast.error(errors.newPassword.message);
-      const currentValues = getValues(); // méthode de react-hook-form pour récupérer toutes les valeurs
+      const currentValues = getValues(); // Récupère toutes les valeurs saisies
+      // Réinitialise les champs sauf l'ancien mot de passe
       reset({ ...currentValues, newPassword: "", newPassword2: "" });
     }
   };
+
+  // Soumission du formulaire
   const onSubmit = async (data) => {
     setLoading(true);
     try {
+      // Vérifie que les deux nouveaux mots de passe sont identiques
       if (data.newPassword !== data.newPassword2) {
         throw new Error(
           "Les deux mots de passe saisis ne sont pas identiques."
         );
       }
+
+      // Appelle la fonction pour modifier les identifiants
       await changeUserCredential(data.oldPassword, data.newPassword || null);
+
+      // Redirige vers la page des paramètres
       navigate("/settings");
     } catch (error) {
+      // Affiche l'erreur dans un toast
       toast.error(error.message);
-      reset();
+      reset(); // Réinitialise tous les champs
       return;
     } finally {
-      setLoading(false);
+      setLoading(false); // Désactive le loader
     }
   };
 
@@ -57,9 +72,10 @@ export default function UpdatePassword() {
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.2 }}
     >
+      {/* Formulaire de changement de mot de passe */}
       <form onSubmit={handleSubmit(onSubmit, onError)}>
         <div className=" ml-5 flex flex-col justify-between gap-5 items-start">
-          {/* Ancien mot de passe */}
+          {/* Champ pour l'ancien mot de passe */}
           <p className="flex flex-col">
             <label className="text-gray-500 mr-3" htmlFor="oldPassword">
               Mot de passe actuel:
@@ -73,9 +89,9 @@ export default function UpdatePassword() {
                   "Veuillez saisir votre mot de passe actuel pour modifier vos données",
               })}
             />
-            {}
           </p>
-          {/* Nouveau mot de passe */}
+
+          {/* Champ pour le nouveau mot de passe */}
           <p className="flex flex-col">
             <label className="text-gray-500 mr-3" htmlFor="newPassword">
               Nouveau mot de passe:
@@ -95,7 +111,8 @@ export default function UpdatePassword() {
               })}
             />
           </p>
-          {/* Vérification du mot de passe */}
+
+          {/* Champ pour confirmer le nouveau mot de passe */}
           <p className="flex flex-col">
             <label className="text-gray-500 mr-3" htmlFor="newPassword2">
               Confirmer nouveau mot de passe:
@@ -107,6 +124,8 @@ export default function UpdatePassword() {
               {...register("newPassword2")}
             />
           </p>
+
+          {/* Boutons de validation et de retour */}
           <div className="flex gap-6 items-center">
             <Button type="submit" disabled={loading}>
               {loading ? (

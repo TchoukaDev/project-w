@@ -1,4 +1,4 @@
-import { useContext, useState, useRef, useEffect } from "react";
+import { useContext, useRef, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { UserContext } from "../contexts/userContext";
 import { toast } from "react-toastify";
@@ -6,69 +6,81 @@ import { Link, useNavigate } from "react-router";
 import Button from "../components/Button";
 import Logo from "../components/Logo";
 import { ClipLoader } from "react-spinners";
+import GoogleBtn from "../components/GoogleBtn";
 
 export default function SignIn() {
   const {
     register,
     handleSubmit,
-    watch,
+    watch, // Fonction pour observer les valeurs des champs
     formState: { errors },
   } = useForm();
+
+  // Récupération des fonctions de login et loading depuis le contexte utilisateur
   const { loginUser, loading, setLoading } = useContext(UserContext);
+
+  // On observe les valeurs en temps réel pour animer les labels
   const emailValue = watch("email", "");
   const passwordValue = watch("password", "");
 
-  const navigate = useNavigate();
-  const emailRef = useRef();
+  const navigate = useNavigate(); // Pour rediriger l’utilisateur
+  const emailRef = useRef(); // Pour focus automatiquement le champ email
 
+  // Focus automatique sur le champ email à l’ouverture de la page
   useEffect(() => {
     emailRef.current?.focus();
   }, []);
 
+  // Définition du champ email avec validation de format
   const emailRegister = register("email", {
     required: true,
     pattern: {
-      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
+      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i, // Regex email
       message: "Veuillez saisir une adresse email valide.",
     },
   });
+
+  // Fonction appelée à la soumission du formulaire
   const onSubmit = (data) => {
-    if (loading) {
-      return;
-    }
-    setLoading(true);
+    if (loading) return; // Empêche la double soumission si déjà en cours
+
+    setLoading(true); // Active le chargement
+
     loginUser(data.email, data.password)
       .then((userCredential) => {
         toast.success("Connexion réussie!");
-        navigate("/");
+        navigate("/"); // Redirection vers la page d'accueil
       })
       .catch((error) => {
         const { code } = error;
         if (code === "auth/invalid-credential") {
           toast.error("La combinaison email/mot de passe est incorrecte");
         } else {
-          toast.error(code);
+          toast.error(code); // Affiche un code d’erreur générique sinon
         }
       })
-      .finally(() => setLoading(false));
+      .finally(() => setLoading(false)); // Arrête le chargement
   };
+
   return (
     <div className="flex grow justify-evenly items-center">
+      {/* Logo */}
       <Logo size="lg" />
       <main className="flex flex-col justify-center items-center ">
-        <div className="flex flex-col items-center justify-between  w-[500px] h-[500px] shadow-lg/10 shadow-white p-9 rounded">
+        <div className="flex flex-col items-center justify-between  w-[500px] shadow-lg/10 shadow-white p-9 rounded">
           <p className="text-center underline text-2xl font-semibold mb-6">
             Connexion
           </p>
-          <p className="text-xl">
+          <p className="text-xl mb-6">
             Bienvenue sur Waves. Pour commencez, connectez-vous:{" "}
           </p>
 
-          {/* Formulaire */}
+          {/* Formulaire de connexion */}
           <form
-            className="flex flex-col items-center gap-3"
+            className="flex flex-col items-center gap-5"
             onSubmit={handleSubmit(onSubmit)}
           >
+            {/* Champ email */}
             <div className="relative">
               <input
                 autoComplete="email"
@@ -78,8 +90,8 @@ export default function SignIn() {
                 placeholder=" "
                 {...emailRegister}
                 ref={(e) => {
-                  emailRegister.ref(e); // <- donne le ref à React Hook Form
-                  emailRef.current = e; // <- garde le ref dans ton useRef
+                  emailRegister.ref(e); // Référence pour react-hook-form
+                  emailRef.current = e; // Référence pour le focus auto
                 }}
               />
               <label
@@ -93,9 +105,12 @@ export default function SignIn() {
                 Adresse email
               </label>
             </div>
+            {/* Message d'erreur si le champ email est invalide */}
             {errors.email && (
               <p className="text-red-400">{errors.email.message}</p>
             )}
+
+            {/* Champ mot de passe */}
             <div className="relative">
               <input
                 type="password"
@@ -117,23 +132,39 @@ export default function SignIn() {
                 Mot de passe
               </label>
             </div>
-            <Button margin="my-6" type="submit">
-              {" "}
-              {loading ? (
-                <div>
-                  Connexion...
-                  <ClipLoader size={10} color="white" />
-                </div>
-              ) : (
-                "Se connecter"
-              )}
-            </Button>
+
+            {/* Boutons */}
+            <div className="flex flex-col gap-3">
+              <Button type="submit">
+                {/* Affiche un loader si loading en cours */}
+                {loading ? (
+                  <div>
+                    Connexion...
+                    <ClipLoader size={10} color="white" />
+                  </div>
+                ) : (
+                  "Se connecter"
+                )}
+              </Button>
+              {/* Bouton Google personnalisé */}
+              <GoogleBtn>Se connecter avec Google</GoogleBtn>
+            </div>
           </form>
+
+          {/* Lien vers la page de mot de passe oublié */}
+          <Link
+            className=" underline text-blue-500 mt-2 mb-9 text-sm"
+            to="/forgotPassword"
+          >
+            Mot de passe oublié?
+          </Link>
+
+          {/* Lien vers l’inscription */}
           <div>
             Pas encore de compte?{" "}
             <Link className=" underline text-blue-500" to="/signUp">
               Inscrivez vous
-            </Link>{" "}
+            </Link>
           </div>
         </div>
       </main>

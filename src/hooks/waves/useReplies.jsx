@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 
 export function useReplies(wid) {
   return useQuery({
-    queryKey: ["waves", wid],
+    queryKey: ["replies", wid],
     queryFn: async () => {
       const response = await fetch(
         `https://waves-27b13-default-rtdb.europe-west1.firebasedatabase.app/waves/${wid}/replies.json`
@@ -19,5 +19,6 @@ export function useReplies(wid) {
         : [];
       return data;
     },
+    staleTime: 0,
   });
 }

@@ -17,11 +17,11 @@ import UpdatePassword from "./pages/UpdatePassword";
 import Profile from "./pages/Profile";
 import Followers from "./pages/Followers";
 import EmojiTest from "./pages/Messages";
+import ForgotPassword from "./pages/ForgotPassword";
 
 // Importation des pages et layouts en lazy loading pour optimiser le chargement
 const SettingsLayout = lazy(() => import("./components/layout/SettingsLayout"));
 const SettingsIndex = lazy(() => import("./pages/SettingsIndex"));
-const Language = lazy(() => import("./pages/Language"));
 const UserInfos = lazy(() => import("./pages/UserInfos"));
 
 /**
@@ -92,16 +92,17 @@ function App() {
               path: "changePassword",
               element: <UpdatePassword />,
             },
-            {
-              path: "langage",
-              element: <Language />,
-            },
           ],
         },
         // Page de connexion : accessible uniquement si non connecté
         {
           path: "signIn",
           element: !user ? <SignIn /> : <Navigate to="/" replace />,
+        },
+        // Page de réinitialisation de mot de passe si utilisateur non connecté
+        {
+          path: "/forgotPassword",
+          element: !user ? <ForgotPassword /> : <Navigate to="/" replace />,
         },
         // Page d'inscription : accessible uniquement si non connecté
         {

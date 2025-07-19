@@ -9,17 +9,26 @@ import Logo from "./Logo";
 import anonymeImage from "/src/assets/images/anonyme.png";
 import SearchBar from "./SearchBar";
 import { ClipLoader } from "react-spinners";
+import ToggleTheme from "./toggleTheme";
 
 export default function Header() {
   const [research, setResearch] = useState(""); // Champ de recherche
   const debouncedResearch = useDebounce(research, 400); // Anti-rebond de la recherche (400ms)
-  const { usersFounded } = useSearchUser(debouncedResearch); // Résultats de recherche
-
+  const { usersFounded } = useSearchUser(debouncedResearch); // Résultats de recherches
   const { logOut, user } = useContext(UserContext); // Récupération des infos utilisateur
   const navigate = useNavigate(); // Pour les redirections
 
   const [loading, setLoading] = useState(false); // État de chargement pour le bouton de déconnexion
   const [showNav, setShowNav] = useState(false); // Contrôle l'affichage du menu en version mobile
+
+  //  Liens de navigation
+  const navLinks = {
+    Accueil: "/",
+    Profil: "/profile",
+    Abonnements: "/followers",
+    Messages: "/messages",
+    Préférences: "/settings",
+  };
 
   // Fonction de déconnexion
   const handleClick = () => {
@@ -35,14 +44,6 @@ export default function Header() {
         toast.error("Une erreur est intervenue lors de la déconnexion");
       })
       .finally(() => setLoading(false));
-  };
-
-  const navLinks = {
-    Accueil: "/",
-    Profil: "/profile",
-    Abonnements: "/followers",
-    Messages: "/messages",
-    Préférences: "/settings",
   };
 
   return (
@@ -103,6 +104,9 @@ export default function Header() {
 
       {/* Zone de recherche */}
       <SearchBar usersFounded={usersFounded} setResearch={setResearch} />
+
+      {/* Bouton de changement de thème */}
+      <ToggleTheme />
 
       {/* Profil utilisateur + bouton déconnexion */}
       <div className="flex gap-9">
