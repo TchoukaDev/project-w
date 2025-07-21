@@ -10,14 +10,14 @@ export default function LikeButton({ wid, uid, wuid }) {
   const { data: counterLike, isLoading: counterLoading } = useCounterLike(wid);
 
   return wuid === uid ? (
-    <span className="text-xs text-gray-600 dark:text-gray-400">
+    <span className="text-xs text-center text-gray-600 dark:text-gray-400">
       Nombre de like ({counterLike})
     </span>
   ) : (
     <button
       onClick={() => toggleLike(liked)}
       disabled={loadingLikes || isLoading}
-      className={`hover:text-blue-600 hover:cursor-pointer text-xs flex gap-2 items-center  p-1 transition-colors duration-300 ${
+      className={`hover:text-blue-600 hover:cursor-pointer text-center text-xs flex gap-2 items-center  p-1 transition-colors duration-300 ${
         liked ? "text-blue-600" : "text-gray-600: dark:text-gray-400"
       }`}
     >

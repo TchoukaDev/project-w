@@ -28,7 +28,7 @@ export default function Followers() {
     >
       {/* Section des abonnés */}
       <div className="grow flex flex-col flex-wrap overflow-auto border-b border-gray-600 pb-8 ">
-        <h1 className="text-center mb-5">Espace abonnés</h1>
+        <h1 className="text-center mb-8 sm:mb-5">Espace abonnés</h1>
         <p className=" mb-5 underline text-lg">Vos abonnés:</p>
 
         {/* Si chargement en cours, afficher message */}
@@ -52,7 +52,7 @@ export default function Followers() {
       </div>
 
       {/* Section des personnes suivies */}
-      <div className="grow flex flex-col flex-wrap overflow-auto pt-8 ">
+      <div className="grow flex flex-col flex-nowrap md:flex-wrap overflow-auto pt-8 ">
         <p className=" mb-5 underline text-lg">
           Les personnes que vous suivez:{" "}
         </p>

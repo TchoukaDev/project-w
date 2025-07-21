@@ -74,7 +74,7 @@ export default function UpdatePassword() {
     >
       {/* Formulaire de changement de mot de passe */}
       <form onSubmit={handleSubmit(onSubmit, onError)}>
-        <div className=" ml-5 flex flex-col justify-between gap-5 items-start">
+        <div className=" ml-5 flex flex-col justify-between gap-5 items-center md:items-start">
           {/* Champ pour l'ancien mot de passe */}
           <p className="flex flex-col">
             <label className="text-gray-500 mr-3" htmlFor="oldPassword">
@@ -113,7 +113,7 @@ export default function UpdatePassword() {
           </p>
 
           {/* Champ pour confirmer le nouveau mot de passe */}
-          <p className="flex flex-col">
+          <p className="flex flex-col md:items-start items-center">
             <label className="text-gray-500 mr-3" htmlFor="newPassword2">
               Confirmer nouveau mot de passe:
             </label>

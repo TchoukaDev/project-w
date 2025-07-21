@@ -11,8 +11,8 @@ export default function Logo({ size = "lg", onClick, canBeClicked }) {
       text: "-ml-5 text-4xl",
     },
     lg: {
-      imgHeight: "max-h-[400px]",
-      imgWidth: "max-w-[400px]",
+      imgHeight: "max-h-[300px]",
+      imgWidth: "max-w-[300px]",
       text: "-ml-15 text-7xl",
     },
   };

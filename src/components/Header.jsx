@@ -1,6 +1,7 @@
 import { useContext, useState } from "react";
 import { NavLink, useNavigate } from "react-router";
 import { toast } from "react-toastify";
+import { motion, AnimatePresence } from "framer-motion";
 import { UserContext } from "../contexts/userContext";
 import { useSearchUser } from "../hooks/users/useSearchUser";
 import { useDebounce } from "../hooks/utilities/useDebounce";
@@ -12,16 +13,15 @@ import { ClipLoader } from "react-spinners";
 import ToggleTheme from "./toggleTheme";
 
 export default function Header() {
-  const [research, setResearch] = useState(""); // Champ de recherche
-  const debouncedResearch = useDebounce(research, 400); // Anti-rebond de la recherche (400ms)
-  const { usersFounded } = useSearchUser(debouncedResearch); // Résultats de recherches
-  const { logOut, user } = useContext(UserContext); // Récupération des infos utilisateur
-  const navigate = useNavigate(); // Pour les redirections
+  const [research, setResearch] = useState("");
+  const debouncedResearch = useDebounce(research, 400);
+  const { usersFounded } = useSearchUser(debouncedResearch);
+  const { logOut, user } = useContext(UserContext);
+  const navigate = useNavigate();
 
-  const [loading, setLoading] = useState(false); // État de chargement pour le bouton de déconnexion
-  const [showNav, setShowNav] = useState(false); // Contrôle l'affichage du menu en version mobile
+  const [loading, setLoading] = useState(false);
+  const [showNav, setShowNav] = useState(false);
 
-  //  Liens de navigation
   const navLinks = {
     Accueil: "/",
     Profil: "/profile",
@@ -30,10 +30,8 @@ export default function Header() {
     Préférences: "/settings",
   };
 
-  // Fonction de déconnexion
   const handleClick = () => {
     if (loading) return;
-
     setLoading(true);
     logOut()
       .then(() => {
@@ -47,14 +45,16 @@ export default function Header() {
   };
 
   return (
-    <nav className="flex justify-between items-center h-[100px] py-5 px-10 relative">
-      {/* Logo cliquable */}
+    <nav className="flex justify-between items-center w-[90%] mx-auto h-[100px] py-5 px-6 relative bg-transparent z-50">
       <Logo onClick={() => navigate("/")} size="sm" canBeClicked />
 
-      {/* Bouton menu mobile */}
-      <button className="lg:hidden" onClick={() => setShowNav((prev) => !prev)}>
+      {/* Menu hamburger mobile */}
+      <button
+        className="2xl:hidden z-50 cursor-pointer"
+        onClick={() => setShowNav((prev) => !prev)}
+      >
         <svg
-          className="w-6 h-6"
+          className="w-6 h-6 text-white"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -77,64 +77,115 @@ export default function Header() {
         </svg>
       </button>
 
-      {/* Navigation principale */}
-      <div
-        className={`${
-          showNav
-            ? "absolute top-full left-0 mt-6 flex flex-col justify-end z-10 bg-gray-900/30 p-2 rounded"
-            : "hidden lg:flex"
-        } lg:static lg:flex-row lg:justify-between lg:items-center md:gap-3`}
-      >
-        <div className="relative flex gap-2 p-2 rounded-full bg-gray-900">
-          {Object.entries(navLinks).map(([label, path]) => (
-            <NavLink
-              key={label}
-              to={path}
-              className={({ isActive }) =>
-                `relative px-4 py-2 rounded-3xl font-semibold text-white ${
-                  isActive ? "bg-blue-500/30" : "hover:bg-blue-400/10"
-                }`
-              }
-            >
-              {label}
-            </NavLink>
-          ))}
-        </div>
+      {/* Navigation animée */}
+      <AnimatePresence>
+        {showNav && (
+          <motion.div
+            key="mobile-nav"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3 }}
+            className="absolute top-full left-1/2 -translate-x-1/2 w-full 2xl:hidden mt-4 transition-colors duration-300 bg-gray-600 dark:bg-gray-900 p-4 rounded shadow-md"
+          >
+            <div className="flex flex-col gap-3 items-center">
+              <div className="flex lg:hidden">
+                <SearchBar
+                  usersFounded={usersFounded}
+                  setResearch={setResearch}
+                />
+              </div>
+              {Object.entries(navLinks).map(([label, path]) => (
+                <NavLink
+                  key={label}
+                  to={path}
+                  className={({ isActive }) =>
+                    `text-white text-lg font-medium ${
+                      isActive ? "!text-blue-500" : "hover:text-blue-400"
+                    }`
+                  }
+                  onClick={() => setShowNav(false)}
+                >
+                  {label}
+                </NavLink>
+              ))}
+              <div className="flex sm:hidden">
+                <Button
+                  onClick={handleClick}
+                  disabled={loading}
+                  type="button"
+                  margin="my-2"
+                >
+                  {loading ? (
+                    <div className="flex items-center gap-2">
+                      Déconnexion...
+                      <ClipLoader size={10} color="white" />
+                    </div>
+                  ) : (
+                    "Se déconnecter"
+                  )}
+                </Button>
+              </div>
+              <ToggleTheme />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Navigation desktop */}
+      <div className="hidden 2xl:flex gap-2 bg-gray-800 rounded-3xl items-center">
+        {Object.entries(navLinks).map(([label, path]) => (
+          <NavLink
+            key={label}
+            to={path}
+            className={({ isActive }) =>
+              `text-white px-4 py-2 rounded-full font-medium ${
+                isActive ? "bg-blue-500/30" : "hover:bg-blue-400/10"
+              }`
+            }
+          >
+            {label}
+          </NavLink>
+        ))}
       </div>
 
-      {/* Zone de recherche */}
-      <SearchBar usersFounded={usersFounded} setResearch={setResearch} />
+      {/* Barre de recherche */}
+      <div className="hidden lg:flex">
+        <SearchBar usersFounded={usersFounded} setResearch={setResearch} />
+      </div>
 
-      {/* Bouton de changement de thème */}
-      <ToggleTheme />
-
-      {/* Profil utilisateur + bouton déconnexion */}
-      <div className="flex gap-9">
-        <div className="flex flex-row-reverse items-center gap-2">
+      {/* Thème + Profil + Déconnexion */}
+      <div className="flex gap-4 items-center">
+        <div className="hidden 2xl:flex">
+          <ToggleTheme />
+        </div>
+        <div className="flex items-center gap-2">
           <img
             src={user.photo ? user.photo : anonymeImage}
-            className="rounded-full w-[50px]"
-            alt="Photo de profil"
+            alt="Profil"
+            className="w-10 h-10 rounded-full object-cover"
           />
-          <div className="font-semibold">
-            {user.pseudo ? user.pseudo : "Inconnu"}
-          </div>
+          <span className="text-white font-semibold text-sm">
+            {user.pseudo || "Inconnu"}
+          </span>
         </div>
-        <Button
-          onClick={handleClick}
-          disabled={loading}
-          type="button"
-          margin="my-2"
-        >
-          {loading ? (
-            <div>
-              Déconnexion...
-              <ClipLoader size={10} color="white" />
-            </div>
-          ) : (
-            "Se déconnecter"
-          )}
-        </Button>
+        <div className="hidden sm:flex">
+          <Button
+            onClick={handleClick}
+            disabled={loading}
+            type="button"
+            margin="my-2"
+          >
+            {loading ? (
+              <div className="flex items-center gap-2">
+                Déconnexion...
+                <ClipLoader size={10} color="white" />
+              </div>
+            ) : (
+              "Se déconnecter"
+            )}
+          </Button>
+        </div>
       </div>
     </nav>
   );

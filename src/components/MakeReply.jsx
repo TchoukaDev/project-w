@@ -92,7 +92,7 @@ const MakeReply = forwardRef(function MakeReply(
         <textarea
           ref={replyCombinedRef} // Combine la ref RHF et notre ref locale
           {...registerRest} // Règles de validation (aucune ici)
-          rows={10}
+          rows={5}
           placeholder="Votre réponse..."
           className="peer w-full border border-b-0 p-2 rounded outline-0 focus:border-2 placeholder:text-gray-300 dark:text-white focus:border-b-0 focus:border-blue-600 text-sm resize-none"
         />

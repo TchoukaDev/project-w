@@ -112,13 +112,13 @@ export default function Profile() {
   return (
     <>
       <motion.main
-        className="container flex"
+        className="container flex-col lg:flex-row flex"
         initial={{ opacity: 0, x: -30 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.2 }}
       >
         {/* Colonne de gauche : informations personnelles du profil */}
-        <div className="basis-1/3 p-5 border-r border-gray-600 flex flex-col justify-center items-center">
+        <div className="basis-1/3 py-5 px-5 md:px-16 border-b lg-border-b-0 lg:border-r border-gray-600 flex flex-col justify-center items-center">
           {/* Affiche un message de chargement si UID manquant ou données en cours de chargement */}
           {(!profileUid || loadingUser || loadingWaves) && (
             <p>Chargement en cours...</p>
@@ -182,7 +182,7 @@ export default function Profile() {
         </div>
 
         {/* Colonne de droite : liste des publications (waves) */}
-        <div className=" flex flex-col items-center py-5 px-16 gap-10 grow">
+        <div className=" flex flex-col items-center py-5 mt-10 px-5 md:px-16 gap-10 grow">
           <h1 className="text-center w-full">
             {isOwnProfile
               ? "Vos publications récentes:"

@@ -118,12 +118,17 @@ export default function UserInfos() {
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.2 }}
     >
-      <div className="mb-8">Saisissez vos informations personnelles:</div>
+      <div className="mb-8 text-center md:text-start">
+        Saisissez vos informations personnelles:
+      </div>
 
       {/* Formulaire principal */}
-      <form className="flex justify-between" onSubmit={handleSubmit(onSubmit)}>
+      <form
+        className="flex flex-col-reverse md:flex-row justify-between"
+        onSubmit={handleSubmit(onSubmit)}
+      >
         {/* Colonne de gauche avec les champs texte */}
-        <div className=" ml-5 flex flex-col justify-between gap-5 items-start">
+        <div className=" ml-5 flex flex-col justify-between gap-5 items-center md:items-start">
           {/* Pseudo */}
           <p className="flex flex-col">
             <label className="text-gray-500 mr-3" htmlFor="pseudo">
@@ -241,7 +246,7 @@ export default function UserInfos() {
           {/* Label déclencheur pour choisir un fichier */}
           <label
             htmlFor="file-upload"
-            className="hover:cursor-pointer hover:text-blue-600 hover:underline border border-gray-600 rounded p-2"
+            className="hover:cursor-pointer hover:text-blue-600 hover:underline border border-gray-600 rounded mt-5 mb-10 p-2"
           >
             Modifier la photo de profil
           </label>

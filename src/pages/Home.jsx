@@ -149,17 +149,17 @@ export default function Home() {
         initial={{ opacity: 0, x: -30 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.2 }}
-        className="container flex items-stretch"
+        className="container flex flex-col lg:flex-row items-stretch"
       >
         {/* Modale de bienvenue */}
         {showModal && <WelcomeModal onCloseModal={handleCloseModal} />}
 
         {/* Colonne de gauche - création d'une Wave */}
-        <div className="flex flex-col justify-evenly px-16 border-r basis-1/3 shrink-0 border-gray-600 ">
-          <div className="flex justify-center items-center text-gray-600 dark:text-gray-300 my-5 font-semibold !font-pompiere underline text-4xl">
+        <div className="flex flex-col justify-evenly px-5 md:px-16 py-5 border-b lg:border-b-0 lg:border-r basis-1/3 shrink-0 border-gray-600 ">
+          <div className="flex justify-center items-center text-gray-600 dark:text-gray-300 my-5 font-semibold  underline text-2xl">
             Salut {user?.firstName || "toi"}!{" "}
           </div>
-          <div className="flex justify-center items-center text-gray-600 dark:text-gray-300 my-5 font-semibold !font-pompiere text-3xl">
+          <div className="flex justify-center items-center text-gray-600 dark:text-gray-300 my-7 font-semibold  text-xl">
             Souhaites-tu partager quelque chose aujourd'hui?{" "}
           </div>
 
@@ -177,7 +177,7 @@ export default function Home() {
                     {...registerRest}
                     ref={combinedRef}
                     className="peer border border-b-0 focus:border-2 focus:border-b-0 focus:border-blue-600 outline-none rounded-t p-3 w-full resize-none"
-                    rows={10}
+                    rows={5}
                     placeholder="Ecrivez votre message..."
                   ></textarea>
                   <div className="w-full -mt-2 px-2 pt-2 border border-t-0 peer-focus:border-2 peer-focus:border-t-0 peer-focus:border-blue-600 ">
@@ -230,7 +230,7 @@ export default function Home() {
         </div>
 
         {/* Colonne de droite - affichage des messages */}
-        <div className="flex flex-col items-center py-5 px-16 gap-10 grow">
+        <div className="flex flex-col items-center py-5 px-5 mt-10 md:px-16 gap-10 grow">
           <h1 className="text-center w-full">Fil d'actualités:</h1>
           <div className="flex flex-col w-full">
             {loadingWaves ? (
@@ -304,7 +304,7 @@ export default function Home() {
                         }}
                         className="hover:text-blue-600 hover:cursor-pointer text-xs flex gap-2 items-center text-gray-600 dark:text-gray-400 p-1 transition-colors duration-300"
                       >
-                        <p>Répondre</p>
+                        <p className="text-center">Répondre</p>
                         {activeReplyId === wave.wid ? (
                           <ChevronUp size={16} strokeWidth={2.75} />
                         ) : (
