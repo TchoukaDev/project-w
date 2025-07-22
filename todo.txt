@@ -1,5 +1,5 @@
-responsive
-Sécurité base de données
-Messagerie instantanée
+
+Messagerie instantanée validation formulaire avec entrée
 readme.md
-footer
+ouverture emoji picker Reply en haut
+fixer bug de fermeture make reply et sho reply

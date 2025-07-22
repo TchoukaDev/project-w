@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { useCreateReply } from "../hooks/waves/useCreateReply";
 import { toast } from "react-toastify";
 import { useContext, useRef, useState, useEffect, forwardRef } from "react";
@@ -92,7 +92,7 @@ const MakeReply = forwardRef(function MakeReply(
         <textarea
           ref={replyCombinedRef} // Combine la ref RHF et notre ref locale
           {...registerRest} // Règles de validation (aucune ici)
-          rows={5}
+          rows={2}
           placeholder="Votre réponse..."
           className="peer w-full border border-b-0 p-2 rounded outline-0 focus:border-2 placeholder:text-gray-300 dark:text-white focus:border-b-0 focus:border-blue-600 text-sm resize-none"
         />
@@ -110,28 +110,30 @@ const MakeReply = forwardRef(function MakeReply(
       </div>
 
       {/* Affiche le picker d'emoji avec animation */}
-      {showEmoji && mountEmoji && (
-        <motion.div
-          ref={emojiRef} // Ref. pour détecter les clics extérieurs
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.3 }}
-          className="absolute z-50"
-        >
-          <EmojiPicker
-            theme="dark"
-            skinTonesDisabled={true}
-            searchDisabled={true}
-            previewConfig={{ showPreview: false }}
-            onEmojiClick={(emojiObject) => {
-              // Insère l'emoji à la position actuelle du curseur
-              insertEmoji(emojiObject.emoji, replyRef, setValue, "reply");
-              setShowEmoji(false);
-            }}
-          />
-        </motion.div>
-      )}
+      <AnimatePresence>
+        {showEmoji && mountEmoji && (
+          <motion.div
+            ref={emojiRef} // Ref. pour détecter les clics extérieurs
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="absolute z-50"
+          >
+            <EmojiPicker
+              theme="dark"
+              skinTonesDisabled={true}
+              searchDisabled={true}
+              previewConfig={{ showPreview: false }}
+              onEmojiClick={(emojiObject) => {
+                // Insère l'emoji à la position actuelle du curseur
+                insertEmoji(emojiObject.emoji, replyRef, setValue, "reply");
+                setShowEmoji(false);
+              }}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Bouton d’envoi */}
       <p className="text-center">

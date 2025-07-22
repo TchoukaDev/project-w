@@ -11,7 +11,7 @@ export default function LikeButton({ wid, uid, wuid }) {
 
   return wuid === uid ? (
     <span className="text-xs text-center text-gray-600 dark:text-gray-400">
-      Nombre de like ({counterLike})
+      Nombre de like ({counterLike ?? 0})
     </span>
   ) : (
     <button

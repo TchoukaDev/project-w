@@ -135,7 +135,9 @@ export default function Profile() {
           {/* Pseudo */}
           <p className="text-lg font-semibold mb-9">{userData.pseudo}</p>
           <div>
-            <p className="underline mb-5">Informations personnelles:</p>
+            <p className="underline text-center mb-5">
+              Informations personnelles:
+            </p>
             {/* Liste des infos personnelles, affichage conditionnel si données présentes */}
             <div className="flex flex-col gap-3 items-start">
               {userData.firstName && (
@@ -175,7 +177,12 @@ export default function Profile() {
                   currentUserId={user.uid}
                   followedUserId={profileUid}
                 />
-                <Button>Envoyer un message</Button>
+                <Link
+                  className="bg-gray-300/30 rounded-3xl px-4 py-2 font-semibold text-sm  hover:bg-blue-600 cursor-pointer transition-color duration-300"
+                  to={`/messages/${userData.pseudo}`}
+                >
+                  Envoyer un message
+                </Link>
               </div>
             )}
           </div>

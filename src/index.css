@@ -4,10 +4,16 @@
 
 @font-face {
   font-family: "pompiere";
-  src: url(./assets/fonts/Pompiere-Regular.ttf);
+  src: url("./assets/fonts/Pompiere-Regular.ttf");
+
+  @font-face {
+    font-family: "roboto";
+    src: url("./assets/fonts/Roboto-Variable.ttf");
+  }
 
   @theme {
     --font-pompiere: "pompiere", sans-serif;
+    --font-roboto: "roboto", sans-serif;
     --shadow-custom: 0px 4px 12px rgba(255, 255, 255, 0.3);
     --shadow-custom-black: 0px 4px 12px rgba(0, 0, 0, 0.3);
   }
@@ -25,7 +31,7 @@ body,
 }
 
 h1 {
-  @apply underline font-semibold text-gray-700 dark:text-gray-300 text-3xl !font-pompiere;
+  @apply underline font-semibold text-gray-700 dark:text-gray-300 text-2xl !font-roboto;
 }
 
 .container {

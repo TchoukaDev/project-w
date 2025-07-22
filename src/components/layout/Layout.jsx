@@ -2,6 +2,7 @@ import { Outlet } from "react-router";
 import { UserContext } from "../../contexts/userContext";
 import { useContext } from "react";
 import Header from "../Header";
+import Footer from "../Footer";
 
 export default function Layout({ children }) {
   const { user } = useContext(UserContext);
@@ -10,6 +11,7 @@ export default function Layout({ children }) {
       {user && <Header />}
       <Outlet />
       {children}
+      <Footer />
     </div>
   );
 }

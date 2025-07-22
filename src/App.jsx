@@ -16,8 +16,9 @@ import Loader from "./components/Loader";
 import UpdatePassword from "./pages/UpdatePassword";
 import Profile from "./pages/Profile";
 import Followers from "./pages/Followers";
-import EmojiTest from "./pages/Messages";
 import ForgotPassword from "./pages/ForgotPassword";
+import Messages from "./pages/Messages";
+import Conversation from "./pages/Conversation";
 
 // Importation des pages et layouts en lazy loading pour optimiser le chargement
 const SettingsLayout = lazy(() => import("./components/layout/SettingsLayout"));
@@ -69,10 +70,15 @@ function App() {
           path: "followers",
           element: user ? <Followers /> : <Navigate to="/" replace />,
         },
-        // Messagerie
+        // Messagerie Globale
         {
-          path: "messages",
-          element: <EmojiTest />,
+          path: "messages/",
+          element: user ? <Messages /> : <Navigate to="/" replace />,
+        },
+        // Conversation privée
+        {
+          path: "messages/:pseudo",
+          element: user ? <Conversation /> : <Navigate to="/" replace />,
         },
 
         // Pages de paramètres (layout imbriqué)

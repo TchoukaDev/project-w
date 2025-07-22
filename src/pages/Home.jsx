@@ -65,11 +65,15 @@ export default function Home() {
   // Références pour le formulaire de réponse
   const makeReplyRef = useRef();
   const makeReplyBtn = useRef();
+
+  // Fonction de fermeture de de la fenetre de réponse si clic en dehors
   useClickOutside(makeReplyRef, makeReplyBtn, () => setActiveReplyId(false));
 
   // Références pour l'affichage des réponses
   const showReplyRef = useRef();
   const showReplyBtnRef = useRef();
+
+  // Fonction de fermeture de la fenetre d'affichage des réponses si clic en dehors
   useClickOutside(showReplyRef, showReplyBtnRef, () => setShowReply(false));
 
   // Formulaire avec react-hook-form
@@ -156,10 +160,10 @@ export default function Home() {
 
         {/* Colonne de gauche - création d'une Wave */}
         <div className="flex flex-col justify-evenly px-5 md:px-16 py-5 border-b lg:border-b-0 lg:border-r basis-1/3 shrink-0 border-gray-600 ">
-          <div className="flex justify-center items-center text-gray-600 dark:text-gray-300 my-5 font-semibold  underline text-2xl">
+          <div className="flex justify-center items-center text-gray-600 dark:text-gray-300 my-5 font-semibold !font-roboto underline text-2xl">
             Salut {user?.firstName || "toi"}!{" "}
           </div>
-          <div className="flex justify-center items-center text-gray-600 dark:text-gray-300 my-7 font-semibold  text-xl">
+          <div className="flex justify-center items-center text-gray-600 dark:text-gray-300 my-7 font-semibold !font-roboto text-xl">
             Souhaites-tu partager quelque chose aujourd'hui?{" "}
           </div>
 
@@ -193,25 +197,28 @@ export default function Home() {
                 </div>
 
                 {/* Popup emoji */}
-                {showEmoji && (
-                  <motion.div ref={emojiRef} className="absolute z-50">
-                    <EmojiPicker
-                      theme="dark"
-                      skinTonesDisabled={true}
-                      searchDisabled={true}
-                      previewConfig={{ showPreview: false }}
-                      onEmojiClick={(emojiObject) => {
-                        insertEmoji(
-                          emojiObject.emoji,
-                          waveContentRef,
-                          setValue,
-                          "message"
-                        );
-                        setShowEmoji(false);
-                      }}
-                    />
-                  </motion.div>
-                )}
+                <AnimatePresence>
+                  {showEmoji && (
+                    <motion.div ref={emojiRef} className="absolute z-50">
+                      <EmojiPicker
+                        className="max-h-[250px]"
+                        theme="dark"
+                        skinTonesDisabled={true}
+                        searchDisabled={true}
+                        previewConfig={{ showPreview: false }}
+                        onEmojiClick={(emojiObject) => {
+                          insertEmoji(
+                            emojiObject.emoji,
+                            waveContentRef,
+                            setValue,
+                            "message"
+                          );
+                          setShowEmoji(false);
+                        }}
+                      />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
 
               {/* Bouton de soumission */}
