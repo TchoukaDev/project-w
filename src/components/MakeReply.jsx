@@ -94,47 +94,49 @@ const MakeReply = forwardRef(function MakeReply(
           {...registerRest} // Règles de validation (aucune ici)
           rows={2}
           placeholder="Votre réponse..."
-          className="peer w-full border border-b-0 p-2 rounded outline-0 focus:border-2 placeholder:text-gray-300 dark:text-white focus:border-b-0 focus:border-blue-600 text-sm resize-none"
+          className="peer w-full border border-b-0 p-2 rounded-t outline-0 focus:border-2 placeholder:text-gray-300 dark:text-white focus:border-b-0 focus:border-blue-600 text-sm resize-none"
         />
-        <div className=" w-full -mt-2 px-2 pt-2 border border-t-0 peer-focus:border-2 peer-focus:border-t-0 peer-focus:border-blue-600 ">
-          <button
-            type="button"
-            ref={emojiBtnRef} // Réf. pour détecter les clics hors du bouton
-            onClick={() => setShowEmoji((prev) => !prev)} // Bascule l'affichage du picker
-            className=" hover:scale-110 transition "
-          >
-            <Smile className="text-gray-400 hover:cursor-pointer" />{" "}
-            {/* Icône smiley */}
-          </button>
+        <div className=" w-full -mt-2 px-2 pt-2 border border-t-0 rounded-b peer-focus:border-2 peer-focus:border-t-0 peer-focus:border-blue-600 ">
+          <div className="relative">
+            <button
+              type="button"
+              ref={emojiBtnRef} // Réf. pour détecter les clics hors du bouton
+              onClick={() => setShowEmoji((prev) => !prev)} // Bascule l'affichage du picker
+              className=" hover:scale-110 transition "
+            >
+              <Smile className="text-gray-400 hover:cursor-pointer" />{" "}
+              {/* Icône smiley */}
+            </button>
+          </div>
         </div>
+
+        {/* Affiche le picker d'emoji avec animation */}
+        <AnimatePresence>
+          {showEmoji && mountEmoji && (
+            <motion.div
+              className="absolute bottom-full mb-2 z-50"
+              y
+              ref={emojiRef} // Ref. pour détecter les clics extérieurs
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              <EmojiPicker
+                theme="dark"
+                skinTonesDisabled={true}
+                searchDisabled={true}
+                previewConfig={{ showPreview: false }}
+                onEmojiClick={(emojiObject) => {
+                  // Insère l'emoji à la position actuelle du curseur
+                  insertEmoji(emojiObject.emoji, replyRef, setValue, "reply");
+                  setShowEmoji(false);
+                }}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
-
-      {/* Affiche le picker d'emoji avec animation */}
-      <AnimatePresence>
-        {showEmoji && mountEmoji && (
-          <motion.div
-            ref={emojiRef} // Ref. pour détecter les clics extérieurs
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            className="absolute z-50"
-          >
-            <EmojiPicker
-              theme="dark"
-              skinTonesDisabled={true}
-              searchDisabled={true}
-              previewConfig={{ showPreview: false }}
-              onEmojiClick={(emojiObject) => {
-                // Insère l'emoji à la position actuelle du curseur
-                insertEmoji(emojiObject.emoji, replyRef, setValue, "reply");
-                setShowEmoji(false);
-              }}
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
-
       {/* Bouton d’envoi */}
       <p className="text-center">
         <Button margin={"mt-3"} type="submit">

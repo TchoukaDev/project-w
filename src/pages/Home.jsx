@@ -155,7 +155,7 @@ export default function Home() {
                     rows={5}
                     placeholder="Ecrivez votre message..."
                   ></textarea>
-                  <div className="w-full -mt-2 px-2 pt-2 border border-t-0 peer-focus:border-2 peer-focus:border-t-0 peer-focus:border-blue-600 ">
+                  <div className="w-full -mt-2 px-2 pt-2 border border-t-0 peer-focus:border-2 peer-focus:border-t-0 rounded-b peer-focus:border-blue-600 ">
                     <div className="relative">
                       <button
                         type="button"
