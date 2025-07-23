@@ -6,30 +6,21 @@ import Button from "../components/Button";
 import { useCreateWave } from "../hooks/waves/useCreateWave";
 import { toast } from "react-toastify";
 import { motion, AnimatePresence } from "framer-motion";
-import { Reply, Smile, X, ChevronUp } from "lucide-react";
+import { Smile, X } from "lucide-react";
 import Modal from "react-modal";
 import { useDeleteWave } from "../hooks/waves/useDeleteWave";
-import RepliesCount from "../components/RepliesCount";
-import MakeReply from "../components/MakeReply";
-import ShowReply from "../components/ShowReply";
 import { useWaves } from "../hooks/waves/useWaves";
 import { Link } from "react-router";
-import LikeButton from "../components/LikeButton";
 import Loader from "../components/Loader";
 import { dateToFr, insertEmoji } from "../utilities/functions";
 import { ClipLoader } from "react-spinners";
 import EmojiPicker from "emoji-picker-react";
 import { useClickOutside } from "../hooks/utilities/useClickOutside";
+import WaveInteraction from "../components/WaveInteractions";
 
 export default function Home() {
   // État pour afficher la modale de bienvenue si l'utilisateur n'a pas de pseudo
   const [showModal, setShowModal] = useState(false);
-
-  // État pour gérer l'ouverture du formulaire de réponse à un message
-  const [activeReplyId, setActiveReplyId] = useState(null);
-
-  // État pour afficher ou masquer les réponses d'un message
-  const [showReply, setShowReply] = useState(null);
 
   // État pour stocker le message à supprimer
   const [wavetoDelete, setWavetoDelete] = useState(null);
@@ -61,20 +52,6 @@ export default function Home() {
   useClickOutside(emojiRef, emojiBtnRef, () => {
     setShowEmoji(false);
   });
-
-  // Références pour le formulaire de réponse
-  const makeReplyRef = useRef();
-  const makeReplyBtn = useRef();
-
-  // Fonction de fermeture de de la fenetre de réponse si clic en dehors
-  useClickOutside(makeReplyRef, makeReplyBtn, () => setActiveReplyId(false));
-
-  // Références pour l'affichage des réponses
-  const showReplyRef = useRef();
-  const showReplyBtnRef = useRef();
-
-  // Fonction de fermeture de la fenetre d'affichage des réponses si clic en dehors
-  useClickOutside(showReplyRef, showReplyBtnRef, () => setShowReply(false));
 
   // Formulaire avec react-hook-form
   const {
@@ -129,12 +106,6 @@ export default function Home() {
     });
     setWavetoDelete(null);
   };
-
-  // Ferme le formulaire de réponse
-  const onCloseReviewForm = () => setActiveReplyId(false);
-
-  // Gère l'affichage des réponses à un message
-  const onClickShowReplies = (id) => setShowReply(id);
 
   // Affiche la modale si l'utilisateur n'a pas encore de pseudo
   useEffect(() => {
@@ -292,63 +263,7 @@ export default function Home() {
                     </div>
 
                     {/* Zone d'interaction : like, répondre, voir réponses */}
-                    <div className="bg-gray-900/40 p-1 rounded-b flex justify-evenly items-center">
-                      <LikeButton
-                        uid={user.uid}
-                        wid={wave.wid}
-                        wuid={wave.uid}
-                      />
-
-                      <div
-                        ref={makeReplyBtn}
-                        onClick={() => {
-                          if (showReply) {
-                            setShowReply(null);
-                          }
-                          setActiveReplyId((prev) =>
-                            prev === wave.wid ? null : wave.wid
-                          );
-                        }}
-                        className="hover:text-blue-600 hover:cursor-pointer text-xs flex gap-2 items-center text-gray-600 dark:text-gray-400 p-1 transition-colors duration-300"
-                      >
-                        <p className="text-center">Répondre</p>
-                        {activeReplyId === wave.wid ? (
-                          <ChevronUp size={16} strokeWidth={2.75} />
-                        ) : (
-                          <Reply size={16} strokeWidth={2.75} />
-                        )}
-                      </div>
-
-                      <AnimatePresence>
-                        {activeReplyId === wave.wid && (
-                          <MakeReply
-                            ref={makeReplyRef}
-                            wid={wave.wid}
-                            onCloseReviewForm={onCloseReviewForm}
-                          />
-                        )}
-                      </AnimatePresence>
-
-                      <RepliesCount
-                        ref={showReplyBtnRef}
-                        showReply={showReply}
-                        onClickShowReplies={() => {
-                          if (activeReplyId) {
-                            setActiveReplyId(null);
-                          }
-                          onClickShowReplies((prev) =>
-                            prev === wave.wid ? null : wave.wid
-                          );
-                        }}
-                        wid={wave.wid}
-                      />
-                    </div>
-
-                    <AnimatePresence>
-                      {showReply === wave.wid && (
-                        <ShowReply ref={showReplyRef} wid={wave.wid} />
-                      )}
-                    </AnimatePresence>
+                    <WaveInteraction user={user} wave={wave} />
                   </div>
                 ))
             )}

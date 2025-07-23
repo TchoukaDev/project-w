@@ -32,6 +32,7 @@ const UserProvider = ({ children }) => {
       setAuthLoading(true);
       setAuthUser(currentUser); //Stocke l'utilisateur connecté
       setAuthLoading(false);
+      console.log(currentUser);
     });
     return () => unsubscribe();
   }, []);
