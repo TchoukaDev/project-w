@@ -11,6 +11,8 @@ import { Smile } from "lucide-react";
 import Button from "../components/Button";
 import { useClickOutside } from "../hooks/utilities/useClickOutside";
 import { useUserByPseudo } from "../hooks/users/useUserByPseudo";
+import { useSendMessage } from "../hooks/messages/useSendMessage";
+import { usePrivateMessages } from "../hooks/messages/usePrivateMessages";
 
 export default function Conversation() {
   // État pour l'emoji Picker
@@ -19,10 +21,21 @@ export default function Conversation() {
 
   // Récupération du pseudo de l'URL
   const { pseudo } = useParams();
+
+  // Récupération des informations des utilisateurs
   const { data: otherUser, isLoading: otherUserLoading } =
     useUserByPseudo(pseudo);
 
   const { user, loading: userLoading } = useContext(UserContext);
+
+  // Fonction de mutation pour l'envoi des message
+  const { mutate, isLoading: mutateLoading } = useSendMessage(
+    user?.id,
+    otherUser?.uid
+  );
+
+  const { data: messages = [], isLoading: messagesLoading } =
+    usePrivateMessages(user?.id, otherUser?.uid);
 
   // Utilisation React Hook Form
   const { register, handleSubmit, reset, setValue } = useForm();
@@ -44,15 +57,28 @@ export default function Conversation() {
 
   // Soumission du formulaire
   const onSubmit = (data) => {
-    if (isLoading) return;
+    if (mutateLoading) return;
+    const message = data.message;
+    reset();
     mutate(data, {
-      onSuccess: () => {
-        reset();
-      },
       onError: (error) => {
         toast.error(error.message);
+        setValue("message", message);
       },
     });
+  };
+
+  // Validation du message en appuyant sur touche Enter
+  const submitForm = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      // Eviter envoi vide
+      if (!messageContentRef.current?.value.trim()) return;
+
+      // On définit data manuellement
+      const data = { message: messageContentRef.current.value };
+      e.preventDefault();
+      handleSubmit(onSubmit(data));
+    }
   };
 
   // Fermer le picker emoji si clic en dehors
@@ -81,7 +107,12 @@ export default function Conversation() {
       transition={{ duration: 0.2 }}
     >
       {" "}
-      <div className="grow">Messages</div>
+      <div className="grow">
+        Messages:
+        {messages.map((message) => (
+          <p key={message.id}>{message.message}</p>
+        ))}
+      </div>
       <div>
         {" "}
         {/* Formulaire */}
@@ -98,11 +129,13 @@ export default function Conversation() {
                 onClick={() => messageContentRef.current.focus()}
               >
                 <textarea
+                  disabled={mutateLoading}
                   {...registerRest}
                   ref={combinedRef}
                   className="peer border border-b-0 focus:border-2 focus:border-b-0 focus:border-blue-600 outline-none rounded-t p-3 w-full resize-none"
                   rows={1}
                   placeholder="Ecrivez votre message..."
+                  onKeyDown={submitForm}
                 ></textarea>
                 <div className="w-full -mt-2 px-2 pt-2 border border-t-0 peer-focus:border-2 rounded-b peer-focus:border-t-0 peer-focus:border-blue-600 ">
                   {" "}
@@ -149,7 +182,7 @@ export default function Conversation() {
             </div>
 
             {/* Bouton de soumission */}
-            <Button type="submit" disabled={isLoading}>
+            <Button type="submit" disabled={mutateLoading}>
               {isLoading ? (
                 <div>
                   Publication...

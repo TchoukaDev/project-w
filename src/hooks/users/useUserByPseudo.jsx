@@ -28,35 +28,3 @@ export function useUserByPseudo(pseudo) {
     enabled: !!pseudo, // N'exécute la requête que si un pseudo est fourni
   });
 }
-
-// Version fetch
-
-async function fetchUserByPseudo(pseudo) {
-  const url = `https://your-project-id.firebaseio.com/users.json?orderBy=${encodeURIComponent(
-    '"pseudo"'
-  )}&equalTo=${encodeURIComponent('"' + pseudo + '"')}`;
-
-  const response = await fetch(url, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-
-  if (!response.ok) {
-    throw new Error("Erreur lors de la récupération de l'utilisateur");
-  }
-
-  const data = await response.json();
-
-  // Si aucun utilisateur trouvé
-  if (!data || Object.keys(data).length === 0) {
-    return null;
-  }
-
-  // On récupère le premier utilisateur trouvé
-  const uid = Object.keys(data)[0];
-  const user = data[uid];
-
-  return { uid, ...user };
-}

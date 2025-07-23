@@ -1,5 +1,3 @@
 
 Messagerie instantanée validation formulaire avec entrée
 readme.md
-ouverture emoji picker Reply en haut
-fixer bug de fermeture make reply et sho reply

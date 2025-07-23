@@ -1,75 +1,125 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-export function useSendMessage(conversationId, currentUserUid) {
+export function useSendMessage(currentUserUid, otherUserUid) {
   const queryClient = useQueryClient();
+  const databaseUrl =
+    "https://waves-27b13-default-rtdb.europe-west1.firebasedatabase.app";
+
+  const conversationId = [currentUserUid, otherUserUid].sort().join("_");
 
   return useMutation({
-    // 🔁 Envoie le message au serveur
     mutationFn: async (messageText) => {
-      const response = await fetch(
-        `/https://waves-27b13-default-rtdb.europe-west1.firebasedatabase.app/messages/${conversationId}`, // endpoint REST
+      const timestamp = Date.now();
+
+      const newMessage = {
+        message: messageText.message,
+        sender: currentUserUid,
+        timestamp,
+        readBy: {
+          [currentUserUid]: true,
+        },
+      };
+
+      // 1. Ajout du message (équivalent à push)
+      const resPush = await fetch(
+        `${databaseUrl}/conversations/${conversationId}/messages.json`,
         {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          method: "POST", // POST = push
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(newMessage),
+        }
+      );
+      const pushResult = await resPush.json();
+      const newMessageId = pushResult.name;
+
+      // 2. Mise à jour du dernier message
+      await fetch(
+        `${databaseUrl}/conversations/${conversationId}/lastMessage.json`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(newMessage),
+        }
+      );
+
+      // 3. Mise à jour des participants
+      await fetch(
+        `${databaseUrl}/conversations/${conversationId}/participants.json`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            text: messageText,
-            uid: currentUserUid,
+            [currentUserUid]: true,
+            [otherUserUid]: true,
           }),
         }
       );
 
-      if (!response.ok) {
-        throw new Error("Erreur lors de l'envoi du message");
-      }
+      // 4. Mise à jour des utilisateurs
+      await fetch(
+        `${databaseUrl}/users/${currentUserUid}/conversations/${conversationId}.json`,
+        {
+          method: "PUT",
+          body: "true",
+        }
+      );
 
-      // On suppose que l'API renvoie le message complet (id, text, uid, timestamp...)
-      const savedMessage = await response.json();
-      return savedMessage;
+      await fetch(
+        `${databaseUrl}/users/${otherUserUid}/conversations/${conversationId}.json`,
+        {
+          method: "PUT",
+          body: "true",
+        }
+      );
+
+      return { ...newMessage, id: newMessageId };
     },
 
-    // 🔮 Mise à jour optimiste
     onMutate: async (messageText) => {
+      await queryClient.cancelQueries([
+        "privateMessages",
+        currentUserUid,
+        otherUserUid,
+      ]);
+
+      const previousMessages = queryClient.getQueryData([
+        "privateMessages",
+        currentUserUid,
+        otherUserUid,
+      ]);
+
       const optimisticMessage = {
-        id: `optimistic-${Date.now()}`, // id temporaire pour affichage
-        text: messageText,
-        uid: currentUserUid,
-        timestamp: Date.now(), // timestamp local
+        id: "optimistic_" + Date.now(),
+
+        sender: currentUserUid,
+        timestamp: Date.now(),
+        readBy: {
+          [currentUserUid]: true,
+        },
+        optimistic: true,
       };
 
-      // Annule les requêtes en cours pour éviter un conflit de cache
-      await queryClient.cancelQueries(["messages", conversationId]);
+      queryClient.setQueryData(
+        ["privateMessages", currentUserUid, otherUserUid],
+        (old = []) => [...old, optimisticMessage]
+      );
 
-      // Snapshot de l’état précédent pour rollback en cas d’erreur
-      const previousMessages = queryClient.getQueryData([
-        "messages",
-        conversationId,
-      ]);
-
-      // Mise à jour immédiate du cache avec le nouveau message
-      queryClient.setQueryData(["messages", conversationId], (old) => [
-        ...(old || []),
-        optimisticMessage,
-      ]);
-
-      // On retourne le snapshot dans le contexte
       return { previousMessages };
     },
 
-    // 💥 Rollback si erreur
-    onError: (err, messageText, context) => {
-      if (context?.previousMessages) {
-        queryClient.setQueryData(
-          ["messages", conversationId],
-          context.previousMessages
-        );
-      }
+    onError: (err, _, context) => {
+      queryClient.setQueryData(
+        ["privateMessages", currentUserUid, otherUserUid],
+        context.previousMessages
+      );
     },
 
-    // ✅ Après succès, on invalide la requête pour forcer un refetch propre
     onSettled: () => {
-      queryClient.invalidateQueries(["messages", conversationId]);
+      queryClient.invalidateQueries([
+        "privateMessages",
+        currentUserUid,
+        otherUserUid,
+      ]);
     },
   });
 }
