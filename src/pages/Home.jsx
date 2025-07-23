@@ -156,40 +156,46 @@ export default function Home() {
                     placeholder="Ecrivez votre message..."
                   ></textarea>
                   <div className="w-full -mt-2 px-2 pt-2 border border-t-0 peer-focus:border-2 peer-focus:border-t-0 peer-focus:border-blue-600 ">
-                    <button
-                      type="button"
-                      ref={emojiBtnRef}
-                      onClick={() => setShowEmoji((prev) => !prev)}
-                      className=" hover:scale-110 transition "
-                    >
-                      <Smile className="text-gray-400 hover:cursor-pointer" />
-                    </button>
-                  </div>
-                </div>
-
-                {/* Popup emoji */}
-                <AnimatePresence>
-                  {showEmoji && (
-                    <motion.div ref={emojiRef} className="absolute z-50">
-                      <EmojiPicker
-                        className="max-h-[250px]"
-                        theme="dark"
-                        skinTonesDisabled={true}
-                        searchDisabled={true}
-                        previewConfig={{ showPreview: false }}
-                        onEmojiClick={(emojiObject) => {
-                          insertEmoji(
-                            emojiObject.emoji,
-                            waveContentRef,
-                            setValue,
-                            "message"
-                          );
-                          setShowEmoji(false);
+                    <div className="relative">
+                      <button
+                        type="button"
+                        ref={emojiBtnRef}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setShowEmoji((prev) => !prev);
                         }}
-                      />
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                        className=" hover:scale-110 transition "
+                      >
+                        <Smile className="text-gray-400 hover:cursor-pointer" />
+                      </button>{" "}
+                      {/* Popup emoji */}
+                      <AnimatePresence>
+                        {showEmoji && (
+                          <motion.div
+                            ref={emojiRef}
+                            className="absolute bottom-full mb-2 z-50"
+                          >
+                            <EmojiPicker
+                              theme="dark"
+                              skinTonesDisabled={true}
+                              searchDisabled={true}
+                              previewConfig={{ showPreview: false }}
+                              onEmojiClick={(emojiObject) => {
+                                insertEmoji(
+                                  emojiObject.emoji,
+                                  waveContentRef,
+                                  setValue,
+                                  "message"
+                                );
+                                setShowEmoji(false);
+                              }}
+                            />
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  </div>{" "}
+                </div>
               </div>
 
               {/* Bouton de soumission */}
