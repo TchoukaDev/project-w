@@ -68,7 +68,8 @@ export default function UserInfos() {
     }
 
     const data = await response.json();
-    return data.photoUrl;
+
+    return data.url;
   };
 
   // Affiche un aperçu temporaire de la photo sélectionnée (avant upload)

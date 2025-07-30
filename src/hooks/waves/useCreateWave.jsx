@@ -12,6 +12,11 @@ export function useCreateWave(uid, pseudo, photo) {
       createdAt: new Date(),
     };
 
+    // Si image, on l'ajoute
+    if (data.image) {
+      waveData.image = data.image;
+    }
+
     const response = await fetch(
       "https://waves-27b13-default-rtdb.europe-west1.firebasedatabase.app/waves.json",
       {
@@ -57,6 +62,9 @@ export function useCreateWave(uid, pseudo, photo) {
           year: "numeric",
         }),
       };
+      if (data.image) {
+        optimisticWave.image = data.image;
+      }
 
       queryClient.setQueryData(allKey, (prev) => {
         const current = Array.isArray(prev) ? prev : [];

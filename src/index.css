@@ -35,7 +35,7 @@ h1 {
 }
 
 .container {
-  @apply my-9 w-[90%] mx-auto rounded shadow-custom-black dark:shadow-custom h-full grow;
+  @apply my-9 w-[90%] mx-auto rounded shadow-custom-black dark:shadow-custom min-h-screen grow;
 }
 
 .input {

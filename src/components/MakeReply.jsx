@@ -114,7 +114,7 @@ const MakeReply = forwardRef(function MakeReply(
         <AnimatePresence>
           {showEmoji && mountEmoji && (
             <motion.div
-              className="absolute bottom-full mb-2 z-50"
+              className="absolute bottom-full left-0 mb-2 z-50"
               y
               ref={emojiRef} // Ref. pour détecter les clics extérieurs
               initial={{ opacity: 0 }}
@@ -124,6 +124,7 @@ const MakeReply = forwardRef(function MakeReply(
             >
               <EmojiPicker
                 theme="dark"
+                width={"100%"}
                 skinTonesDisabled={true}
                 searchDisabled={true}
                 previewConfig={{ showPreview: false }}

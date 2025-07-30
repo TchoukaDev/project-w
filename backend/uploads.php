@@ -37,42 +37,45 @@ try {
         mkdir($upload_dir, 0777, true);
     }
 
-    // Vérifier si un fichier a été envoyé
-    if (isset($_FILES['photo']) && $_FILES['photo']['error'] === 0) {
-        $file = $_FILES['photo'];
+    // Vérifie qu'il y a bien un fichier
+    if (!empty($_FILES)) {
+        // Récupère la première entrée de $_FILES, peu importe le nom du champ
+        $fileField = array_key_first($_FILES);
+        $file = $_FILES[$fileField];
 
-        // Vérifier la taille du fichier
-        if ($file['size'] < 5000000) {
+        if ($file['error'] === 0) {
+            // Vérifie la taille
+            if ($file['size'] < 5000000) {
+                // Vérifie l'extension
+                $fileExtension = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+                $allowed_ext = ['jpg', 'jpeg', 'png', 'gif'];
 
-            // Obtenir l'extension du fichier
-            $fileExtension = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+                if (in_array($fileExtension, $allowed_ext)) {
+                    // Crée un nom unique
+                    $new_filename = uniqid() . '.' . $fileExtension;
+                    $destination = $upload_dir . $new_filename;
 
-            // Liste des extensions autorisées
-            $allowed_ext = ['jpg', 'jpeg', 'png', 'gif'];
+                    // Déplace le fichier
+                    if (move_uploaded_file($file['tmp_name'], $destination)) {
+                        $base_url = 'http://' . $_SERVER['HTTP_HOST'];
+                        $relative_path = '/React/project-w/backend/uploads/' . $new_filename;
+                        $file_url = $base_url . $relative_path;
 
-            // Vérifier l'extension
-            if (in_array($fileExtension, $allowed_ext)) {
-                // Créer un nom de fichier unique
-                $new_filename = uniqid() . '.' . $fileExtension;
-                $destination = $upload_dir . $new_filename;
-
-                // Déplacer le fichier téléchargé
-                if (move_uploaded_file($file['tmp_name'], $destination)) {
-                    // Construire l'URL complète
-                    $base_url = 'http://' . $_SERVER['HTTP_HOST'];
-                    $relative_path = '/React/project-w/backend/uploads/' . $new_filename;
-                    $file_url = $base_url . $relative_path;
-
-                    // Renvoyer l'URL au format JSON
-                    header('Content-Type: application/json');
-                    echo json_encode(['photoUrl' => $file_url]);
-                    exit;
-                } else
-                    throw new Exception("Le téléchargement de l'image a échoué.");
-            } else
-                throw new Exception("Ce format d'image n'est pas valide.");
-        } else
-            throw new Exception("L'image sélectionnée est trop grande.");
+                        // 🔁 On renvoie la clé de champ utilisée, ainsi que l'URL
+                        echo json_encode([
+                            'url' => $file_url
+                        ]);
+                        exit;
+                    } else {
+                        throw new Exception("Le téléchargement de l'image a échoué.");
+                    }
+                } else {
+                    throw new Exception("Ce format d'image n'est pas valide.");
+                }
+            } else {
+                throw new Exception("L'image sélectionnée est trop grande.");
+            }
+        }
     }
 } catch (Exception $e) {
     http_response_code(400);

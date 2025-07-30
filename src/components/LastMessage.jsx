@@ -1,0 +1,75 @@
+import { useContext, useState } from "react";
+import { UserContext } from "../contexts/userContext";
+import Loader from "./Loader";
+import useMarkToRead from "../hooks/messages/useMarkToRead";
+import useIsRead from "../hooks/messages/useIsRead";
+import { useUserById } from "../hooks/users/useUserById";
+import { Link } from "react-router";
+import { dateToFr } from "../utilities/functions";
+export default function LastMessage({ conversation }) {
+  // Récupération de l'utilisateur
+  const { user, loading } = useContext(UserContext);
+  // Marquer un message comme lu au clic
+  const { mutate: markToRead, isLoading } = useMarkToRead(
+    user?.id,
+    conversation?.id
+  );
+  // Récupération du statut de lecture du dernier message
+  const { data: isRead } = useIsRead(conversation.id, user.id);
+
+  // Récupération du pseudo de l'autre utilisateur
+  const participants = Object.keys(conversation.participants);
+  const otherUserId = participants.filter(
+    (participant) => participant !== user.id
+  );
+  const { data: otherUser, isLoadind: otherUserLoading } =
+    useUserById(otherUserId);
+
+  if (loading) {
+    return <Loader />;
+  }
+  return (
+    <Link
+      to={`/messages/${otherUser?.pseudo}`}
+      className={`cursor-pointer border w-1/1 lg:w-3/4 py-4 px-2 md:px-12 h-[150px] md:h-[100px] rounded my-1 border-gray-500 relative ${
+        isRead ? "" : "bg-gray-600/20"
+      }`}
+      disabled={isLoading}
+      onClick={() => markToRead(isRead)}
+    >
+      <div className=" flex items-center gap-3 underline font-semibold mb-3">
+        {/* Photo utilisateur */}
+        <img
+          src={otherUser?.photo}
+          alt="photo de profil"
+          className="rounded-full w-[30px]"
+        />
+        <div
+          className={`flex justify-between w-full ${
+            isRead ? "text-gray-400" : "text-white"
+          }`}
+        >
+          {/* Nom utilisateur */}
+          <div className="grow">{otherUser?.pseudo} </div>
+          <div>{dateToFr(conversation?.lastMessage.timestamp)}</div>
+        </div>
+      </div>
+      <div
+        className={`ms-12 ${isRead ? "text-gray-400" : "text-white"} max-h-1/1`}
+      >
+        {/* Si le message n'est pas vide, on affiche le message */}
+        {conversation?.lastMessage.message.trim() !== "" &&
+          conversation?.lastMessage.message}{" "}
+        {/* Si le message est vide est qu'il contient juste une image, on affiche le lien de */}
+        {conversation?.lastMessage.message.trim() == "" &&
+          conversation?.lastMessage.image && (
+            <span> {otherUser?.pseudo} vous a envoyé une image</span>
+          )}{" "}
+      </div>
+      {/* Point de notification de novueau message */}
+      {!isRead && (
+        <div className="w-[15px] h-[15px]  absolute right-3 top-1 rounded-full bg-red-600"></div>
+      )}
+    </Link>
+  );
+}

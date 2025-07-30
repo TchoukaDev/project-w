@@ -8,11 +8,11 @@ export function useSendMessage(currentUserUid, otherUserUid) {
   const conversationId = [currentUserUid, otherUserUid].sort().join("_");
 
   return useMutation({
-    mutationFn: async (messageText) => {
+    mutationFn: async (messageData) => {
       const timestamp = Date.now();
 
       const newMessage = {
-        message: messageText.message,
+        message: messageData.message || "", // message texte (vide si juste une image)
         sender: currentUserUid,
         timestamp,
         readBy: {
@@ -20,15 +20,21 @@ export function useSendMessage(currentUserUid, otherUserUid) {
         },
       };
 
-      // 1. Ajout du message (équivalent à push)
+      // Si une image est incluse dans le message
+      if (messageData.image) {
+        newMessage.image = messageData.image;
+      }
+
+      // 1. Ajout du message
       const resPush = await fetch(
         `${databaseUrl}/conversations/${conversationId}/messages.json`,
         {
-          method: "POST", // POST = push
+          method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(newMessage),
         }
       );
+
       const pushResult = await resPush.json();
       const newMessageId = pushResult.name;
 
@@ -75,7 +81,7 @@ export function useSendMessage(currentUserUid, otherUserUid) {
       return { ...newMessage, id: newMessageId };
     },
 
-    onMutate: async (messageText) => {
+    onMutate: async (messageData) => {
       await queryClient.cancelQueries([
         "privateMessages",
         currentUserUid,
@@ -90,7 +96,7 @@ export function useSendMessage(currentUserUid, otherUserUid) {
 
       const optimisticMessage = {
         id: "optimistic_" + Date.now(),
-
+        message: messageData.message || "",
         sender: currentUserUid,
         timestamp: Date.now(),
         readBy: {
@@ -98,6 +104,10 @@ export function useSendMessage(currentUserUid, otherUserUid) {
         },
         optimistic: true,
       };
+
+      if (messageData.image) {
+        optimisticMessage.image = messageData.image;
+      }
 
       queryClient.setQueryData(
         ["privateMessages", currentUserUid, otherUserUid],

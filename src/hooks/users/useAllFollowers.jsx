@@ -21,7 +21,7 @@ export function useAllFollowers(uid) {
           `https://waves-27b13-default-rtdb.europe-west1.firebasedatabase.app/users/${userId}.json`
         );
         if (!response2.ok) {
-          throw new Error("une erreur est survenue");
+          throw new Error("Une erreur est survenue");
         }
         const userData = await response2.json();
 

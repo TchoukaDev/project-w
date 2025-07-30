@@ -6,7 +6,7 @@ import Button from "../components/Button";
 import { useCreateWave } from "../hooks/waves/useCreateWave";
 import { toast } from "react-toastify";
 import { motion, AnimatePresence } from "framer-motion";
-import { Smile, X } from "lucide-react";
+import { CircleX, ImagePlus, Smile, X } from "lucide-react";
 import Modal from "react-modal";
 import { useDeleteWave } from "../hooks/waves/useDeleteWave";
 import { useWaves } from "../hooks/waves/useWaves";
@@ -28,6 +28,12 @@ export default function Home() {
   // État pour afficher ou masquer le picker d'emojis
   const [showEmoji, setShowEmoji] = useState(false);
 
+  // État local pour la prévisualisation de l'image
+  const [preview, setPreview] = useState(null);
+
+  // Fichier sélectionné par l'utilisateur
+  const [selectedFile, setSelectedFile] = useState(null);
+
   // Récupère l'utilisateur via le contexte
   const { user, loading: userLoading } = useContext(UserContext);
 
@@ -47,6 +53,8 @@ export default function Home() {
   // Références pour le picker d'emoji
   const emojiRef = useRef();
   const emojiBtnRef = useRef();
+
+  const fileRef = useRef(); // Référence pour l'input de chargement d'image (pour pouvoir le vider)
 
   // Fermer le picker emoji si clic en dehors
   useClickOutside(emojiRef, emojiBtnRef, () => {
@@ -69,7 +77,9 @@ export default function Home() {
   // Récupère les props du champ message
   const { ref: registerRef, ...registerRest } = register("message", {
     validate: (value) =>
-      value.trim().length > 0 || "Vous ne pouvez pas envoyer une Wave vide!",
+      value.trim() !== "" ||
+      selectedFile !== null ||
+      "Veuillez saisir un message ou choisir un fichier",
   });
 
   // Fonction qui combine la ref de react-hook-form et une ref perso
@@ -83,16 +93,79 @@ export default function Home() {
     setShowModal(false);
   };
 
+  // Met à jour le fichier sélectionné dans l'état
+  const onFileChange = (e) => {
+    setSelectedFile(e.target.files[0]);
+  };
+
+  // Affiche un aperçu temporaire de l'image sélectionnée (avant upload)
+  const showPreview = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setPreview(URL.createObjectURL(file));
+    }
+  };
+
+  // Téléchargement de l'image
+  const uploadFile = async () => {
+    const formData = new FormData();
+    formData.append("image", selectedFile);
+
+    const response = await fetch(
+      "http://localhost/React/project-w/backend/uploads.php",
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Erreur lors du téléchargement de la photo");
+    }
+
+    const data = await response.json();
+
+    return data.url;
+  };
+
+  // Reset du champ File
+  const resetFile = () => {
+    setPreview(null);
+    setSelectedFile(null);
+    if (fileRef.current) {
+      fileRef.current.value = "";
+    }
+  };
+
   // Soumission du formulaire
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     if (isLoading) return;
-    mutate(data, {
-      onSuccess: () => {
-        toast.success("Votre Wave a été publiée!");
-        reset();
-      },
+
+    let url = null;
+    let completeData = data;
+    const message = data.message;
+
+    // Si un fichier est chargé, on récupère son url
+    try {
+      if (selectedFile) {
+        url = await uploadFile("image", selectedFile);
+      }
+    } catch (err) {
+      toast.error(err.message);
+    }
+    // On modifie les données
+    completeData = {
+      ...data,
+      image: url,
+    };
+
+    reset();
+    resetFile();
+    mutate(completeData, {
+      onSuccess: () => toast.success("Votre Wave a été publiée"),
       onError: (error) => {
         toast.error(error.message);
+        setValue("message", message);
       },
     });
   };
@@ -132,7 +205,7 @@ export default function Home() {
         {/* Colonne de gauche - création d'une Wave */}
         <div className="flex flex-col justify-evenly px-5 md:px-16 py-5 border-b lg:border-b-0 lg:border-r basis-1/3 shrink-0 border-gray-600 ">
           <div className="flex justify-center items-center text-gray-600 dark:text-gray-300 my-5 font-semibold !font-roboto underline text-2xl">
-            Salut {user?.firstName || "toi"}!{" "}
+            Salut {user?.firstName || user?.pseudo}!{" "}
           </div>
           <div className="flex justify-center items-center text-gray-600 dark:text-gray-300 my-7 font-semibold !font-roboto text-xl">
             Souhaites-tu partager quelque chose aujourd'hui?{" "}
@@ -146,8 +219,11 @@ export default function Home() {
           >
             <div className="flex flex-col gap-12 items-center">
               {/* Zone de saisie du message */}
-              <div className=" w-full">
-                <div>
+              <div className=" w-full relative">
+                <div
+                  className="cursor-text"
+                  onClick={() => waveContentRef.current.focus()}
+                >
                   <textarea
                     {...registerRest}
                     ref={combinedRef}
@@ -156,7 +232,7 @@ export default function Home() {
                     placeholder="Ecrivez votre message..."
                   ></textarea>
                   <div className="w-full -mt-2 px-2 pt-2 border border-t-0 peer-focus:border-2 peer-focus:border-t-0 rounded-b peer-focus:border-blue-600 ">
-                    <div className="relative">
+                    <div className="relative flex pb-2 gap-2">
                       <button
                         type="button"
                         ref={emojiBtnRef}
@@ -173,10 +249,11 @@ export default function Home() {
                         {showEmoji && (
                           <motion.div
                             ref={emojiRef}
-                            className="absolute bottom-full mb-2 z-50"
+                            className="absolute bottom-full left-0 mb-2 z-50"
                           >
                             <EmojiPicker
                               theme="dark"
+                              width={"100%"}
                               skinTonesDisabled={true}
                               searchDisabled={true}
                               previewConfig={{ showPreview: false }}
@@ -193,6 +270,58 @@ export default function Home() {
                           </motion.div>
                         )}
                       </AnimatePresence>
+                      {/* Label déclencheur pour choisir un fichier */}
+                      <label htmlFor="file-upload" className="self-center">
+                        <ImagePlus className="text-gray-400 cursor-pointer hover:scale-110 transition" />
+                      </label>
+                      {/* Input de type fichier (caché mais déclenché par le label) */}
+                      <input
+                        id="file-upload"
+                        ref={fileRef}
+                        name="image"
+                        onChange={(e) => {
+                          onFileChange(e);
+                          showPreview(e);
+                        }}
+                        type="file"
+                        className="hidden"
+                      />
+                      <div className="flex justify-center grow">
+                        <AnimatePresence>
+                          {selectedFile && (
+                            <motion.div
+                              key="preview"
+                              initial={{ opacity: 0, scale: 0.9 }}
+                              animate={{ opacity: 1, scale: 1 }}
+                              exit={{ opacity: 0, scale: 0.9 }}
+                              transition={{ duration: 0.3 }}
+                              className="relative max-w-[100px] hover:scale-105 transition cursor-pointer"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                resetFile();
+                              }}
+                            >
+                              {/* Croix de suppression positionnée en haut à droite de l’image */}
+                              <motion.div
+                                className="absolute -top-2 -right-2 rounded-full"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                transition={{ duration: 0.2 }}
+                              >
+                                <CircleX size={20} />
+                              </motion.div>
+
+                              {/* Image prévisualisée */}
+                              <motion.img
+                                src={preview}
+                                className="max-w-[100px] max-h-[50px] rounded"
+                                layout
+                              />
+                            </motion.div>
+                          )}
+                        </AnimatePresence>{" "}
+                      </div>
                     </div>
                   </div>{" "}
                 </div>
@@ -266,6 +395,15 @@ export default function Home() {
                         )}
                       </div>
                       <p>{wave.message}</p>
+                      {wave.image && (
+                        <div>
+                          <img
+                            className="mx-auto max-h-[150px] max-w-[100%]"
+                            src={wave.image}
+                            alt="image publiée"
+                          />
+                        </div>
+                      )}
                     </div>
 
                     {/* Zone d'interaction : like, répondre, voir réponses */}
