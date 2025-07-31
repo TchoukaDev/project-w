@@ -31,7 +31,7 @@ export default function LastMessage({ conversation }) {
   return (
     <Link
       to={`/messages/${otherUser?.pseudo}`}
-      className={`cursor-pointer border w-1/1 lg:w-3/4 py-4 px-2 md:px-12 h-[150px] md:h-[100px] rounded my-1 border-gray-500 relative ${
+      className={`cursor-pointer border w-1/1 lg:w-3/4 py-4 px-2 md:px-12 max-h-[150px] h-fit md:max-h-[100px] overflow-hidden rounded my-1 border-gray-500 relative ${
         isRead ? "" : "bg-gray-600/20"
       }`}
       disabled={isLoading}
@@ -42,7 +42,7 @@ export default function LastMessage({ conversation }) {
         <img
           src={otherUser?.photo}
           alt="photo de profil"
-          className="rounded-full w-[30px]"
+          className="rounded-full max-w-[30px] max-h-[30px]"
         />
         <div
           className={`flex justify-between w-full ${
@@ -55,7 +55,9 @@ export default function LastMessage({ conversation }) {
         </div>
       </div>
       <div
-        className={`ms-12 ${isRead ? "text-gray-400" : "text-white"} max-h-1/1`}
+        className={`ms-12 ${
+          isRead ? "text-gray-400" : "text-white"
+        } max-w-1/1 max-h-1/1  break-words whitespace-pre-wrap line-clamp-1 overflow-hidden`}
       >
         {/* Si le message n'est pas vide, on affiche le message */}
         {conversation?.lastMessage.message.trim() !== "" &&

@@ -257,8 +257,8 @@ export default function Conversation() {
                       src={user.photo}
                       className="w-10 rounded-full self-start"
                     ></img>
-                    <div className=" bg-blue-500 relative w-fit max-w-1/2 max-h-1/2 my-3 p-2 rounded-2xl rounded-tl-none">
-                      <p>{message.message}</p>
+                    <div className=" bg-blue-500 relative w-fit max-w-1/2 max-h-fit break-words whitespace-pre-wrap my-3 p-2 rounded-2xl rounded-tl-none">
+                      <p className="">{message.message}</p>
                       {message.image && (
                         <>
                           <Zoom>
@@ -293,7 +293,7 @@ export default function Conversation() {
                   transition={{ duration: 0.3 }}
                 >
                   <div className="flex justify-end items-center gap-3">
-                    <div className=" bg-blue-500 relative w-fit max-w-1/2 max-h-1/2 my-3 p-2 rounded-2xl rounded-tl-none">
+                    <div className=" bg-blue-500 relative w-fit max-w-1/2 max-h-1/2 my-3 p-2 break-words whitespace-pre-wrap rounded-2xl rounded-tl-none">
                       <p>{message.message}</p>
                       {message.image && (
                         <>
