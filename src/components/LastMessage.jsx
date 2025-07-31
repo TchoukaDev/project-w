@@ -46,7 +46,7 @@ export default function LastMessage({ conversation }) {
         />
         <div
           className={`flex justify-between w-full ${
-            isRead ? "text-gray-400" : "text-white"
+            isRead ? "text-gray-400" : "text-gray-600 dark:text-white"
           }`}
         >
           {/* Nom utilisateur */}
@@ -56,7 +56,7 @@ export default function LastMessage({ conversation }) {
       </div>
       <div
         className={`ms-12 ${
-          isRead ? "text-gray-400" : "text-white"
+          isRead ? "text-gray-400" : "text-gray-600 dark:text-white"
         } max-w-1/1 max-h-1/1  break-words whitespace-pre-wrap line-clamp-1 overflow-hidden`}
       >
         {/* Si le message n'est pas vide, on affiche le message */}

@@ -75,7 +75,7 @@ export default function SignUp() {
     <main className="flex flex-col lg:flex-row grow justify-evenly items-center">
       {/* Logo */}
       <Logo size={isSm ? "sm" : isLg ? "lg" : "md"} />
-      <div className="flex flex-col items-center justify-between  w-[95%] sm:w-[500px] shadow-custom p-9 rounded">
+      <div className="flex flex-col items-center justify-between my-5  w-[95%] sm:w-[500px] shadow-custom-black dark:shadow-custom p-9 rounded">
         <h1 className="text-center underline text-2xl font-semibold mb-6">
           Inscription
         </h1>
@@ -195,7 +195,7 @@ export default function SignUp() {
               )}
             </Button>
             <hr className="text-gray-500" />
-            <p className="bg-black mx-auto text-center w-1/6 mt-[-28px] z-10">
+            <p className="bg-gray-100 dark:bg-black mx-auto text-center w-1/6 mt-[-28px] z-10">
               ou
             </p>
             <GoogleBtn>S'inscrire avec Google</GoogleBtn>

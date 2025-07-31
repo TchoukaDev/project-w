@@ -39,7 +39,7 @@ h1 {
 }
 
 .input {
-  @apply w-full border text-white border-gray-400 rounded-md px-4 pt-7 pb-2 text-sm placeholder-transparent outline-none focus:border-2 focus:border-blue-500;
+  @apply w-full border text-gray-600 dark:text-white  border-gray-400 rounded-md px-4 pt-7 pb-2 text-sm placeholder-transparent outline-none focus:border-2 focus:border-blue-500;
 }
 
 .inputSettings {

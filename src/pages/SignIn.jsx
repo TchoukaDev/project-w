@@ -74,7 +74,7 @@ export default function SignIn() {
       {/* Logo */}
       <Logo size={isSm ? "sm" : isLg ? "lg" : "md"} />
 
-      <div className="flex flex-col items-center justify-between  w-[95%] sm:w-[500px] shadow-custom p-9 rounded">
+      <div className="flex flex-col items-center justify-between  w-[95%] sm:w-[500px] shadow-custom-black dark:shadow-custom p-9 rounded">
         <h1 className="text-center underline text-2xl font-semibold mb-6">
           Connexion
         </h1>

@@ -60,7 +60,7 @@ export default function Header() {
         onClick={() => setShowNav((prev) => !prev)}
       >
         <svg
-          className="w-6 h-6 text-white"
+          className="w-6 h-6 text-gray-900 dark:text-white"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -177,7 +177,7 @@ export default function Header() {
             alt="Profil"
             className="w-10 h-10 rounded-full object-cover"
           />
-          <span className="text-white font-semibold text-sm">
+          <span className=" font-semibold text-sm">
             {user.pseudo || "Inconnu"}
           </span>
         </div>
