@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { useReplies } from "../hooks/waves/useReplies";
 import { forwardRef } from "react";
+import { Link } from "react-router";
 
 const ShowReply = forwardRef(function ShowReply({ wid }, showReplyRef) {
   // Appel du hook personnalisé pour récupérer les réponses associées à un identifiant de publication (wid)
@@ -32,9 +33,12 @@ const ShowReply = forwardRef(function ShowReply({ wid }, showReplyRef) {
             >
               {/* Pseudo et date de création */}
               <div className="flex text-lg gap-4 text-gray-400/70">
-                <div className="text-blue-600 underline !font-pompiere">
+                <Link
+                  to={`/profile/${reply.pseudo}`}
+                  className="text-blue-600 underline !font-pompiere"
+                >
                   {reply.pseudo}
-                </div>
+                </Link>
                 <div className="!font-pompiere">{reply.createdAt}</div>
               </div>
               {/* Contenu de la réponse */}

@@ -1,0 +1,1 @@
+import{j as t,m as a,O as s}from"./index-D5wShA4Q.js";function e(){return t.jsxs(a.div,{initial:{opacity:0,x:-30},animate:{opacity:1,x:0},transition:{duration:.2},className:"container px-16 py-8",children:[t.jsxs("h1",{className:" mb-8 ",children:["Préférences",t.jsx("hr",{className:"mt-5 text-gray-500"})]}),t.jsx(s,{})]})}export{e as default};

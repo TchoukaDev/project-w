@@ -17,6 +17,8 @@ import { ClipLoader } from "react-spinners";
 import EmojiPicker from "emoji-picker-react";
 import { useClickOutside } from "../hooks/utilities/useClickOutside";
 import WaveInteraction from "../components/WaveInteractions";
+import Zoom from "react-medium-image-zoom";
+import "react-medium-image-zoom/dist/styles.css";
 
 export default function Home() {
   // État pour afficher la modale de bienvenue si l'utilisateur n'a pas de pseudo
@@ -374,7 +376,7 @@ export default function Home() {
                             <div className="flex items-center gap-3 underline text-xl text-blue-600 !font-pompiere">
                               <img
                                 src={wave.photo}
-                                className="w-[30px] rounded-full"
+                                className="w-[30px]  h-[30px] rounded-full"
                               />{" "}
                               {wave.pseudo}
                             </div>
@@ -396,13 +398,15 @@ export default function Home() {
                       </div>
                       <p>{wave.message}</p>
                       {wave.image && (
-                        <div>
-                          <img
-                            className="mx-auto max-h-[150px] max-w-[100%]"
-                            src={wave.image}
-                            alt="image publiée"
-                          />
-                        </div>
+                        <Zoom classDialog="custom-zoom">
+                          <div>
+                            <img
+                              className="mx-auto max-h-[150px] max-w-[100%]"
+                              src={wave.image}
+                              alt="image publiée"
+                            />
+                          </div>
+                        </Zoom>
                       )}
                     </div>
 

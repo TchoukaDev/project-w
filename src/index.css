@@ -58,3 +58,8 @@ input[data-autocompleted] {
 input[type="date"]::-webkit-calendar-picker-indicator {
   @apply bg-white rounded-full cursor-pointer;
 }
+
+[data-rmiz-modal-overlay="visible"] {
+  background-color: rgba(30, 30, 30, 0.9) !important;
+  backdrop-filter: blur(2px);
+}

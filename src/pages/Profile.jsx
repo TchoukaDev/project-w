@@ -4,21 +4,19 @@ import { useParams } from "react-router";
 import { useContext, useRef, useState } from "react";
 import { UserContext } from "../contexts/userContext";
 import { toast } from "react-toastify";
-import { motion, AnimatePresence } from "framer-motion";
-import { Reply, ChevronUp, X, ChevronDown } from "lucide-react";
+import { motion } from "framer-motion";
+import { X } from "lucide-react";
 import Modal from "react-modal";
 import { useDeleteWave } from "../hooks/waves/useDeleteWave";
-import MakeReply from "../components/MakeReply";
-import ShowReply from "../components/ShowReply";
+import Zoom from "react-medium-image-zoom";
+import "react-medium-image-zoom/dist/styles.css";
 import { useWaves } from "../hooks/waves/useWaves";
 import { Link } from "react-router";
 import Button from "../components/Button";
-import LikeButton from "../components/LikeButton";
 import FollowingButton from "../components/FollowingButton";
 import { dateToFr } from "../utilities/functions";
 import { ClipLoader } from "react-spinners";
 import { useClickOutside } from "../hooks/utilities/useClickOutside";
-import RepliesCount from "../components/RepliesCount";
 import WaveInteraction from "../components/WaveInteractions";
 
 export default function Profile() {
@@ -225,7 +223,7 @@ export default function Profile() {
                             <div className="flex items-center gap-3 underline text-xl text-blue-600 !font-pompiere">
                               <img
                                 src={wave.photo}
-                                className="w-[30px] rounded-full"
+                                className="w-[30px] h-[30px] rounded-full"
                               />{" "}
                               {wave.pseudo}
                             </div>
@@ -249,10 +247,21 @@ export default function Profile() {
                       </div>
                       {/* Contenu du message */}
                       <p>{wave.message}</p>
+                      {wave.image && (
+                        <Zoom classDialog="custom-zoom">
+                          <div>
+                            <img
+                              className="mx-auto max-h-[150px] max-w-[100%]"
+                              src={wave.image}
+                              alt="image publiée"
+                            />
+                          </div>
+                        </Zoom>
+                      )}
                     </div>
 
                     {/* Actions sous le message */}
-                    <WaveInteraction user={userData} wave={wave} />
+                    <WaveInteraction user={user} wave={wave} />
                   </div>
                 ))
             )}

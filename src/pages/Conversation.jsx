@@ -261,7 +261,7 @@ export default function Conversation() {
                       <p className="">{message.message}</p>
                       {message.image && (
                         <>
-                          <Zoom>
+                          <Zoom classDialog="custom-zoom">
                             <img
                               className="w-full mt-1"
                               src={message.image}
