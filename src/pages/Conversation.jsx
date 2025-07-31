@@ -228,7 +228,7 @@ export default function Conversation() {
       <div className="flex max-h-[80vh] flex-col w-full lg:w-2/3 basis-2/3 gap-3 items-center overflow-y-auto grow  self-center px-4 lg:px-16 py-5">
         {/* Affichage des messages */}
         <div
-          className="grow overflow-y-auto rounded border border-gray-300 p-5"
+          className="grow overflow-y-auto w-full rounded border border-gray-300 p-5"
           ref={scrollMessagesRef}
         >
           {" "}

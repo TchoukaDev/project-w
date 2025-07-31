@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import defaultPhoto from "/src/assets/images/anonyme.png";
 
 // Hook personnalisé pour gérer le suivi / arrêt de suivi d'un utilisateur
 export function useToggleFollowing(currentUserId, followedUserId) {
@@ -58,7 +59,7 @@ export function useToggleFollowing(currentUserId, followedUserId) {
             {
               [followedUserId]: {
                 pseudo: "Identification en cours...",
-                photo: "/src/assets/images/anonyme.png",
+                photo: defaultPhoto,
               },
             },
           ];
@@ -75,7 +76,7 @@ export function useToggleFollowing(currentUserId, followedUserId) {
             {
               [currentUserId]: {
                 pseudo: "Identification en cours...",
-                photo: "/src/assets/images/anonyme.png",
+                photo: defaultPhoto,
               },
             },
           ];

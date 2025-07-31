@@ -11,16 +11,22 @@ import anonymeImage from "/src/assets/images/anonyme.png";
 import SearchBar from "./SearchBar";
 import { ClipLoader } from "react-spinners";
 import ToggleTheme from "./toggleTheme";
+import useConversationsByUser from "../hooks/messages/useConversationsByUser";
 
 export default function Header() {
   const [research, setResearch] = useState("");
   const debouncedResearch = useDebounce(research, 400);
   const { usersFounded } = useSearchUser(debouncedResearch);
   const { logOut, user } = useContext(UserContext);
+  const { data: conversations = [] } = useConversationsByUser(user.id);
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(false);
   const [showNav, setShowNav] = useState(false);
+
+  const hasUnread = conversations.some(
+    (conversation) => conversation.hasUnread
+  );
 
   const navLinks = {
     Accueil: "/",
@@ -45,7 +51,7 @@ export default function Header() {
   };
 
   return (
-    <nav className="flex justify-between items-center w-[90%] mx-auto h-[100px] py-5 px-6 relative bg-transparent z-50">
+    <nav className="flex justify-between items-center w-full mx-auto h-[100px] py-5 px-6 relative bg-transparent z-50">
       <Logo onClick={() => navigate("/")} size="sm" canBeClicked />
 
       {/* Menu hamburger mobile */}
@@ -100,13 +106,16 @@ export default function Header() {
                   key={label}
                   to={path}
                   className={({ isActive }) =>
-                    `text-white text-lg font-medium ${
+                    `text-white text-lg font-medium relative ${
                       isActive ? "!text-blue-500" : "hover:text-blue-400"
                     }`
                   }
                   onClick={() => setShowNav(false)}
                 >
-                  {label}
+                  <div>{label}</div>
+                  {path === "/messages" && hasUnread && (
+                    <div className="absolute top-0 -right-4 bg-red-600 h-[12px] w-[12px] rounded-full"></div>
+                  )}
                 </NavLink>
               ))}
               <div className="flex sm:hidden">
@@ -139,12 +148,15 @@ export default function Header() {
             key={label}
             to={path}
             className={({ isActive }) =>
-              `text-white px-4 py-2 rounded-full font-medium ${
+              `text-white px-4 py-2 rounded-full relative font-medium ${
                 isActive ? "bg-blue-500/30" : "hover:bg-blue-400/10"
               }`
             }
           >
-            {label}
+            <div>{label}</div>
+            {path === "/messages" && hasUnread && (
+              <div className="absolute top-1 right-0 bg-red-600 h-[12px] w-[12px] rounded-full"></div>
+            )}
           </NavLink>
         ))}
       </div>

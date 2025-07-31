@@ -14,6 +14,7 @@ import { auth, googleProvider } from "../utilities/firebase";
 import { useUserRealTime } from "../hooks/users/useUserRealTime";
 import { toast } from "react-toastify";
 import { useUserById } from "../hooks/users/useUserById";
+import defaultPhoto from "/src/assets/images/anonyme.png";
 
 // Création du context
 export const UserContext = createContext(null);
@@ -22,7 +23,6 @@ export const UserContext = createContext(null);
 const UserProvider = ({ children }) => {
   const [authUser, setAuthUser] = useState(null);
   const [authLoading, setAuthLoading] = useState(true);
-  const defaultPhoto = "/src/assets/images/anonyme.png";
 
   //  Ecouter les changements d'état d'authentification de l'utilisateur
   useEffect(() => {
@@ -77,7 +77,7 @@ const UserProvider = ({ children }) => {
         body: JSON.stringify({
           id: uid,
           email: user.email,
-          photo: "/src/assets/images/anonyme.png",
+          photo: defaultPhoto,
         }),
       }
     );
@@ -120,7 +120,7 @@ const UserProvider = ({ children }) => {
             body: JSON.stringify({
               id: user.uid, // ID Firebase
               email: user.email, // Email Google
-              photo: user.photoURL || "/src/assets/images/anonyme.png", // Photo Google, ou image par défaut
+              photo: user.photoURL || defaultPhoto, // Photo Google, ou image par défaut
             }),
           }
         );

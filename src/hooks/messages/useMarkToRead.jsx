@@ -53,7 +53,6 @@ export default function useMarkToRead(currentUserId, conversationId) {
     },
 
     onError: (error, readingState, context) => {
-      console.log("mutation échouée");
       if (context?.previous) {
         queryClient.setQueryData(
           ["conversations", conversationId],
