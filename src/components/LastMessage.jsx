@@ -1,8 +1,8 @@
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import { UserContext } from "../contexts/userContext";
 import Loader from "./Loader";
 import useMarkToRead from "../hooks/messages/useMarkToRead";
-import useIsRead from "../hooks/messages/useIsRead";
+
 import { useUserById } from "../hooks/users/useUserById";
 import { Link } from "react-router";
 import { dateToFr } from "../utilities/functions";
@@ -15,14 +15,13 @@ export default function LastMessage({ conversation }) {
     conversation?.id
   );
   // Récupération du statut de lecture du dernier message
-  const { data: isRead } = useIsRead(conversation.id, user.id);
 
   // Récupération du pseudo de l'autre utilisateur
-  const participants = Object.keys(conversation.participants);
+  const participants = Object.keys(conversation?.participants);
   const otherUserId = participants.filter(
     (participant) => participant !== user.id
   );
-  const { data: otherUser, isLoadind: otherUserLoading } =
+  const { data: otherUser, isLoading: otherUserLoading } =
     useUserById(otherUserId);
 
   if (loading) {
@@ -32,10 +31,10 @@ export default function LastMessage({ conversation }) {
     <Link
       to={`/messages/${otherUser?.pseudo}`}
       className={`cursor-pointer border w-1/1 lg:w-3/4 py-4 px-2 md:px-12 max-h-[150px] h-fit md:max-h-[100px] overflow-hidden rounded my-1 border-gray-500 relative ${
-        isRead ? "" : "bg-gray-600/20"
+        !conversation.hasUnread ? "" : "bg-gray-600/20"
       }`}
       disabled={isLoading}
-      onClick={() => markToRead(isRead)}
+      onClick={() => markToRead(conversation.hasUnread)}
     >
       <div className=" flex items-center gap-3 underline font-semibold mb-3">
         {/* Photo utilisateur */}
@@ -46,7 +45,9 @@ export default function LastMessage({ conversation }) {
         />
         <div
           className={`flex justify-between w-full ${
-            isRead ? "text-gray-400" : "text-gray-600 dark:text-white"
+            !conversation.hasUnread
+              ? "text-gray-400"
+              : "text-gray-600 dark:text-white"
           }`}
         >
           {/* Nom utilisateur */}
@@ -56,7 +57,9 @@ export default function LastMessage({ conversation }) {
       </div>
       <div
         className={`ms-12 ${
-          isRead ? "text-gray-400" : "text-gray-600 dark:text-white"
+          !conversation.hasUnread
+            ? "text-gray-400"
+            : "text-gray-600 dark:text-white"
         } max-w-1/1 max-h-1/1  break-words whitespace-pre-wrap line-clamp-1 overflow-hidden`}
       >
         {/* Si le message n'est pas vide, on affiche le message */}
@@ -69,7 +72,7 @@ export default function LastMessage({ conversation }) {
           )}{" "}
       </div>
       {/* Point de notification de novueau message */}
-      {!isRead && (
+      {conversation.hasUnread && (
         <div className="w-[15px] h-[15px]  absolute right-3 top-1 rounded-full bg-red-600"></div>
       )}
     </Link>

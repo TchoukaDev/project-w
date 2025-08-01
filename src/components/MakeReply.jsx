@@ -62,12 +62,11 @@ const MakeReply = forwardRef(function MakeReply(
     if (mutateLoading) {
       return; // Évite une double soumission si la requête est en cours
     }
-
+    onCloseReviewForm(); // Ferme le formulaire après envoi
     // Envoie des données via la mutation
     mutate(data, {
       onSuccess: () => {
         toast.success("Votre réponse a été envoyée."); // Message de succès
-        onCloseReviewForm(); // Ferme le formulaire après envoi
       },
       onError: (error) => {
         toast.error(error.message); // Message d'erreur

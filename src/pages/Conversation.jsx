@@ -196,7 +196,7 @@ export default function Conversation() {
 
   return (
     <motion.main
-      className="container min-h-[80vh] flex flex-col overflow-auto lg:flex-row"
+      className="container flex flex-col overflow-auto lg:flex-row"
       initial={{ y: 50, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.2 }}
@@ -216,13 +216,16 @@ export default function Conversation() {
             Votre conversation avec {otherUser?.pseudo}:
           </h1>{" "}
           {/* Infos autre utilisateurs */}
-          <img src={otherUser?.photo} className="w-[150px] rounded-full"></img>
+          <img
+            src={otherUser?.photo}
+            className="w-[150px] h-|150px] rounded-full"
+          ></img>
           <Link to={`/profile/${otherUser?.pseudo}`}>
             <Button type="button">Voir le profil</Button>
           </Link>
         </div>
       </div>
-      <div className="flex max-h-[80vh] flex-col w-full lg:w-2/3 basis-2/3 gap-3 items-center overflow-y-auto grow  self-center px-4 lg:px-16 py-5">
+      <div className="flex flex-col relative  w-full lg:w-2/3 basis-2/3 gap-3 items-center justify-start  overflow-y-auto grow  px-4 lg:px-16 py-5">
         {/* Affichage des messages */}
         <div
           className="grow overflow-y-auto w-full rounded border border-gray-300 p-5"
@@ -236,7 +239,7 @@ export default function Conversation() {
             </div>
           )}
           {messages?.length === 0 ? (
-            <p className="text-center text-gray-300">
+            <p className="text-center absolute top-1/2 -translate-y-1/2 left-0 right-0 text-gray-600 dark:text-gray-300">
               Vous n'avez encore échangé aucun message avec cet utilisateur{" "}
             </p>
           ) : (
@@ -252,7 +255,7 @@ export default function Conversation() {
                   <div className="flex justify-start items-center gap-3">
                     <img
                       src={user.photo}
-                      className="w-10 rounded-full self-start"
+                      className="w-10 h-10 rounded-full self-start"
                     ></img>
                     <div className=" bg-blue-500 relative w-fit max-w-1/2 max-h-fit break-words whitespace-pre-wrap my-3 p-2 rounded-2xl rounded-tl-none">
                       <p className="">{message.message}</p>
@@ -316,7 +319,7 @@ export default function Conversation() {
                     </div>{" "}
                     <img
                       src={otherUser.photo}
-                      className="w-10 rounded-full self-start"
+                      className="w-10 h-10 rounded-full self-start"
                       alt="image "
                     ></img>
                   </div>
@@ -454,7 +457,7 @@ export default function Conversation() {
                         {/* Image prévisualisée */}
                         <motion.img
                           src={preview}
-                          className="w-full rounded"
+                          className="max-w-full max-h-10 rounded"
                           layout
                         />
                       </motion.div>

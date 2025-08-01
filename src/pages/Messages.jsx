@@ -22,9 +22,15 @@ export default function Messages() {
       transition={{ duration: 0.2 }}
     >
       <h1 className="mb-16">Vos conversations:</h1>
-      {conversations?.map((conversation) => (
-        <LastMessage conversation={conversation} key={conversation.id} />
-      ))}
+      {conversations?.length === 0 ? (
+        <p className="text-center self-center text-gray-600 dark:text-gray-300">
+          Vous n'avez encore échangé aucun message avec cet utilisateur{" "}
+        </p>
+      ) : (
+        conversations?.map((conversation) => (
+          <LastMessage conversation={conversation} key={conversation.id} />
+        ))
+      )}
     </motion.main>
   );
 }

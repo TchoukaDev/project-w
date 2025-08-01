@@ -42,7 +42,10 @@ export default function Followers() {
             // Chaque abonné est un lien vers son profil
             <Link to={`/profile/${user.pseudo}`} key={user.id}>
               <span className="flex items-center gap-3 hover:text-blue-600 text-gray-300 transition-colors duration:0.3">
-                <img src={user.photo} className="w-[30px] rounded-full" />
+                <img
+                  src={user.photo}
+                  className="w-[30px] h-[30px] rounded-full"
+                />
                 {user.firstName}
                 {user.Name} ({user.pseudo})
               </span>
@@ -68,9 +71,11 @@ export default function Followers() {
             // Chaque utilisateur suivi est un lien vers son profil
             <Link to={`/profile/${user.pseudo}`} key={user.id}>
               <span className="flex items-center gap-3 hover:text-blue-600 text-gray-300 transition-colors duration:0.3">
-                <img src={user.photo} className="w-[30px] rounded-full" />
-                {user.firstName}
-                {user.name} ({user.pseudo})
+                <img
+                  src={user.photo}
+                  className="w-[30px] h-[30px] rounded-full"
+                />
+                {user.firstName} {user.name} ({user.pseudo})
               </span>
             </Link>
           ))

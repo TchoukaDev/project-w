@@ -29,7 +29,8 @@ export default function useConversationsByUser(currentUserId) {
 
         // 3. Vérifie si l'utilisateur a lu le dernier message
         const hasUnread =
-          !conversationData.lastMessage.readBy ||
+          (conversationData.lastMessage &&
+            !conversationData.lastMessage.readBy) ||
           !conversationData.lastMessage.readBy[currentUserId];
 
         return {
@@ -38,7 +39,7 @@ export default function useConversationsByUser(currentUserId) {
           hasUnread, // 4. On ajoute ce champ à chaque conversation
         };
       });
-
+      console.log(fetchAll);
       const conversations = await Promise.all(fetchAll);
 
       // 5. Trie par date du dernier message

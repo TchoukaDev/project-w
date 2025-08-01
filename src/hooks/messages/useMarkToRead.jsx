@@ -24,16 +24,16 @@ export default function useMarkToRead(currentUserId, conversationId) {
     // ✅ Rendu optimiste
     onMutate: async () => {
       // Annule les requêtes en cours sur la conversation
-      await queryClient.cancelQueries(["conversations", conversationId]);
+      await queryClient.cancelQueries(["conversations", currentUserId]);
 
       // Récupère le cache actuel
       const previous = queryClient.getQueryData([
         "conversations",
-        conversationId,
+        currentUserId,
       ]);
 
       // Modifie le cache localement
-      queryClient.setQueryData(["conversations", conversationId], (prev) => {
+      queryClient.setQueryData(["conversations", currentUserId], (prev) => {
         console.log("mutation réussie");
         if (!prev?.lastMessage) return prev;
         return {
@@ -55,7 +55,7 @@ export default function useMarkToRead(currentUserId, conversationId) {
     onError: (error, readingState, context) => {
       if (context?.previous) {
         queryClient.setQueryData(
-          ["conversations", conversationId],
+          ["conversations", currentUserId],
           context.previous
         );
       }
@@ -65,7 +65,7 @@ export default function useMarkToRead(currentUserId, conversationId) {
 
     // ✅ En cas de succès, on rafraîchit les données (si besoin)
     onSuccess: () => {
-      queryClient.invalidateQueries(["conversations", conversationId]);
+      queryClient.invalidateQueries(["conversations", currentUserId]);
     },
   });
 }

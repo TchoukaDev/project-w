@@ -177,7 +177,7 @@ export default function Profile() {
                   followedUserId={profileUid}
                 />
                 <Link
-                  className="bg-gray-300/30 rounded-3xl px-4 py-2 font-semibold text-sm  hover:bg-blue-600 cursor-pointer transition-color duration-300"
+                  className="bg-gray-300/30 rounded-3xl px-4 py-2 font-semibold text-sm text-center  hover:bg-blue-600 cursor-pointer transition-color duration-300"
                   to={`/messages/${userData.pseudo}`}
                 >
                   Envoyer un message
