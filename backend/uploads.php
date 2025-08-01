@@ -58,7 +58,7 @@ try {
                     // Déplace le fichier
                     if (move_uploaded_file($file['tmp_name'], $destination)) {
                         $base_url = 'http://' . $_SERVER['HTTP_HOST'];
-                        $relative_path = '/React/project-w/backend/uploads/' . $new_filename;
+                        $relative_path = '/backend/uploads/' . $new_filename;
                         $file_url = $base_url . $relative_path;
 
                         // 🔁 On renvoie la clé de champ utilisée, ainsi que l'URL

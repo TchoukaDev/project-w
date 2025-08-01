@@ -113,13 +113,10 @@ export default function Home() {
     const formData = new FormData();
     formData.append("image", selectedFile);
 
-    const response = await fetch(
-      "http://localhost/React/project-w/backend/uploads.php",
-      {
-        method: "POST",
-        body: formData,
-      }
-    );
+    const response = await fetch("/backend/uploads.php", {
+      method: "POST",
+      body: formData,
+    });
 
     if (!response.ok) {
       throw new Error("Erreur lors du téléchargement de la photo");

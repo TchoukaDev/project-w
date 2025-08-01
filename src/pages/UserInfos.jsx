@@ -55,13 +55,10 @@ export default function UserInfos() {
     formData.append("photo", selectedFile);
     formData.append("oldPhotoPath", user.photo);
 
-    const response = await fetch(
-      "http://localhost/React/project-w/backend/uploads.php",
-      {
-        method: "POST",
-        body: formData,
-      }
-    );
+    const response = await fetch("/backend/uploads.php", {
+      method: "POST",
+      body: formData,
+    });
 
     if (!response.ok) {
       throw new Error("Erreur lors du téléchargement de la photo");
