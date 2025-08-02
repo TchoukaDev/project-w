@@ -342,7 +342,7 @@ export default function Home() {
         </div>
 
         {/* Colonne de droite - affichage des messages */}
-        <div className="flex flex-col items-center py-5 px-5 mt-10 md:px-16 gap-10 grow">
+        <div className="flex flex-col items-center py-5 px-5 mt-10 md:px-16 gap-10 grow overflow-y-auto">
           <h1 className="text-center w-full">Fil d'actualités:</h1>
           <div className="flex flex-col w-full">
             {loadingWaves ? (

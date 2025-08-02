@@ -23,6 +23,9 @@ import { usePrivateMessages } from "../hooks/messages/usePrivateMessages";
 import Button from "../components/Button";
 import Zoom from "react-medium-image-zoom";
 import "react-medium-image-zoom/dist/styles.css";
+import { useConversationId } from "../hooks/messages/useConversationId";
+import useMarkToRead from "../hooks/messages/useMarkToRead";
+import { useConversationById } from "../hooks/messages/useConversationById";
 
 export default function Conversation() {
   // État local pour la prévisualisation de l'image
@@ -38,20 +41,39 @@ export default function Conversation() {
   const { pseudo } = useParams();
 
   // Récupération des informations des utilisateurs
-  const { data: otherUser, isLoading: otherUserLoading } =
+  const { data: otherUser = [], isLoading: otherUserLoading } =
     useUserByPseudo(pseudo);
-
   const { user, loading: userLoading } = useContext(UserContext);
 
-  // Fonction de mutation pour l'envoi des message
+  // Récupération id de la conversation
+  const { data: conversationId = [] } = useConversationId(
+    user?.id,
+    otherUser?.uid
+  );
+
+  const { data: conversation = [] } = useConversationById(conversationId);
+
+  // Fonction de mutation pour l'envoi des messages
   const { mutate, isLoading: mutateLoading } = useSendMessage(
     user?.id,
     otherUser?.uid
   );
 
+  const { mutate: markToRead } = useMarkToRead(user?.id, conversationId);
+
   // Récupération des messages
   const { data: messages = [], isLoading: messagesLoading } =
     usePrivateMessages(user?.id, otherUser?.uid);
+
+  // UssEffect pour marquer le dernier message comme lu à chaque fois qu'il change, si l'utilisateur est déjà dans la conversation
+  useEffect(() => {
+    if (
+      conversation?.lastMessage &&
+      !conversation.lastMessage.readBy?.[user?.id]
+    ) {
+      markToRead(true);
+    }
+  }, [conversation?.lastMessage, user?.id]);
 
   // Utilisation React Hook Form
   const { register, handleSubmit, reset, setValue } = useForm();
@@ -196,12 +218,12 @@ export default function Conversation() {
 
   return (
     <motion.main
-      className="container flex flex-col overflow-auto lg:flex-row"
+      className="container !h-[120vh] flex flex-col overflow-auto lg:flex-row"
       initial={{ y: 50, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.2 }}
     >
-      <div className="basis-1/3 flex flex-col items-center gap-5 lg:gap-16 px-16 py-5 border-r border-gray-600">
+      <div className="lg:basis-1/3 flex flex-col items-center gap-5 lg:gap-16 px-16 py-5 border-r border-gray-600">
         {" "}
         {/* Retour */}
         <Link
@@ -210,19 +232,35 @@ export default function Conversation() {
         >
           <ArrowLeft /> Retour aux messages
         </Link>
-        <div className="flex flex-col gap-5 items-center justify-evenly grow">
+        {/* Version desktop */}
+        <div className="hidden lg:flex flex-col gap-5 items-center justify-evenly grow">
           {/* Titre */}
           <h1 className="text-center">
             Votre conversation avec {otherUser?.pseudo}:
           </h1>{" "}
           {/* Infos autre utilisateurs */}
-          <img
-            src={otherUser?.photo}
-            className="w-[150px] h-|150px] rounded-full"
-          ></img>
-          <Link to={`/profile/${otherUser?.pseudo}`}>
-            <Button type="button">Voir le profil</Button>
-          </Link>
+          <div className="flex flex-col gap-3 items-center ">
+            <img
+              src={otherUser?.photo}
+              className=" w-[50px] lg:w-[150px] h-[50px] lg:h-[150px] rounded-full"
+            ></img>
+            <Link to={`/profile/${otherUser?.pseudo}`}>
+              <Button type="button">Voir le profil</Button>
+            </Link>
+          </div>
+        </div>
+        {/* Version mobile */}
+        <div className="flex lg:hidden">
+          <div className="font-semibold text-gray-900 dark:text-gray-300 text-md lg:text-2xl !font-roboto text-center">
+            Votre conversation avec{" "}
+            <Link
+              to={`/profile/${otherUser?.pseudo}`}
+              className=" text-blue-600 underline hover:text-gray-600 dark:hover:text-gray-300"
+            >
+              {otherUser?.pseudo}
+            </Link>{" "}
+            :{/* Infos autre utilisateurs */}
+          </div>
         </div>
       </div>
       <div className="flex flex-col relative  w-full lg:w-2/3 basis-2/3 gap-3 items-center justify-start  overflow-y-auto grow  px-4 lg:px-16 py-5">
@@ -263,7 +301,7 @@ export default function Conversation() {
                         <>
                           <Zoom classDialog="custom-zoom">
                             <img
-                              className="w-full mt-1"
+                              className="w-[50px] lg:w-[100px] lg:max-h-[100px] max-h-[50px] mx-auto mt-1"
                               src={message.image}
                               alt="image du message"
                             />
@@ -299,7 +337,7 @@ export default function Conversation() {
                         <>
                           <Zoom shouldCloseonScroll={false}>
                             <img
-                              className="w-full mt-1"
+                              className="w-[50px] lg:w-[100px] lg:max-h-[100px] max-h-[50px] mx-auto mt-1"
                               src={message.image}
                               alt="image du message"
                             />

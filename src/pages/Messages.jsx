@@ -16,7 +16,7 @@ export default function Messages() {
   }
   return (
     <motion.main
-      className="container flex-col items-center flex px-4 md:px-16 py-8"
+      className="container !h-[100vh] flex-col items-center flex px-4 md:px-16 py-8"
       initial={{ opacity: 0, x: -30 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.2 }}

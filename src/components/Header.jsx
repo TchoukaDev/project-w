@@ -24,6 +24,7 @@ export default function Header() {
   const [loading, setLoading] = useState(false);
   const [showNav, setShowNav] = useState(false);
 
+  // Récupérer le statut hasUnread dans au moins une des conversations en cours
   const hasUnread = conversations.some(
     (conversation) => conversation.hasUnread
   );

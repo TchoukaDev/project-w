@@ -7,7 +7,7 @@ export default function SettingsLayout() {
       initial={{ opacity: 0, x: -30 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.2 }}
-      className="container px-16 py-8"
+      className="container !h-[80vh] px-16 py-8"
     >
       <h1 className=" mb-8 ">
         Préférences

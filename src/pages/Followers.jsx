@@ -21,7 +21,7 @@ export default function Followers() {
 
   return (
     <motion.main
-      className="container flex flex-col px-16 py-8"
+      className="container !h-[100vh] flex flex-col px-16 py-8"
       initial={{ opacity: 0, x: -30 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.2 }}
@@ -35,19 +35,19 @@ export default function Followers() {
         {loadingFollowers && <p>Chargement en cours...</p>}
 
         {/* Si aucun abonné, afficher message, sinon afficher la liste */}
-        {followers.length === 0 ? (
+        {followers?.length === 0 ? (
           <p>Vous n'avez aucun abonné pour le moment.</p>
         ) : (
-          followers.map((user) => (
+          followers?.map((user) => (
             // Chaque abonné est un lien vers son profil
-            <Link to={`/profile/${user.pseudo}`} key={user.id}>
+            <Link to={`/profile/${user?.pseudo}`} key={user?.id}>
               <span className="flex items-center gap-3 hover:text-blue-600 text-gray-300 transition-colors duration:0.3">
                 <img
-                  src={user.photo}
+                  src={user?.photo}
                   className="w-[30px] h-[30px] rounded-full"
                 />
-                {user.firstName}
-                {user.Name} ({user.pseudo})
+                {user?.firstName}
+                {user?.Name} ({user?.pseudo})
               </span>
             </Link>
           ))

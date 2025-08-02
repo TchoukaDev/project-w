@@ -1,12 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 
-// hook pour récupérer les conversations de l'utilisateur
+// Hook pour récupérer les conversations d’un utilisateur avec un champ hasUnread calculé
 export default function useConversationsByUser(currentUserId) {
   return useQuery({
     queryKey: ["conversations", currentUserId],
     queryFn: async () => {
-      // 1. Récupère les IDs des conversations de l'utilisateur
+      // 1. Récupérer la liste des IDs des conversations de l'utilisateur
       const response = await fetch(
         `https://waves-27b13-default-rtdb.europe-west1.firebasedatabase.app/users/${currentUserId}/conversations.json`
       );
@@ -16,9 +16,10 @@ export default function useConversationsByUser(currentUserId) {
       const data = await response.json();
       if (!data) return [];
 
+      // 2. Extraire les IDs des conversations
       const conversationIds = Object.keys(data);
 
-      // 2. Récupère les infos de chaque conversation
+      // 3. Pour chaque conversation, récupérer ses données complètes
       const fetchAll = conversationIds.map(async (conversationId) => {
         const url = `https://waves-27b13-default-rtdb.europe-west1.firebasedatabase.app/conversations/${conversationId}.json`;
         const response2 = await fetch(url);
@@ -27,29 +28,32 @@ export default function useConversationsByUser(currentUserId) {
         }
         const conversationData = await response2.json();
 
-        // 3. Vérifie si l'utilisateur a lu le dernier message
+        // 4. Calculer si l'utilisateur a des messages non lus dans cette conversation
+        // On vérifie que lastMessage existe, que readBy est un objet et si l'utilisateur l'a lu
         const hasUnread =
-          (conversationData.lastMessage &&
-            !conversationData.lastMessage.readBy) ||
+          conversationData.lastMessage &&
+          conversationData.lastMessage.readBy &&
           !conversationData.lastMessage.readBy[currentUserId];
 
         return {
           id: conversationId,
           ...conversationData,
-          hasUnread, // 4. On ajoute ce champ à chaque conversation
+          hasUnread, // Ajout du champ hasUnread
         };
       });
-      console.log(fetchAll);
+
+      // 5. Attendre que toutes les conversations soient récupérées
       const conversations = await Promise.all(fetchAll);
 
-      // 5. Trie par date du dernier message
+      // 6. Trier les conversations par date du dernier message, du plus récent au plus ancien
       conversations.sort(
-        (a, b) => b.lastMessage.timestamp - a.lastMessage.timestamp
+        (a, b) =>
+          (b.lastMessage?.timestamp || 0) - (a.lastMessage?.timestamp || 0)
       );
 
       return conversations;
     },
     onError: (error) => toast.error(error.message),
-    enabled: !!currentUserId,
+    enabled: !!currentUserId, // n’exécute la requête que si currentUserId est défini
   });
 }

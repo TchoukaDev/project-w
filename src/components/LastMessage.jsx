@@ -34,7 +34,7 @@ export default function LastMessage({ conversation }) {
         !conversation.hasUnread ? "" : "bg-gray-600/20"
       }`}
       disabled={isLoading}
-      onClick={() => markToRead(conversation.hasUnread)}
+      onClick={() => markToRead(true)}
     >
       <div className=" flex items-center gap-3 underline font-semibold mb-3">
         {/* Photo utilisateur */}
