@@ -188,7 +188,7 @@ export default function Profile() {
         </div>
 
         {/* Colonne de droite : liste des publications (waves) */}
-        <div className=" flex flex-col items-center py-5 mt-10 px-5 md:px-16 gap-10 overflow-y-auto grow">
+        <div className=" flex flex-col items-center py-5 mt-10 px-5 md:px-16 gap-10 overflow-auto grow">
           <h1 className="text-center w-full">
             {isOwnProfile
               ? "Vos publications récentes:"
