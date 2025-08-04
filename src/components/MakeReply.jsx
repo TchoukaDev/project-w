@@ -35,7 +35,15 @@ const MakeReply = forwardRef(function MakeReply(
   ); // Hook personnalisé pour envoyer la réponse (mutation)
 
   // On sépare la référence du champ "reply"
-  const { ref: registerRef, ...registerRest } = register("reply");
+  const { ref: registerRef, ...registerRest } = register("reply", {
+    required:
+      "Vous ne pouvez pas envoyer une réponse vide, veuillez saisir un message",
+  });
+  const onInvalid = (errors) => {
+    if (errors.reply) {
+      toast.error(errors.reply.message); // Affiche le message de validation
+    }
+  };
 
   const replyRef = useRef(null); // Référence au textarea
   const emojiRef = useRef(); // Référence au composant EmojiPicker
@@ -81,7 +89,7 @@ const MakeReply = forwardRef(function MakeReply(
       ref={makeReplyRef} // Référence transmise au formulaire
       key={wid} // Clé unique liée à l'identifiant du message
       className="absolute bg-gray-800 p-3 border border-gray-600 top-full z-1 mt-1 w-full rounded"
-      onSubmit={handleSubmit(onSubmit)} // Appelle handleSubmit avec notre fonction onSubmit
+      onSubmit={handleSubmit(onSubmit, onInvalid)} // Appelle handleSubmit avec notre fonction onSubmit
       initial={{ opacity: 0, y: -10 }} // Animation d'entrée
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -10 }} // Animation de sortie

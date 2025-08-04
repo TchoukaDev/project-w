@@ -202,11 +202,11 @@ export default function Home() {
         {showModal && <WelcomeModal onCloseModal={handleCloseModal} />}
 
         {/* Colonne de gauche - création d'une Wave */}
-        <div className="flex flex-col justify-evenly px-5 md:px-16 py-5 border-b lg:border-b-0 lg:border-r basis-1/3 shrink-0 border-gray-600 ">
-          <div className="flex justify-center items-center text-gray-600 dark:text-gray-300 my-5 font-semibold !font-roboto underline text-2xl">
+        <div className="flex flex-col justify-evenly overflow-auto px-5 md:px-16 py-5 border-b lg:border-b-0 lg:border-r basis-1/3 shrink-0 border-gray-600 ">
+          <div className="flex justify-center items-center text-gray-600 dark:text-gray-300 my-5 font-semibold !font-inter underline text-2xl">
             Salut {user?.firstName || user?.pseudo}!{" "}
           </div>
-          <div className="flex justify-center items-center text-gray-600 dark:text-gray-300 my-7 font-semibold !font-roboto text-xl">
+          <div className="flex justify-center items-center text-gray-600 dark:text-gray-300 my-7 font-semibold !font-inter text-xl">
             Souhaites-tu partager quelque chose aujourd'hui?{" "}
           </div>
 
@@ -342,7 +342,7 @@ export default function Home() {
         </div>
 
         {/* Colonne de droite - affichage des messages */}
-        <div className="flex flex-col items-center py-5 px-5 mt-10 md:px-16 gap-10 grow overflow-auto">
+        <div className="flex flex-col items-center pb-5 px-5 mt-10 md:px-16 gap-10 grow overflow-auto">
           <h1 className="text-center w-full">Fil d'actualités:</h1>
           <div className="flex flex-col w-full">
             {loadingWaves ? (
@@ -378,7 +378,7 @@ export default function Home() {
                               {wave.pseudo}
                             </div>
                           </Link>
-                          <div className="text-white/50 !font-pompiere">
+                          <div className=" text-gray-600 dark:text-white/50 !font-pompiere">
                             {dateToFr(wave.createdAt)}
                           </div>
                         </div>

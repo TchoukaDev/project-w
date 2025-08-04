@@ -24,7 +24,7 @@ export default function Messages() {
       <h1 className="mb-16">Vos conversations:</h1>
       {conversations?.length === 0 ? (
         <p className="text-center self-center text-gray-600 dark:text-gray-300">
-          Vous n'avez encore échangé aucun message avec cet utilisateur{" "}
+          Vous n'avez encore démarré aucune conversation.{" "}
         </p>
       ) : (
         conversations?.map((conversation) => (

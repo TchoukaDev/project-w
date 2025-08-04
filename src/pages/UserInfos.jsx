@@ -123,7 +123,9 @@ export default function UserInfos() {
       {/* Formulaire principal */}
       <form
         className="flex flex-col-reverse md:flex-row justify-between"
-        onSubmit={handleSubmit(onSubmit)}
+        onSubmit={handleSubmit(onSubmit, (error) =>
+          toast.error(error.pseudo.message)
+        )}
       >
         {/* Colonne de gauche avec les champs texte */}
         <div className=" ml-5 flex flex-col justify-between gap-5 items-center md:items-start">
@@ -136,17 +138,11 @@ export default function UserInfos() {
               className="inputSettings"
               id="pseudo"
               {...register("pseudo", {
-                required: true,
                 validate: (value) =>
                   value.trim().length > 0 ||
-                  "Ce champ ne peut pas contenir de caractère vide",
+                  "Le pseudo doit absolument être renseigné",
               })}
             />
-            {errors.pseudo && (
-              <p className="text-red-600 my-1">
-                Ce champ ne peut pas être vide.
-              </p>
-            )}
           </p>
 
           {/* First Name */}

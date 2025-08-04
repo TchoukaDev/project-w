@@ -28,10 +28,7 @@ export default function WelcomeModal({ onCloseModal }) {
 
   // Enregistrement du champ "pseudo" avec règles de validation
   const pseudoRegister = register("pseudo", {
-    required: "Le pseudo est obligatoire",
-    validate: (value) =>
-      value.trim() !== "" ||
-      "Le pseudo ne peut pas être vide ou composé d'espaces",
+    validate: (value) => value.trim() !== "" || "Veuillez saisir un pseudo",
   });
 
   // Fonction appelée lors de la soumission du formulaire
@@ -65,7 +62,7 @@ export default function WelcomeModal({ onCloseModal }) {
   // Contenu JSX de la modale
   const modalContent = (
     <div className=" bg-black/70 fixed inset-0 flex justify-center items-center z-50 text-black">
-      <div className="bg-gray-950 border shadow shadow-custom text-xl p-8 rounded-lg  w-2/3 lg:w-1/2  relative">
+      <div className="bg-gray-950 border shadow-custom-black dark:shadow-custom text-xl p-8 rounded-lg  w-2/3 lg:w-1/2  relative">
         <p className="text-white my-7 text-center">
           Bienvenue sur Waves. Avant de faire vos premiers pas, veuillez choisir
           un pseudo. Ne vous inquiétez pas, vous pourrez le modifier par la
@@ -75,7 +72,9 @@ export default function WelcomeModal({ onCloseModal }) {
         {/* Formulaire pour saisir le pseudo */}
         <form
           className="w-1/3 mx-auto text-center"
-          onSubmit={handleSubmit(onSubmit)}
+          onSubmit={handleSubmit(onSubmit, (error) =>
+            toast.error(error.pseudo.message)
+          )}
         >
           <input
             className="w-full border border-gray-400 rounded-md p-2 placeholder:text-sm outline-none focus:border-2 focus:border-blue-500 my-7 text-white text-sm"
@@ -89,13 +88,6 @@ export default function WelcomeModal({ onCloseModal }) {
               pseudoRef.current = e;
             }}
           />
-
-          {/* Affichage d'un message d'erreur si la validation échoue */}
-          {errors.pseudo && (
-            <p className="text-red-600 font-semibold">
-              {errors.pseudo.message}
-            </p>
-          )}
 
           {/* Bouton de validation du formulaire */}
           <Button margin="my-5" type="submit" disabled={isLoading}>

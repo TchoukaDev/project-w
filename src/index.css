@@ -11,16 +11,21 @@
     src: url("./assets/fonts/Roboto-Variable.ttf");
   }
 
+  @font-face {
+    font-family: "inter";
+    src: url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap");
+  }
+
   @theme {
     --font-pompiere: "pompiere", sans-serif;
     --font-roboto: "roboto", sans-serif;
+    --font-inter: "inter", sans-serif;
     --shadow-custom: 0px 4px 12px rgba(255, 255, 255, 0.3);
     --shadow-custom-black: 0px 4px 12px rgba(0, 0, 0, 0.3);
   }
 }
 * {
-  font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
-    "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+  font-family: "Roboto", sans-serif;
   box-sizing: border-box;
 }
 
@@ -31,19 +36,23 @@ body,
 }
 
 h1 {
-  @apply underline font-semibold text-gray-700 dark:text-gray-300 text-2xl !font-roboto;
+  @apply underline font-semibold text-gray-700 dark:text-gray-300 text-3xl !font-inter;
 }
 
 .container {
-  @apply my-9 w-[90%] mx-auto rounded shadow-custom-black dark:shadow-custom  overflow-auto max-h-[200vh] lg:h-[80vh] grow;
+  @apply my-9 w-[90%] mx-auto rounded shadow-custom-black dark:shadow-custom  overflow-auto min-h-[80vh] max-h-[200vh] lg:h-[80vh] grow;
 }
 
 .input {
-  @apply w-full border text-gray-600 dark:text-white  border-gray-400 rounded-md px-4 pt-7 pb-2 text-sm placeholder-transparent outline-none focus:border-2 focus:border-blue-500;
+  @apply w-[300px] border text-gray-600 dark:text-white  border-gray-400 rounded-md px-4 pt-7 pb-2 text-sm placeholder-transparent outline-none focus:border-2 focus:border-blue-500;
 }
 
 .inputSettings {
   @apply bg-gray-900 py-1 text-white px-2 rounded text-sm outline-none focus:border-2 focus:border-blue-600 w-[250px];
+}
+
+.link {
+  @apply text-blue-600 hover:text-blue-800 hover:underline;
 }
 
 /* Neutraliser le comportement d'autofill */

@@ -42,7 +42,7 @@ export default function SignUp() {
 
   // Configuration du champ email avec validation
   const emailRegister = register("email", {
-    required: true,
+    required: "Veuillez-saisir une adresse email",
     pattern: {
       value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i, // Regex pour vérifier le format email
       message: "Veuillez saisir une adresse email valide.",
@@ -126,7 +126,7 @@ export default function SignUp() {
               className="input peer"
               placeholder=""
               {...register("password", {
-                required: true,
+                required: "Veuillez saisir un mot de passe",
                 minLength: {
                   value: 8,
                   message:
@@ -145,7 +145,9 @@ export default function SignUp() {
               Saisir un mot de passe
             </label>
           </div>
-
+          {errors.password && (
+            <p className="text-red-400">{errors.password.message}</p>
+          )}
           {/* Champ confirmation mot de passe */}
           <div className="relative">
             <input
@@ -174,9 +176,6 @@ export default function SignUp() {
 
           {/* Affichage des erreurs des champs password et password2 */}
           <div>
-            {errors.password && (
-              <p className="text-red-400">{errors.password.message}</p>
-            )}
             {errors.password2 && (
               <p className="text-red-400">{errors.password2.message}</p>
             )}
@@ -205,7 +204,7 @@ export default function SignUp() {
         {/* Lien vers la page de connexion */}
         <div className="text-center">
           Vous avez déjà un compte?{" "}
-          <Link className="underline text-blue-500" to="/">
+          <Link className="link" to="/">
             Connectez-vous
           </Link>{" "}
         </div>

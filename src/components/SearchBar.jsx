@@ -81,7 +81,7 @@ export default function SearchBar({ usersFounded, setResearch, research }) {
             ) : (
               usersFounded.map((user, index) => (
                 <li
-                  key={user?.uid}
+                  key={user?.id}
                   onMouseDown={() => {
                     isNavigatingRef.current = true;
 

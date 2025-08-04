@@ -83,21 +83,6 @@ export default function Profile() {
     setWavetoDelete(null); // Ferme la modale après la demande
   };
 
-  /**
-   * Ferme le formulaire de réponse (en réinitialisant l'id actif)
-   */
-  const onCloseReviewForm = () => {
-    setActiveReplyId(false);
-  };
-
-  /**
-   * Affiche ou masque les réponses d'un message
-   * @param {string} id - ID du message
-   */
-  const onClickShowReplies = (id) => {
-    setShowReply(id);
-  };
-
   // Gérer la fermeture du formulaire de réponse lorsqu'on clique en dehors
   const makeReplyRef = useRef();
   const makeReplyBtn = useRef();
@@ -117,7 +102,7 @@ export default function Profile() {
         transition={{ duration: 0.2 }}
       >
         {/* Colonne de gauche : informations personnelles du profil */}
-        <div className="basis-1/3 py-5 px-5 md:px-16 border-b lg-border-b-0 lg:border-r border-gray-600 flex flex-col justify-center items-center">
+        <div className="basis-1/3 py-5 px-5 overflow-auto md:px-16 border-b lg-border-b-0 lg:border-r border-gray-600 flex flex-col justify-center items-center">
           {/* Affiche un message de chargement si UID manquant ou données en cours de chargement */}
           {(!profileUid || loadingUser || loadingWaves) && (
             <p>Chargement en cours...</p>
@@ -177,7 +162,7 @@ export default function Profile() {
                   followedUserId={profileUid}
                 />
                 <Link
-                  className="bg-gray-300/30 rounded-3xl px-4 py-2 font-semibold text-sm text-center  hover:bg-blue-600 cursor-pointer transition-color duration-300"
+                  className=" bg-blue-500 dark:bg-blue-900 rounded-3xl px-4 py-2 border text-white border-transparent text-center font-semibold text-sm hover:bg-blue-600/70 hover:border-black dark:hover:border-white cursor-pointer transition-color duration-300"
                   to={`/messages/${userData.pseudo}`}
                 >
                   Envoyer un message
@@ -229,7 +214,7 @@ export default function Profile() {
                             </div>
                           </Link>
                           {/* Date de publication */}
-                          <div className="text-white/50 !font-pompiere">
+                          <div className="text-gray-600 dark:text-white/50 !font-pompiere">
                             {dateToFr(wave.createdAt)}
                           </div>
                         </div>

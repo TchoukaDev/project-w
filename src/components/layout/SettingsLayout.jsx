@@ -9,7 +9,7 @@ export default function SettingsLayout() {
       transition={{ duration: 0.2 }}
       className="container !h-[80vh] px-16 py-8"
     >
-      <h1 className=" mb-8 ">
+      <h1 className=" text-center mb-8 ">
         Préférences
         <hr className="mt-5 text-gray-500" />
       </h1>

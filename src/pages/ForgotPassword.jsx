@@ -11,6 +11,7 @@ export default function ForgotPassword() {
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors, isSubmitting }, // Gère les erreurs + l'état "en cours"
   } = useForm();
 
@@ -26,6 +27,8 @@ export default function ForgotPassword() {
     }
   };
 
+  const emailValue = watch("email");
+
   return (
     <div className="flex flex-col justify-center gap-8 items-center h-screen">
       <Logo size="md" />
@@ -39,22 +42,35 @@ export default function ForgotPassword() {
         </h2>
 
         {/* Champ email lié avec React Hook Form */}
-        <input
-          type="email"
-          placeholder="Votre adresse email"
-          className="inputSettings mx-auto"
-          {...register("email", {
-            required: "L'email est obligatoire",
-            pattern: {
-              value: /^\S+@\S+\.\S+$/,
-              message: "Format d'email invalide",
-            },
-          })}
-        />
+        <div className=" mx-auto relative">
+          <input
+            type="email"
+            id="email"
+            placeholder="Votre adresse email"
+            className="input peer"
+            {...register("email", {
+              required: "Veuillez saisir une adresse email",
+              pattern: {
+                value: /^\S+@\S+\.\S+$/,
+                message: "Format d'email invalide",
+              },
+            })}
+          />
+          <label
+            htmlFor="email"
+            className={`absolute left-2  transition-all cursor-text
+                peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400
+                peer-focus:top-1 peer-focus:text-sm peer-focus:text-blue-500  ${
+                  emailValue && "top-1 text-sm text-gray-400 "
+                }`}
+          >
+            Adresse email
+          </label>
+        </div>
 
         {/* Affichage d'une erreur si l'email est incorrect */}
         {errors.email && (
-          <p className="text-red-500 text-sm">{errors.email.message}</p>
+          <p className="text-red-500 text-sm mx-auto">{errors.email.message}</p>
         )}
         <div className=" mx-auto">
           {/* Bouton désactivé pendant la soumission */}
@@ -62,7 +78,7 @@ export default function ForgotPassword() {
             {isSubmitting ? "Envoi en cours..." : "Réinitialiser"}
           </Button>
         </div>
-        <Link className="text-sm text-blue-600 underline mx-auto" to="/">
+        <Link className="link mx-auto" to="/">
           Revenir à la page de connexion
         </Link>
       </form>

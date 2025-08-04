@@ -227,7 +227,7 @@ export default function Conversation() {
         {" "}
         {/* Retour */}
         <Link
-          className="hover:text-blue-600 dark:hover:text-white text-gray-400 text-sm transition-colors duration-300 flex items-center self-start"
+          className="hover:text-blue-600 text-gray-400 text-sm transition-colors duration-300 flex items-center self-start"
           to="/messages"
         >
           <ArrowLeft /> Retour aux messages
@@ -251,7 +251,7 @@ export default function Conversation() {
         </div>
         {/* Version mobile */}
         <div className="flex lg:hidden">
-          <div className="font-semibold text-gray-900 dark:text-gray-300 text-md lg:text-2xl !font-roboto text-center">
+          <div className="font-semibold text-gray-900 dark:text-gray-300 text-md lg:text-2xl !font-inter text-center">
             Votre conversation avec{" "}
             <Link
               to={`/profile/${otherUser?.pseudo}`}

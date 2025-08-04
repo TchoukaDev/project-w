@@ -40,7 +40,7 @@ export default function SignIn() {
 
   // Définition du champ email avec validation de format
   const emailRegister = register("email", {
-    required: true,
+    required: "Veuillez saisir votre adresse email",
     pattern: {
       value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i, // Regex email
       message: "Veuillez saisir une adresse email valide.",
@@ -125,7 +125,7 @@ export default function SignIn() {
               className="input peer"
               placeholder=""
               {...register("password", {
-                required: true,
+                required: "Veuillez saisir votre mot de passe",
               })}
             />
             <label
@@ -139,6 +139,10 @@ export default function SignIn() {
               Mot de passe
             </label>
           </div>
+          {/* Message d'erreur si le champ password est invalide */}
+          {errors.password && (
+            <p className="text-red-400">{errors.password.message}</p>
+          )}
 
           {/* Boutons */}
           <div className="flex flex-col gap-3">
@@ -159,17 +163,14 @@ export default function SignIn() {
         </form>
 
         {/* Lien vers la page de mot de passe oublié */}
-        <Link
-          className=" underline text-blue-500 mt-2 mb-9 text-sm"
-          to="/forgotPassword"
-        >
+        <Link className=" link mt-2 mb-9 text-sm" to="/forgotPassword">
           Mot de passe oublié?
         </Link>
 
         {/* Lien vers l’inscription */}
         <div>
           Pas encore de compte?{" "}
-          <Link className=" underline text-blue-500" to="/signUp">
+          <Link className=" link" to="/signUp">
             Inscrivez vous
           </Link>
         </div>

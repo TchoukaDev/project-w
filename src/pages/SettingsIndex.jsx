@@ -18,7 +18,7 @@ export default function SettingsIndex() {
           <li key={label} className="mb-5">
             {/* Liste de Liens */}
             <Link
-              className=" text-gray-500 hover:text-white transition-colors duration-300"
+              className="text-gray-600 dark:text-gray-300 hover:text-blue-600 transition-colors duration-300"
               to={path}
             >
               <svg

@@ -48,7 +48,7 @@ export default function WaveInteraction({ user, wave }) {
             }
             setActiveReplyId((prev) => (prev === wave.wid ? null : wave.wid));
           }}
-          className="hover:text-blue-600 hover:cursor-pointer text-xs flex gap-2 items-center  text-gray-400 p-1 transition-colors duration-300"
+          className="hover:text-blue-600 hover:cursor-pointer text-xs flex gap-2 items-center dark:text-gray-400 p-1 transition-colors duration-300"
         >
           <p>Répondre</p>
           {activeReplyId === wave.wid ? (

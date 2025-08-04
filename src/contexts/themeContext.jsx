@@ -1,4 +1,5 @@
 import { createContext, useState, useEffect, useContext } from "react";
+import { useLocation } from "react-router";
 
 // Création du contexte
 export const themeContext = createContext(null);
@@ -9,6 +10,9 @@ export function useTheme() {
 
 const ThemeProvider = ({ children }) => {
   const [theme, setTheme] = useState("dark");
+  const location = useLocation();
+  const forcedDarkRoutes = ["/signIn", "/signUp", "/forgotPassword"];
+  const isForcedDark = forcedDarkRoutes.includes(location.pathname);
 
   useEffect(() => {
     const storedTheme = localStorage.getItem("theme");
@@ -21,10 +25,17 @@ const ThemeProvider = ({ children }) => {
 
     // Appliqué le thème stocké ou le dark
     const current = storedTheme || "dark";
-    setTheme(current);
-    //   Ajouter la class dark, si current = dark
-    document.documentElement.classList.toggle("dark", current === "dark");
-  }, []);
+
+    // Si on est sur une page noire forcée, on aplique le noir
+    if (isForcedDark) {
+      setTheme("dark");
+      document.documentElement.classList.add("dark");
+    } else {
+      setTheme(current);
+      //   Ajouter la class dark, si current = dark
+      document.documentElement.classList.toggle("dark", current === "dark");
+    }
+  }, [location.pathname]);
 
   // Bascule entre les thèmes
   const toggleTheme = () => {
