@@ -1,5 +1,5 @@
-import { useContext, useState } from "react";
-import { NavLink, useNavigate } from "react-router";
+import { useContext, useEffect, useState } from "react";
+import { NavLink, useLocation, useNavigate } from "react-router";
 import { toast } from "react-toastify";
 import { motion, AnimatePresence } from "framer-motion";
 import { UserContext } from "../contexts/userContext";
@@ -14,13 +14,17 @@ import ToggleTheme from "./toggleTheme";
 import useConversationsByUser from "../hooks/messages/useConversationsByUser";
 
 export default function Header() {
+  // Valeur du champ de la barre de recherche
   const [research, setResearch] = useState("");
-  const debouncedResearch = useDebounce(research, 400);
+  // Valeur renvoyée après timeout de 400ms sans rien faire
+  const debouncedResearch = useDebounce(research, 300);
+  // Utilisateurs trouvés
   const { usersFounded } = useSearchUser(debouncedResearch);
+  // Deconnexion
   const { logOut, user } = useContext(UserContext);
   const { data: conversations = [] } = useConversationsByUser(user.id);
   const navigate = useNavigate();
-
+  const location = useLocation();
   const [loading, setLoading] = useState(false);
   const [showNav, setShowNav] = useState(false);
 
@@ -50,6 +54,11 @@ export default function Header() {
       })
       .finally(() => setLoading(false));
   };
+
+  // Réinitialiser la barre après navigation
+  useEffect(() => {
+    setResearch("");
+  }, [location.pathname]);
 
   return (
     <nav className="flex justify-between items-center w-full mx-auto h-[100px] py-5 px-6 relative bg-transparent z-50">
@@ -100,6 +109,7 @@ export default function Header() {
                 <SearchBar
                   usersFounded={usersFounded}
                   setResearch={setResearch}
+                  research={research}
                 />
               </div>
               {Object.entries(navLinks).map(([label, path]) => (
@@ -164,7 +174,11 @@ export default function Header() {
 
       {/* Barre de recherche */}
       <div className="hidden lg:flex">
-        <SearchBar usersFounded={usersFounded} setResearch={setResearch} />
+        <SearchBar
+          usersFounded={usersFounded}
+          setResearch={setResearch}
+          research={research}
+        />
       </div>
 
       {/* Thème + Profil + Déconnexion */}

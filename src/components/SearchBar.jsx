@@ -1,73 +1,79 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router";
 
-export default function SearchBar({ usersFounded, setResearch }) {
-  const [focusIndex, setFocusIndex] = useState(-1); // Index de l'élément sélectionné au clavier dans la liste déroulante
-  const [isOpen, setIsOpen] = useState(false); // Affiche ou cache la liste de résultats
+export default function SearchBar({ usersFounded, setResearch, research }) {
+  const [focusIndex, setFocusIndex] = useState(-1); // Index de l’élément surligné avec le clavier
+  const [isOpen, setIsOpen] = useState(false); // Contrôle l’affichage de la liste
+  const inputRef = useRef(null); // Ref pour l’input, permet de manipuler le focus
+  const isNavigatingRef = useRef(false); // Ref pour indiquer si on est en cours de navigation
+  const navigate = useNavigate(); // Pour naviguer vers une autre page
 
-  const navigate = useNavigate();
-  // Navigation clavier dans la liste de résultats
+  // 🔁 Reset du focusIndex à chaque fois que la liste change
+  useEffect(() => {
+    setFocusIndex(-1);
+  }, [usersFounded]);
 
+  // 🎯 Gestion clavier (flèches, entrée, escape)
   const handleKeyDown = (e) => {
-    // Si la liste n’est pas affichée, on ne fait rien
     if (!isOpen) return;
 
-    // 👉 Flèche bas : sélectionne l’élément suivant
     if (e.key === "ArrowDown") {
-      e.preventDefault(); // Empêche le scroll natif de la page
-
-      setFocusIndex((prev) =>
-        // Si on n’est pas encore à la fin de la liste, on augmente l’index
-        prev < usersFounded.length - 1 ? prev + 1 : 0
-      );
+      e.preventDefault();
+      setFocusIndex((prev) => (prev < usersFounded.length - 1 ? prev + 1 : 0));
     }
 
-    // 👉 Flèche haut : sélectionne l’élément précédent
     if (e.key === "ArrowUp") {
-      e.preventDefault(); // Même chose : on évite le scroll natif
-
-      setFocusIndex((prev) =>
-        // Si on est au-dessus du premier élément, on diminue l’index
-        prev > 0 ? prev - 1 : usersFounded.length - 1
-      );
+      e.preventDefault();
+      setFocusIndex((prev) => (prev > 0 ? prev - 1 : usersFounded.length - 1));
     }
 
-    // 👉 Entrée : sélectionne l’élément actuellement surligné
     if (e.key === "Enter" && usersFounded[focusIndex]) {
-      // On redirige vers la page de profil de l’utilisateur sélectionné
-      navigate(`/profile/${usersFounded[focusIndex].pseudo}`);
+      isNavigatingRef.current = true;
 
-      // On ferme la liste de suggestions
+      // Ferme la liste et vide la recherche
       setIsOpen(false);
+
+      // Force le champ à perdre le focus pour pouvoir le refocus ensuite
+      inputRef.current?.blur();
+
+      // Attend la fin du cycle pour naviguer
+      setTimeout(() => {
+        navigate(`/profile/${usersFounded[focusIndex].pseudo}`);
+        isNavigatingRef.current = false;
+      }, 0);
     }
 
-    // 👉 Escape : ferme simplement la liste
     if (e.key === "Escape") {
       setIsOpen(false);
     }
   };
 
-  useEffect(() => {
-    // 🔄 À chaque fois que la liste des résultats change :
-
-    // Réinitialise le focus clavier (aucun élément sélectionné au début)
-    setFocusIndex(-1);
-  }, [usersFounded]);
-
   return (
     <div className="relative">
       <div className="relative w-[250px]">
         <input
+          ref={inputRef}
           type="text"
+          value={research}
           placeholder="Rechercher un utilisateur"
-          className="bg-white rounded-full outline-none p-2 border-2 border-transparent text-black w-full  focus:border-blue-600"
+          className="bg-white rounded-full outline-none p-2 border-2 border-transparent text-black w-full focus:border-blue-600"
           onChange={(e) => setResearch(e.target.value)}
           onKeyDown={handleKeyDown}
-          onFocus={() => setIsOpen(true)}
-          onBlur={() => setIsOpen(false)}
+          onFocus={() => {
+            // N’ouvre la liste que si on n’est pas en navigation
+            if (!isNavigatingRef.current) {
+              setIsOpen(true);
+            }
+          }}
+          onBlur={() => {
+            // Ferme la liste sauf si on est en train de naviguer
+            if (!isNavigatingRef.current) {
+              setIsOpen(false);
+            }
+          }}
         />
 
-        {/* Liste de résultats */}
+        {/* Liste des résultats */}
         {isOpen && (
           <ul className="absolute top-full w-full mt-1 bg-white rounded shadow z-10 max-h-60 overflow-auto">
             {usersFounded.length === 0 ? (
@@ -75,11 +81,18 @@ export default function SearchBar({ usersFounded, setResearch }) {
             ) : (
               usersFounded.map((user, index) => (
                 <li
-                  key={user.uid}
-                  // Pas de OnClick car s'exécute après le blur, cela risquerait de fermer la liste avant la navigation
+                  key={user?.uid}
                   onMouseDown={() => {
-                    navigate(`/profile/${user.pseudo}`);
+                    isNavigatingRef.current = true;
+
+                    // Ferme la liste , blur l'input
                     setIsOpen(false);
+                    inputRef.current?.blur();
+
+                    setTimeout(() => {
+                      navigate(`/profile/${user.pseudo}`);
+                      isNavigatingRef.current = false;
+                    }, 0);
                   }}
                   className={`p-2 cursor-pointer ${
                     focusIndex === index
@@ -88,7 +101,7 @@ export default function SearchBar({ usersFounded, setResearch }) {
                   }`}
                 >
                   <span className="text-blue-600">
-                    {user.firstName} {user.name}{" "}
+                    {user.firstName} {user.name}
                   </span>
                   <span className="text-gray-600/50">({user.pseudo})</span>
                 </li>
@@ -98,7 +111,7 @@ export default function SearchBar({ usersFounded, setResearch }) {
         )}
       </div>
 
-      {/* Icône de loupe */}
+      {/* Icône de recherche */}
       <div className="absolute right-2 text-blue-600 top-1/2 bg-white -translate-y-1/2">
         <svg
           xmlns="http://www.w3.org/2000/svg"
