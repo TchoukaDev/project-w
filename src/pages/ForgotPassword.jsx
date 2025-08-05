@@ -30,7 +30,7 @@ export default function ForgotPassword() {
   const emailValue = watch("email");
 
   return (
-    <div className="flex flex-col justify-center gap-8 items-center h-screen">
+    <div className="flex flex-col justify-center gap-8 items-center h-screen overflow-auto scrollbar-thin scrollbar-thumb-transparent scrollbar-track-transparent hover:scrollbar-thumb-gray-500 hover:scrollbar-track-gray-200">
       <Logo size="md" />
       <form
         onSubmit={handleSubmit(onSubmit)}

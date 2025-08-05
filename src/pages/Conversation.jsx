@@ -218,16 +218,17 @@ export default function Conversation() {
 
   return (
     <motion.main
-      className="container !h-[120vh] flex flex-col overflow-auto lg:flex-row"
+      className="container !h-[120vh] flex flex-col overflow-auto scrollbar-thin scrollbar-thumb-transparent scrollbar-track-transparent hover:scrollbar-thumb-gray-500 hover:scrollbar-track-gray-200 lg:flex-row"
       initial={{ y: 50, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.2 }}
     >
+      {/* Colonne de gauche */}
       <div className="lg:basis-1/3 flex flex-col items-center gap-5 lg:gap-16 px-16 py-5 border-r border-gray-600">
         {" "}
         {/* Retour */}
         <Link
-          className="hover:text-blue-600 text-gray-400 text-sm transition-colors duration-300 flex items-center self-start"
+          className="hover:text-blue-600 text-gray-600 dark:text-gray-400 text-sm transition-colors duration-300 flex items-center self-start"
           to="/messages"
         >
           <ArrowLeft /> Retour aux messages
@@ -263,10 +264,12 @@ export default function Conversation() {
           </div>
         </div>
       </div>
-      <div className="flex flex-col relative  w-full lg:w-2/3 basis-2/3 gap-3 items-center justify-start  overflow-y-auto grow  px-4 lg:px-16 py-5">
+
+      {/* Colonne de droite */}
+      <div className="flex flex-col relative  w-full lg:w-2/3 basis-2/3 gap-3 items-center justify-start  overflow-y-auto scrollbar-thin scrollbar-thumb-transparent scrollbar-track-transparent hover:scrollbar-thumb-gray-500 hover:scrollbar-track-gray-200 grow  px-4 lg:px-16 py-5">
         {/* Affichage des messages */}
         <div
-          className="grow overflow-y-auto w-full rounded border border-gray-300 p-5"
+          className="grow overflow-y-auto scrollbar-thin scrollbar-thumb-transparent scrollbar-track-transparent hover:scrollbar-thumb-gray-500 hover:scrollbar-track-gray-200 w-full rounded border border-gray-800/60 dark:border-gray-300 p-5"
           ref={scrollMessagesRef}
         >
           {" "}
@@ -385,12 +388,12 @@ export default function Conversation() {
                   disabled={mutateLoading}
                   {...registerRest}
                   ref={combinedRef}
-                  className="peer border border-b-0 focus:border-2 border-gray-300 focus:border-b-0 focus:border-blue-600 outline-none rounded-t p-3 w-full resize-none"
+                  className="peer border border-b-0 focus:border-2 border-gray-800/60 dark:border-gray-300 focus:border-b-0 focus:border-blue-600 outline-none rounded-t p-3 w-full resize-none"
                   rows={1}
                   placeholder="Ecrivez votre message..."
                   onKeyDown={submitForm}
                 ></textarea>
-                <div className="w-full -mt-2 px-2 pt-2 border-gray-300 border border-t-0 peer-focus:border-2 rounded-b peer-focus:border-t-0 peer-focus:border-blue-600 ">
+                <div className="w-full -mt-2 px-2 pt-2 border-gray-800/60 dark:border-gray-300 border border-t-0 peer-focus:border-2 rounded-b peer-focus:border-t-0 peer-focus:border-blue-600 ">
                   {" "}
                   <div className="relative flex items-center justify-between">
                     <div className="flex items-center gap-2">
@@ -403,7 +406,7 @@ export default function Conversation() {
                         }}
                         className=" hover:scale-110 transition "
                       >
-                        <Smile className="text-gray-400 hover:cursor-pointer" />
+                        <Smile className="text-gray-600 dark:text-gray-400 transition-colors hover:cursor-pointer" />
                       </button>{" "}
                       {/* Popup emoji */}
                       <AnimatePresence>
@@ -433,7 +436,7 @@ export default function Conversation() {
                       </AnimatePresence>
                       {/* Label déclencheur pour choisir un fichier */}
                       <label htmlFor="file-upload">
-                        <ImagePlus className="text-gray-400 cursor-pointer hover:scale-110 transition" />
+                        <ImagePlus className="text-gray-600 dark:text-gray-400 cursor-pointer hover:scale-110 transition-all" />
                       </label>
                       {/* Input de type fichier (caché mais déclenché par le label) */}
                       <input

@@ -88,7 +88,7 @@ const MakeReply = forwardRef(function MakeReply(
     <motion.form
       ref={makeReplyRef} // Référence transmise au formulaire
       key={wid} // Clé unique liée à l'identifiant du message
-      className="absolute bg-gray-800 p-3 border border-gray-600 top-full z-1 mt-1 w-full rounded"
+      className="absolute  p-3 border  bg-gray-300 dark:bg-gray-950 border-gray-600 top-full z-1 -mt-5 w-[calc(100%-3rem)]  rounded"
       onSubmit={handleSubmit(onSubmit, onInvalid)} // Appelle handleSubmit avec notre fonction onSubmit
       initial={{ opacity: 0, y: -10 }} // Animation d'entrée
       animate={{ opacity: 1, y: 0 }}
@@ -101,9 +101,9 @@ const MakeReply = forwardRef(function MakeReply(
           {...registerRest} // Règles de validation (aucune ici)
           rows={2}
           placeholder="Votre réponse..."
-          className="peer w-full border border-b-0 p-2 rounded-t outline-0 focus:border-2 placeholder:text-gray-300 dark:text-white focus:border-b-0 focus:border-blue-600 text-sm resize-none"
+          className="peer w-full border border-b-0 p-2 dark:border-gray-700 border-gray-800 rounded-t outline-0 focus:border-2 placeholder:text-gray-300 dark:text-white focus:border-b-0 focus:border-blue-600 text-sm resize-none"
         />
-        <div className=" w-full -mt-2 px-2 pt-2 border border-t-0 rounded-b peer-focus:border-2 peer-focus:border-t-0 peer-focus:border-blue-600 ">
+        <div className=" w-full -mt-2 px-2 pt-2 border border-gray-800  dark:border-gray-700 border-t-0 rounded-b peer-focus:border-2 peer-focus:border-t-0 peer-focus:border-blue-600 ">
           <div className="relative">
             <button
               type="button"
@@ -111,7 +111,7 @@ const MakeReply = forwardRef(function MakeReply(
               onClick={() => setShowEmoji((prev) => !prev)} // Bascule l'affichage du picker
               className=" hover:scale-110 transition "
             >
-              <Smile className="text-gray-400 hover:cursor-pointer" />{" "}
+              <Smile className="text-gray-600 dark:text-gray-400 transition-colors hover:cursor-pointer" />{" "}
               {/* Icône smiley */}
             </button>
           </div>

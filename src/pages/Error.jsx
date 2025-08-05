@@ -3,7 +3,7 @@ import Logo from "../components/Logo";
 
 export default function Error() {
   return (
-    <div className="flex flex-col justify-evenly min-h-[80vh] items-center container p-5">
+    <div className="flex flex-col justify-evenly min-h-[80vh] items-center container p-5 overflow-auto scrollbar-thin scrollbar-thumb-transparent scrollbar-track-transparent hover:scrollbar-thumb-gray-500 hover:scrollbar-track-gray-200">
       {/* Logo */}
       <Logo size="md" />
       <div className="flex flex-col justify-evenly items-center">

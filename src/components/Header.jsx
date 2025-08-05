@@ -1,17 +1,16 @@
-import { useContext, useEffect, useState } from "react";
-import { NavLink, useLocation, useNavigate } from "react-router";
+import { useContext, useEffect, useRef, useState } from "react";
+import { Link, NavLink, useLocation, useNavigate } from "react-router";
 import { toast } from "react-toastify";
 import { motion, AnimatePresence } from "framer-motion";
 import { UserContext } from "../contexts/userContext";
 import { useSearchUser } from "../hooks/users/useSearchUser";
 import { useDebounce } from "../hooks/utilities/useDebounce";
-import Button from "./Button";
 import Logo from "./Logo";
 import anonymeImage from "/src/assets/images/anonyme.png";
 import SearchBar from "./SearchBar";
-import { ClipLoader } from "react-spinners";
 import ToggleTheme from "./toggleTheme";
 import useConversationsByUser from "../hooks/messages/useConversationsByUser";
+import { useClickOutside } from "../hooks/utilities/useClickOutside";
 
 export default function Header() {
   // Valeur du champ de la barre de recherche
@@ -27,6 +26,7 @@ export default function Header() {
   const location = useLocation();
   const [loading, setLoading] = useState(false);
   const [showNav, setShowNav] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   // Récupérer le statut hasUnread dans au moins une des conversations en cours
   const hasUnread = conversations.some(
@@ -38,7 +38,6 @@ export default function Header() {
     Profil: "/profile",
     Abonnements: "/followers",
     Messages: "/messages",
-    Préférences: "/settings",
   };
 
   const handleClick = () => {
@@ -55,18 +54,29 @@ export default function Header() {
       .finally(() => setLoading(false));
   };
 
+  // Fermeture du menu sous la photo de profil si clique en dehors
+  const divRef = useRef();
+  const btnRef = useRef();
+  useClickOutside(divRef, btnRef, () => setIsOpen(false));
+
+  // Fermeture menu de navigation si clic en dehors
+  const navRef = useRef();
+  const btnNavRef = useRef();
+  useClickOutside(navRef, btnNavRef, () => setShowNav(false));
+
   // Réinitialiser la barre après navigation
   useEffect(() => {
     setResearch("");
   }, [location.pathname]);
 
   return (
-    <nav className="flex justify-between items-center w-full mx-auto h-[100px] py-5 px-6 relative bg-transparent z-50">
+    <nav className="flex justify-between items-center w-[90%] mx-auto h-[100px] py-5 px-6 relative bg-transparent z-50">
       <Logo onClick={() => navigate("/")} size="sm" canBeClicked />
 
       {/* Menu hamburger mobile */}
       <button
-        className="2xl:hidden z-50 cursor-pointer"
+        ref={btnNavRef}
+        className="xl:hidden z-50 cursor-pointer"
         onClick={() => setShowNav((prev) => !prev)}
       >
         <svg
@@ -97,12 +107,13 @@ export default function Header() {
       <AnimatePresence>
         {showNav && (
           <motion.div
+            ref={navRef}
             key="mobile-nav"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.3 }}
-            className="absolute top-full left-1/2 -translate-x-1/2 w-full 2xl:hidden mt-4 transition-colors duration-300 bg-gray-600 dark:bg-gray-900 p-4 rounded shadow-md"
+            className="absolute top-full left-1/2 -translate-x-1/2 w-full xl:hidden mt-4 transition-colors duration-300 bg-gray-400 dark:bg-gray-900 p-4 rounded shadow-md"
           >
             <div className="flex flex-col gap-3 items-center">
               <div className="flex lg:hidden">
@@ -117,8 +128,8 @@ export default function Header() {
                   key={label}
                   to={path}
                   className={({ isActive }) =>
-                    `text-white text-lg font-medium relative ${
-                      isActive ? "!text-blue-500" : "hover:text-blue-400"
+                    ` text-lg font-medium relative ${
+                      isActive ? "!text-blue-600" : "hover:text-blue-500"
                     }`
                   }
                   onClick={() => setShowNav(false)}
@@ -129,38 +140,26 @@ export default function Header() {
                   )}
                 </NavLink>
               ))}
-              <div className="flex sm:hidden">
-                <Button
-                  onClick={handleClick}
-                  disabled={loading}
-                  type="button"
-                  margin="my-2"
-                >
-                  {loading ? (
-                    <div className="flex items-center gap-2">
-                      Déconnexion...
-                      <ClipLoader size={10} color="white" />
-                    </div>
-                  ) : (
-                    "Se déconnecter"
-                  )}
-                </Button>
+
+              <div className="flex lg:hidden">
+                <ToggleTheme />
               </div>
-              <ToggleTheme />
             </div>
           </motion.div>
         )}
       </AnimatePresence>
 
       {/* Navigation desktop */}
-      <div className="hidden 2xl:flex gap-2 bg-gray-800 rounded-3xl items-center">
+      <div className="hidden xl:flex gap-2 bg-gray-400 dark:bg-gray-800 rounded-3xl items-center transition-colors">
         {Object.entries(navLinks).map(([label, path]) => (
           <NavLink
             key={label}
             to={path}
             className={({ isActive }) =>
-              `text-white px-4 py-2 rounded-full relative font-medium ${
-                isActive ? "bg-blue-500/30" : "hover:bg-blue-400/10"
+              `text-white px-4 py-2 rounded-full relative font-medium transition-colors ${
+                isActive
+                  ? "bg-blue-500/70 dark:bg-blue-500/30"
+                  : "hover:bg-blue-400/70 dark:hover:bg-blue-400/10"
               }`
             }
           >
@@ -181,38 +180,58 @@ export default function Header() {
         />
       </div>
 
-      {/* Thème + Profil + Déconnexion */}
+      {/* Thème */}
       <div className="flex gap-4 items-center">
-        <div className="hidden 2xl:flex">
+        <div className="hidden lg:flex">
           <ToggleTheme />
         </div>
-        <div className="flex items-center gap-2">
+
+        {/* Photo de profil */}
+        <div
+          onClick={() => setIsOpen((prev) => !prev)}
+          className="flex items-center gap-2 relative"
+          ref={btnRef}
+        >
           <img
             src={user.photo ? user.photo : anonymeImage}
             alt="Profil"
-            className="w-10 h-10 rounded-full object-cover"
+            className="cursor-pointer w-10 h-10 rounded-full object-cover border-2 border-transparent hover:border-2 hover:transform hover:scale-120 hover:border-blue-600 transition-all duration-300"
           />
+          {/* Pseudo */}
           <span className=" font-semibold text-sm">
             {user.pseudo || "Inconnu"}
           </span>
-        </div>
-        <div className="hidden sm:flex">
-          <Button
-            onClick={handleClick}
-            disabled={loading}
-            type="button"
-            margin="my-2"
-          >
-            {loading ? (
-              <div className="flex items-center gap-2">
-                Déconnexion...
-                <ClipLoader size={10} color="white" />
-              </div>
-            ) : (
-              "Se déconnecter"
+
+          {/* Menu déroulant */}
+          <AnimatePresence>
+            {isOpen && (
+              <motion.div
+                ref={divRef}
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.2 }}
+                className="absolute top-full w-[150%] text-center bg-gray-500 dark:bg-gray-600 flex flex-col rounded-tl-4xl rounded-tr rounded-bl rounded-br-4xl -left-full mt-2"
+              >
+                {" "}
+                <Link
+                  className="p-4 text-xs rounded-tl-4xl rounded-tr !text-white hover:bg-gray-700/20 dark:hover:bg-gray-300/10"
+                  to="/settings"
+                >
+                  Préférences
+                </Link>
+                <div
+                  className="text-xs p-4 rounded-br-4xl rounded-bl cursor-pointer !text-white  hover:bg-gray-700/20 dark:hover:bg-gray-300/10"
+                  onClick={handleClick}
+                  disabled={loading}
+                >
+                  Se déconnecter
+                </div>
+              </motion.div>
             )}
-          </Button>
+          </AnimatePresence>
         </div>
+        <div className="hidden sm:flex"></div>
       </div>
     </nav>
   );

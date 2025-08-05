@@ -56,7 +56,7 @@ export default function SearchBar({ usersFounded, setResearch, research }) {
           type="text"
           value={research}
           placeholder="Rechercher un utilisateur"
-          className="bg-white rounded-full outline-none p-2 border-2 border-transparent text-black w-full focus:border-blue-600"
+          className="bg-gray-900 dark:bg-white rounded-full outline-none p-2 border-2 border-transparent text-white placeholder:text-gray-300 dark:placeholder:text-gray-500 dark:text-black w-full focus:border-blue-600"
           onChange={(e) => setResearch(e.target.value)}
           onKeyDown={handleKeyDown}
           onFocus={() => {
@@ -75,9 +75,11 @@ export default function SearchBar({ usersFounded, setResearch, research }) {
 
         {/* Liste des résultats */}
         {isOpen && (
-          <ul className="absolute top-full w-full mt-1 bg-white rounded shadow z-10 max-h-60 overflow-auto">
+          <ul className="absolute top-full w-full mt-1 bg-gray-900 dark:bg-white rounded shadow z-10 max-h-60 overflow-auto">
             {usersFounded.length === 0 ? (
-              <li className="text-gray-600/50">Aucun utilisateur trouvé</li>
+              <li className=" text-gray-300/50 p-2 dark:text-gray-600/50">
+                Aucun utilisateur trouvé
+              </li>
             ) : (
               usersFounded.map((user, index) => (
                 <li
@@ -97,13 +99,15 @@ export default function SearchBar({ usersFounded, setResearch, research }) {
                   className={`p-2 cursor-pointer ${
                     focusIndex === index
                       ? "bg-blue-100 text-blue-700 font-semibold"
-                      : "hover:bg-gray-100 font-semibold"
+                      : " hover:bg-gray-700 dark:hover:bg-gray-200 font-semibold"
                   }`}
                 >
                   <span className="text-blue-600">
-                    {user.firstName} {user.name}
+                    {user.firstName} {user.name}{" "}
                   </span>
-                  <span className="text-gray-600/50">({user.pseudo})</span>
+                  <span className="text-gray-300/50 dark:text-gray-600/50">
+                    ({user.pseudo})
+                  </span>
                 </li>
               ))
             )}
@@ -112,7 +116,7 @@ export default function SearchBar({ usersFounded, setResearch, research }) {
       </div>
 
       {/* Icône de recherche */}
-      <div className="absolute right-2 text-blue-600 top-1/2 bg-white -translate-y-1/2">
+      <div className="absolute right-2 text-blue-600 top-1/2 bg-transparent -translate-y-1/2">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="24"

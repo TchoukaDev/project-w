@@ -11,7 +11,7 @@ const ShowReply = forwardRef(function ShowReply({ wid }, showReplyRef) {
     <motion.div
       key={wid}
       ref={showReplyRef}
-      className="absolute border border-gray-600 flex flex-col gap-5 max-h-[400px] overflow-auto bg-gray-800 z-1 p-3 top-full mt-1 w-full rounded"
+      className="absolute border border-gray-600 flex flex-col gap-5 max-h-[400px] overflow-auto text- bg-gray-300 dark:bg-gray-950 z-1 p-3 top-full -mt-5 w-[calc(100%-3rem)] rounded"
       initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -10 }}
@@ -19,7 +19,7 @@ const ShowReply = forwardRef(function ShowReply({ wid }, showReplyRef) {
     >
       {replies?.length === 0 ? (
         // Affichage si aucune réponse n'est trouvée
-        <div className="text-center text-sm text-gray-300">
+        <div className="text-center text-sm">
           Aucun commentaire pour l'instant
         </div>
       ) : (

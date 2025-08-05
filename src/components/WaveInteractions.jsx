@@ -36,7 +36,7 @@ export default function WaveInteraction({ user, wave }) {
 
   return (
     <>
-      <div className=" bg-gray-900/40  p-1 rounded-b flex justify-evenly items-center">
+      <div className=" bg-gray-900/40 border border-t-0 border-gray-800/60  dark:border-gray-300/60 p-1 rounded-b flex justify-evenly items-center">
         {/* Bouton "J'aime" */}
         <LikeButton uid={user.uid} wid={wave.wid} wuid={wave.uid} />
         {/* Bouton pour répondre */}

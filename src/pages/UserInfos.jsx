@@ -224,7 +224,7 @@ export default function UserInfos() {
               )}
             </Button>
             <Link
-              className="bg-gray-500/30 rounded-3xl px-4 py-2 font-semibold text-sm  hover:bg-blue-500/30 cursor-pointer transition-color duration-300"
+              className="rounded-3xl px-4 py-2 border border-transparent text-white hover:bg-blue-700/70 hover:border-black dark:hover:border-white font-semibold text-sm bg-blue-700 dark:bg-blue-800 dark:hover:bg-blue-800/30 cursor-pointer transition-color duration-300"
               to="/settings"
             >
               Retour

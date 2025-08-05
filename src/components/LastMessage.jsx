@@ -30,7 +30,7 @@ export default function LastMessage({ conversation }) {
   return (
     <Link
       to={`/messages/${otherUser?.pseudo}`}
-      className={`cursor-pointer border w-1/1 lg:w-3/4 py-4 px-2 md:px-12 max-h-[150px] h-fit md:max-h-[100px] overflow-hidden rounded my-1 border-gray-500 relative ${
+      className={`cursor-pointer border w-1/1 lg:w-3/4 py-4 px-2 md:px-12 max-h-[150px] h-fit md:max-h-[100px] overflow-hidden rounded my-1 border-gray-800/60 dark:border-gray-500 relative ${
         !conversation.hasUnread ? "" : "bg-gray-600/20"
       }`}
       disabled={isLoading}

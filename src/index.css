@@ -21,7 +21,7 @@
     --font-roboto: "roboto", sans-serif;
     --font-inter: "inter", sans-serif;
     --shadow-custom: 0px 4px 12px rgba(255, 255, 255, 0.3);
-    --shadow-custom-black: 0px 4px 12px rgba(0, 0, 0, 0.3);
+    --shadow-custom-black: 0px 4px 12px rgba(0, 0, 0, 0.7);
   }
 }
 * {
@@ -40,7 +40,7 @@ h1 {
 }
 
 .container {
-  @apply my-9 w-[90%] mx-auto rounded shadow-custom-black dark:shadow-custom  overflow-auto min-h-[80vh] max-h-[200vh] lg:h-[80vh] grow;
+  @apply my-9 w-[90%] mx-auto rounded shadow-custom-black dark:shadow-custom  overflow-auto scrollbar-thin scrollbar-thumb-transparent scrollbar-track-transparent hover:scrollbar-thumb-gray-500 hover:scrollbar-track-gray-200 min-h-[80vh] max-h-[200vh] lg:h-[80vh] grow;
 }
 
 .input {
@@ -48,7 +48,7 @@ h1 {
 }
 
 .inputSettings {
-  @apply bg-gray-900 py-1 text-white px-2 rounded text-sm outline-none focus:border-2 focus:border-blue-600 w-[250px];
+  @apply bg-gray-900 py-1 mt-1 text-white px-2 rounded text-sm outline-none focus:border-2 focus:border-blue-600 w-[250px];
 }
 
 .link {
@@ -71,4 +71,19 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 [data-rmiz-modal-overlay="visible"] {
   background-color: rgba(30, 30, 30, 0.9) !important;
   backdrop-filter: blur(2px);
+}
+
+@plugin 'tailwind-scrollbar';
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none; /* IE et Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.group-hover\:scrollbar-default::-webkit-scrollbar {
+  display: block;
 }

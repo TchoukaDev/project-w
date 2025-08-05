@@ -27,7 +27,7 @@ export default function Followers() {
       transition={{ duration: 0.2 }}
     >
       {/* Section des abonnés */}
-      <div className="grow flex flex-col flex-wrap overflow-auto border-b border-gray-600 pb-8 ">
+      <div className="grow flex flex-col flex-wrap overflow-auto scrollbar-thin scrollbar-thumb-transparent scrollbar-track-transparent hover:scrollbar-thumb-gray-500 hover:scrollbar-track-gray-200 border-b border-gray-600 pb-8 ">
         <h1 className="text-center mb-8 sm:mb-5">Espace abonnés</h1>
         <p className=" mb-5 underline text-lg">Vos abonnés:</p>
 
@@ -36,12 +36,14 @@ export default function Followers() {
 
         {/* Si aucun abonné, afficher message, sinon afficher la liste */}
         {followers?.length === 0 ? (
-          <p>Vous n'avez aucun abonné pour le moment.</p>
+          <p className="text-gray-600 dark:text-gray-300">
+            Vous n'avez aucun abonné pour le moment.
+          </p>
         ) : (
           followers?.map((user) => (
             // Chaque abonné est un lien vers son profil
             <Link to={`/profile/${user?.pseudo}`} key={user?.id}>
-              <span className="flex items-center gap-3 hover:text-blue-600 text-gray-300 transition-colors duration:0.3">
+              <span className="flex items-center gap-3 hover:text-blue-600 text-gray-600 dark:text-gray-300 transition-colors duration:0.3">
                 <img
                   src={user?.photo}
                   className="w-[30px] h-[30px] rounded-full"
@@ -65,12 +67,14 @@ export default function Followers() {
 
         {/* Si aucun utilisateur suivi, afficher message, sinon afficher la liste */}
         {following.length === 0 ? (
-          <p>Vous ne suivez aucun utilisateur pour l'instant</p>
+          <p className="text-gray-600 dark:text-gray-300">
+            Vous ne suivez aucun utilisateur pour l'instant
+          </p>
         ) : (
           following.map((user) => (
             // Chaque utilisateur suivi est un lien vers son profil
             <Link to={`/profile/${user.pseudo}`} key={user.id}>
-              <span className="flex items-center gap-3 hover:text-blue-600 text-gray-300 transition-colors duration:0.3">
+              <span className="flex items-center gap-3 hover:text-blue-600 text-gray-600 dark:text-gray-300 transition-colors duration:0.3">
                 <img
                   src={user.photo}
                   className="w-[30px] h-[30px] rounded-full"

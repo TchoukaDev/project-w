@@ -102,7 +102,7 @@ export default function Profile() {
         transition={{ duration: 0.2 }}
       >
         {/* Colonne de gauche : informations personnelles du profil */}
-        <div className="basis-1/3 py-5 px-5 overflow-auto md:px-16 border-b lg-border-b-0 lg:border-r border-gray-600 flex flex-col justify-center items-center">
+        <div className="basis-1/3 py-5 px-5 overflow-auto scrollbar-thin scrollbar-thumb-transparent scrollbar-track-transparent hover:scrollbar-thumb-gray-500 hover:scrollbar-track-gray-200 md:px-16 border-b lg-border-b-0 lg:border-r border-gray-600 flex flex-col justify-start items-center">
           {/* Affiche un message de chargement si UID manquant ou données en cours de chargement */}
           {(!profileUid || loadingUser || loadingWaves) && (
             <p>Chargement en cours...</p>
@@ -162,7 +162,7 @@ export default function Profile() {
                   followedUserId={profileUid}
                 />
                 <Link
-                  className=" bg-blue-500 dark:bg-blue-900 rounded-3xl px-4 py-2 border text-white border-transparent text-center font-semibold text-sm hover:bg-blue-600/70 hover:border-black dark:hover:border-white cursor-pointer transition-color duration-300"
+                  className="rounded-3xl px-4 py-2 border border-transparent text-white   hover:bg-blue-700/70 hover:border-black dark:hover:border-white font-semibold text-sm bg-blue-700 dark:bg-blue-800 dark:hover:bg-blue-800/30 cursor-pointer transition-color duration-300"
                   to={`/messages/${userData.pseudo}`}
                 >
                   Envoyer un message
@@ -173,7 +173,7 @@ export default function Profile() {
         </div>
 
         {/* Colonne de droite : liste des publications (waves) */}
-        <div className=" flex flex-col items-center py-5 mt-10 px-5 md:px-16 gap-10 overflow-auto grow">
+        <div className=" flex flex-col items-center py-5 mt-10 px-5 md:px-16 gap-10 overflow-auto scrollbar-thin scrollbar-thumb-transparent scrollbar-track-transparent hover:scrollbar-thumb-gray-500 hover:scrollbar-track-gray-200 grow">
           <h1 className="text-center w-full">
             {isOwnProfile
               ? "Vos publications récentes:"
@@ -192,9 +192,12 @@ export default function Profile() {
               [...waves]
                 .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
                 .map((wave) => (
-                  <div key={wave.wid} className="flex flex-col mb-6 relative">
+                  <div
+                    key={wave.wid}
+                    className="flex flex-col mb-6 p-6 relative"
+                  >
                     {/* En-tête du message */}
-                    <div className=" flex flex-col gap-5 border border-gray-300 transition-all dark:border-gray-300/20 w-full rounded-t py-3 px-6">
+                    <div className=" flex flex-col gap-5 border  border-gray-800/60 transition-all dark:border-gray-300/60 w-full rounded-t p-6">
                       <div className="flex gap-5 items-center">
                         <div className="flex justify-between items-center grow">
                           {/* Lien vers le profil de l'auteur */}
@@ -205,7 +208,7 @@ export default function Profile() {
                                 : `/profile/${wave.pseudo}`
                             }
                           >
-                            <div className="flex items-center gap-3 underline text-xl text-blue-600 !font-pompiere">
+                            <div className="flex items-center gap-3 hover:underline text-xl hover:text-blue-800 text-blue-600 !font-pompiere">
                               <img
                                 src={wave.photo}
                                 className="w-[30px] h-[30px] rounded-full"

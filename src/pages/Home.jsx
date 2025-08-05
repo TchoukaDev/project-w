@@ -202,7 +202,7 @@ export default function Home() {
         {showModal && <WelcomeModal onCloseModal={handleCloseModal} />}
 
         {/* Colonne de gauche - création d'une Wave */}
-        <div className="flex flex-col justify-evenly overflow-auto px-5 md:px-16 py-5 border-b lg:border-b-0 lg:border-r basis-1/3 shrink-0 border-gray-600 ">
+        <div className="flex flex-col justify-evenly overflow-auto scrollbar-thin scrollbar-thumb-transparent scrollbar-track-transparent hover:scrollbar-thumb-gray-500 hover:scrollbar-track-gray-200 px-5 md:px-16 py-5 border-b lg:border-b-0 lg:border-r basis-1/3 shrink-0 border-gray-600 ">
           <div className="flex justify-center items-center text-gray-600 dark:text-gray-300 my-5 font-semibold !font-inter underline text-2xl">
             Salut {user?.firstName || user?.pseudo}!{" "}
           </div>
@@ -241,7 +241,7 @@ export default function Home() {
                         }}
                         className=" hover:scale-110 transition "
                       >
-                        <Smile className="text-gray-400 hover:cursor-pointer" />
+                        <Smile className="text-gray-600 dark:text-gray-400 transition-colors hover:cursor-pointer" />
                       </button>{" "}
                       {/* Popup emoji */}
                       <AnimatePresence>
@@ -271,7 +271,7 @@ export default function Home() {
                       </AnimatePresence>
                       {/* Label déclencheur pour choisir un fichier */}
                       <label htmlFor="file-upload" className="self-center">
-                        <ImagePlus className="text-gray-400 cursor-pointer hover:scale-110 transition" />
+                        <ImagePlus className="text-gray-600 dark:text-gray-400 cursor-pointer hover:scale-110 transition-all" />
                       </label>
                       {/* Input de type fichier (caché mais déclenché par le label) */}
                       <input
@@ -342,7 +342,7 @@ export default function Home() {
         </div>
 
         {/* Colonne de droite - affichage des messages */}
-        <div className="flex flex-col items-center pb-5 px-5 mt-10 md:px-16 gap-10 grow overflow-auto">
+        <div className="flex flex-col items-center pb-5 px-5 mt-10 md:px-16 gap-10 grow overflow-auto scrollbar-thin scrollbar-thumb-transparent scrollbar-track-transparent hover:scrollbar-thumb-gray-500 hover:scrollbar-track-gray-200">
           <h1 className="text-center w-full">Fil d'actualités:</h1>
           <div className="flex flex-col w-full">
             {loadingWaves ? (
@@ -358,9 +358,12 @@ export default function Home() {
               [...waves]
                 .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
                 .map((wave) => (
-                  <div key={wave.wid} className="flex flex-col mb-6 relative">
+                  <div
+                    key={wave.wid}
+                    className="flex flex-col mb-6 p-6 relative"
+                  >
                     {/* En-tête du message */}
-                    <div className="flex flex-col gap-5 border border-gray-300 transition-all dark:border-gray-300/20 rounded-t py-3 px-6">
+                    <div className="flex flex-col gap-5 border border-gray-800/60  transition-all dark:border-gray-300/60 rounded-t p-6">
                       <div className="flex gap-5 items-center">
                         <div className="flex justify-between items-center grow">
                           <Link
@@ -370,7 +373,7 @@ export default function Home() {
                                 : `/profile/${wave.pseudo}`
                             }
                           >
-                            <div className="flex items-center gap-3 underline text-xl text-blue-600 !font-pompiere">
+                            <div className="flex items-center gap-3 hover:underline hover:text-blue-800 text-xl text-blue-600 !font-pompiere">
                               <img
                                 src={wave.photo}
                                 className="w-[30px]  h-[30px] rounded-full"
@@ -420,7 +423,7 @@ export default function Home() {
       {wavetoDelete && (
         <Modal
           isOpen={true}
-          className="bg-gray-600 border shadow-custom p-6 text-gray-200 dark:text-white rounded w-1/3 h-1/3 mx-auto mt-40"
+          className=" bg-gray-300 dark:bg-gray-800 border border-black dark:border-white shadow-custom-black dark:shadow-custom p-6 rounded w-1/3 h-1/3 mx-auto mt-40"
           overlayClassName="fixed inset-0 z-10 bg-black/60 flex justify-center items-center"
           onRequestClose={() => setWavetoDelete(null)}
         >
@@ -439,7 +442,11 @@ export default function Home() {
                   "Valider"
                 )}
               </Button>
-              <Button onClick={() => setWavetoDelete(null)} type="button">
+              <Button
+                onClick={() => setWavetoDelete(null)}
+                blueVariant={true}
+                type="button"
+              >
                 Annuler
               </Button>
             </div>

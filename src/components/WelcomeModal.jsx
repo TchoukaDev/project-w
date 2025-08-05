@@ -62,8 +62,8 @@ export default function WelcomeModal({ onCloseModal }) {
   // Contenu JSX de la modale
   const modalContent = (
     <div className=" bg-black/70 fixed inset-0 flex justify-center items-center z-50 text-black">
-      <div className="bg-gray-950 border shadow-custom-black dark:shadow-custom text-xl p-8 rounded-lg  w-2/3 lg:w-1/2  relative">
-        <p className="text-white my-7 text-center">
+      <div className="bg-gray-300 dark:bg-gray-800 border border-black dark:border-white shadow-custom-black dark:shadow-custom text-xl p-8 rounded-lg  w-2/3 lg:w-1/2  relative">
+        <p className="my-7 text-center">
           Bienvenue sur Waves. Avant de faire vos premiers pas, veuillez choisir
           un pseudo. Ne vous inquiétez pas, vous pourrez le modifier par la
           suite.
