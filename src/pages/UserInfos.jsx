@@ -49,13 +49,20 @@ export default function UserInfos() {
     setSelectedFile(e.target.files[0]);
   };
 
+  // Récupérer la base url selon l'environnement
+  const baseUrl =
+    import.meta.env.VITE_API_BASE_URL ||
+    (window.location.hostname === "localhost"
+      ? "http://localhost:8000/backend"
+      : "https://waves.romainwirth.fr/backend");
+
   // Envoie la photo sur le serveur PHP via fetch et retourne son URL
   const uploadPhoto = async () => {
     const formData = new FormData();
     formData.append("photo", selectedFile);
     formData.append("oldPhotoPath", user.photo);
 
-    const response = await fetch("/backend/uploads.php", {
+    const response = await fetch(`${baseUrl}/uploads.php`, {
       method: "POST",
       body: formData,
     });
@@ -212,7 +219,7 @@ export default function UserInfos() {
           </p>
 
           {/* Boutons de validation et retour */}
-          <div className="flex gap-6 items-center">
+          <div className="flex gap-3 mt-6 md:gap-6 flex-col md:flex-row items-center">
             <Button type="submit" disabled={isLoading}>
               {isLoading ? (
                 <div>
@@ -224,7 +231,7 @@ export default function UserInfos() {
               )}
             </Button>
             <Link
-              className="rounded-3xl px-4 py-2 border border-transparent text-white hover:bg-blue-700/70 hover:border-black dark:hover:border-white font-semibold text-sm bg-blue-700 dark:bg-blue-800 dark:hover:bg-blue-800/30 cursor-pointer transition-color duration-300"
+              className="rounded-3xl w-[130px] text-center px-4 py-2 border border-transparent text-white bg-blue-700 dark:bg-blue-800 hover:bg-blue-700/70  hover:border-black dark:hover:border-white font-semibold text-sm cursor-pointer transition-color duration-300"
               to="/settings"
             >
               Retour

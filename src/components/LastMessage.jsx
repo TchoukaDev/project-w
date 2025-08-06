@@ -40,6 +40,7 @@ export default function LastMessage({ conversation }) {
         {/* Photo utilisateur */}
         <img
           src={otherUser?.photo}
+          referrerPolicy="no-referrer"
           alt="photo de profil"
           className="rounded-full max-w-[30px] max-h-[30px]"
         />

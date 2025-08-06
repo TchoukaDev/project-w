@@ -114,11 +114,13 @@ export default function Profile() {
             <img
               className="w-[200px] h-[200px] rounded mb-5"
               src={userData.photo}
+              alt="photo de profil"
+              referrerPolicy="no-referrer"
             />
           </div>{" "}
           {/* Pseudo */}
           <p className="text-lg font-semibold mb-9">{userData.pseudo}</p>
-          <div>
+          <div className="w-full">
             <p className="underline text-center mb-5">
               Informations personnelles:
             </p>
@@ -156,13 +158,13 @@ export default function Profile() {
             </div>
             {/* Si ce n'est pas le profil de l'utilisateur connecté, afficher les boutons suivre et message */}
             {!isOwnProfile && (
-              <div className="flex gap-2 mt-7">
+              <div className="flex gap-2 justify-between mt-7">
                 <FollowingButton
                   currentUserId={user.uid}
                   followedUserId={profileUid}
                 />
                 <Link
-                  className="rounded-3xl px-4 py-2 border border-transparent text-white   hover:bg-blue-700/70 hover:border-black dark:hover:border-white font-semibold text-sm bg-blue-700 dark:bg-blue-800 dark:hover:bg-blue-800/30 cursor-pointer transition-color duration-300"
+                  className="rounded-3xl px-4 py-2 border border-transparent text-white  max-w-[150px] text-center hover:bg-blue-700/70 hover:border-black dark:hover:border-white font-semibold text-sm bg-blue-700 dark:bg-blue-800 dark:hover:bg-blue-800/30 cursor-pointer transition-color duration-300"
                   to={`/messages/${userData.pseudo}`}
                 >
                   Envoyer un message
@@ -184,7 +186,7 @@ export default function Profile() {
           <div className="flex flex-col w-full">
             {waves?.length == 0 ? (
               // Aucun message à afficher
-              <p className=" flex flex-col justify-center text-xl  items-center grow">
+              <p className=" flex flex-col justify-center text-xl text-center items-center grow">
                 Aucune actualité pour le moment.
               </p>
             ) : (
@@ -194,7 +196,7 @@ export default function Profile() {
                 .map((wave) => (
                   <div
                     key={wave.wid}
-                    className="flex flex-col mb-6 p-6 relative"
+                    className="flex flex-col mb-6 py-6 relative"
                   >
                     {/* En-tête du message */}
                     <div className=" flex flex-col gap-5 border  border-gray-800/60 transition-all dark:border-gray-300/60 w-full rounded-t p-6">
@@ -211,6 +213,7 @@ export default function Profile() {
                             <div className="flex items-center gap-3 hover:underline text-xl hover:text-blue-800 text-blue-600 !font-pompiere">
                               <img
                                 src={wave.photo}
+                                referrerPolicy="no-referrer"
                                 className="w-[30px] h-[30px] rounded-full"
                               />{" "}
                               {wave.pseudo}
@@ -261,16 +264,15 @@ export default function Profile() {
       {wavetoDelete && (
         <Modal
           isOpen={true}
-          className="bg-black border  shadow-custom p-6 rounded  w-1/3 h-1/3 mx-auto mt-40"
+          className=" bg-gray-300 dark:bg-gray-800 border border-black dark:border-white shadow-custom-black dark:shadow-custom p-6 rounded w-3/4 lg:w-1/3 h-1/3 mx-auto mt-40"
           overlayClassName="fixed inset-0 z-10 bg-black/60 flex justify-center items-center"
           onRequestClose={() => setWavetoDelete(null)}
         >
           <div className="flex flex-col justify-evenly h-full items-center-safe">
-            <p className="font-semibold">
+            <p className="font-semibold text-center">
               Voulez-vous vraiment supprimer ce post?{" "}
             </p>
-            <div className="flex gap-10 items-center">
-              {/* Bouton de confirmation de suppression */}
+            <div className="flex flex-col md:flex-row gap-3 md:gap-10 items-center justify-center">
               <Button onClick={onDeleteClick} type="button">
                 {isLoadingDelete ? (
                   <div>
@@ -281,8 +283,11 @@ export default function Profile() {
                   "Valider"
                 )}
               </Button>
-              {/* Bouton d'annulation */}
-              <Button onClick={() => setWavetoDelete(null)} type="button">
+              <Button
+                onClick={() => setWavetoDelete(null)}
+                blueVariant={true}
+                type="button"
+              >
                 Annuler
               </Button>
             </div>

@@ -50,7 +50,7 @@ export default function WaveInteraction({ user, wave }) {
           }}
           className="hover:text-blue-600 hover:cursor-pointer text-xs flex gap-2 items-center dark:text-gray-400 p-1 transition-colors duration-300"
         >
-          <p>Répondre</p>
+          <p className="">Répondre</p>
           {activeReplyId === wave.wid ? (
             <ChevronUp size={16} strokeWidth={2.75} />
           ) : (

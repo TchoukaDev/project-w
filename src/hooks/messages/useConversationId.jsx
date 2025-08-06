@@ -37,7 +37,7 @@ export function useConversationId(currentUserId, otherUserId) {
         })?.[0]; // .find() retourne [id, conversation] → on récupère seulement l'id
 
       // 5. Retourner l'id de la conversation trouvée (ou undefined s’il n’y en a pas)
-      return conversationId;
+      return conversationId || {};
     },
   });
 }

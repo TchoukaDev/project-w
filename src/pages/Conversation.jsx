@@ -110,11 +110,18 @@ export default function Conversation() {
     }
   };
 
+  // Récupérer la base url selon l'environnement
+  const baseUrl =
+    import.meta.env.VITE_API_BASE_URL ||
+    (window.location.hostname === "localhost"
+      ? "http://localhost:8000/backend"
+      : "https://waves.romainwirth.fr/backend");
+
   const uploadFile = async () => {
     const formData = new FormData();
     formData.append("image", selectedFile);
 
-    const response = await fetch("/backend/uploads.php", {
+    const response = await fetch(`${baseUrl}/uploads.php`, {
       method: "POST",
       body: formData,
     });
@@ -152,6 +159,7 @@ export default function Conversation() {
       }
     } catch (err) {
       toast.error(err.message);
+      console.log(err.message);
     }
     // On modifie les données
     completeData = {
@@ -240,9 +248,11 @@ export default function Conversation() {
             Votre conversation avec {otherUser?.pseudo}:
           </h1>{" "}
           {/* Infos autre utilisateurs */}
-          <div className="flex flex-col gap-3 items-center ">
+          <div className="flex flex-col gap-10 items-center ">
             <img
               src={otherUser?.photo}
+              referrerPolicy="no-referrer"
+              alt="Photo de profil"
               className=" w-[50px] lg:w-[150px] h-[50px] lg:h-[150px] rounded-full"
             ></img>
             <Link to={`/profile/${otherUser?.pseudo}`}>
@@ -280,7 +290,7 @@ export default function Conversation() {
             </div>
           )}
           {messages?.length === 0 ? (
-            <p className="text-center absolute top-1/2 -translate-y-1/2 left-0 right-0 text-gray-600 dark:text-gray-300">
+            <p className="text-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 right-0 text-gray-600 dark:text-gray-300">
               Vous n'avez encore échangé aucun message avec cet utilisateur{" "}
             </p>
           ) : (
@@ -296,6 +306,8 @@ export default function Conversation() {
                   <div className="flex justify-start items-center gap-3">
                     <img
                       src={user.photo}
+                      alt="photo de profil"
+                      referrerPolicy="no-referrer"
                       className="w-10 h-10 rounded-full self-start"
                     ></img>
                     <div className=" bg-blue-500 relative w-fit max-w-1/2 max-h-fit break-words whitespace-pre-wrap my-3 p-2 rounded-2xl rounded-tl-none">
@@ -334,7 +346,7 @@ export default function Conversation() {
                   transition={{ duration: 0.3 }}
                 >
                   <div className="flex justify-end items-center gap-3">
-                    <div className=" bg-blue-500 relative w-fit max-w-1/2 max-h-1/2 my-3 p-2 break-words whitespace-pre-wrap rounded-2xl rounded-tl-none">
+                    <div className=" bg-blue-500 relative w-fit max-w-1/2 max-h-1/2 my-3 p-2 break-words whitespace-pre-wrap rounded-2xl rounded-tr-none">
                       <p>{message.message}</p>
                       {message.image && (
                         <>
@@ -360,6 +372,7 @@ export default function Conversation() {
                     </div>{" "}
                     <img
                       src={otherUser.photo}
+                      referrerPolicy="no-referrer"
                       className="w-10 h-10 rounded-full self-start"
                       alt="image "
                     ></img>

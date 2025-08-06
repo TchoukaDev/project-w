@@ -11,20 +11,20 @@ export default function LikeButton({ wid, uid, wuid }) {
 
   return wuid === uid ? (
     <span className="text-xs text-center dark:text-gray-400">
-      Nombre de like ({counterLike ?? 0})
+      Likes ({counterLike ?? 0})
     </span>
   ) : (
     <button
       onClick={() => toggleLike(liked)}
       disabled={loadingLikes || isLoading}
-      className={`hover:text-blue-600 hover:cursor-pointer text-center text-xs flex gap-2 items-center  p-1 transition-colors duration-300 ${
+      className={`hover:text-blue-600 hover:cursor-pointer justify-center text-xs flex gap-2 items-center w-[100px]  p-1 transition-colors duration-300 ${
         liked
           ? "text-blue-800 dark:text-blue-600"
           : "text-gray-600: dark:text-gray-400"
       }`}
     >
       {" "}
-      {liked ? "Liked! " : "Mettre un like "}({counterLike})
+      {liked ? "Liked! " : "Liker "}({counterLike})
       <ThumbsUp size={16} strokeWidth={2.75} />
     </button>
   );

@@ -16,6 +16,7 @@ export default function FollowingButton({ currentUserId, followedUserId }) {
   } = useToggleFollowing(currentUserId, followedUserId);
   return (
     <Button
+      isFollowing={isFollowing}
       disabled={mutationLoading}
       onClick={() => toggleFollowing(isFollowing)}
     >

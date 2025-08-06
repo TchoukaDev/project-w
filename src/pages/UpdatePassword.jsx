@@ -126,7 +126,7 @@ export default function UpdatePassword() {
           </p>
 
           {/* Boutons de validation et de retour */}
-          <div className="flex gap-6 items-center">
+          <div className="flex flex-col md:flex-row gap-3 mt-6 md:gap-6items-center">
             <Button type="submit" disabled={loading}>
               {loading ? (
                 <div>
@@ -138,7 +138,7 @@ export default function UpdatePassword() {
               )}
             </Button>
             <Link
-              className="bg-gray-500/30 rounded-3xl px-4 py-2 font-semibold text-sm  hover:bg-blue-500/30 cursor-pointer transition-color duration-300"
+              className="rounded-3xl w-[130px] text-center px-4 py-2 border border-transparent text-white bg-blue-700 dark:bg-blue-800 hover:bg-blue-700/70  hover:border-black dark:hover:border-white font-semibold text-sm cursor-pointer transition-color duration-300"
               to="/settings"
             >
               Retour

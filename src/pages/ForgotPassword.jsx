@@ -30,11 +30,11 @@ export default function ForgotPassword() {
   const emailValue = watch("email");
 
   return (
-    <div className="flex flex-col justify-center gap-8 items-center h-screen overflow-auto scrollbar-thin scrollbar-thumb-transparent scrollbar-track-transparent hover:scrollbar-thumb-gray-500 hover:scrollbar-track-gray-200">
+    <main className="flex flex-col justify-center gap-8 items-center w-[90%] mx-auto h-screen overflow-auto scrollbar-thin scrollbar-thumb-transparent scrollbar-track-transparent hover:scrollbar-thumb-gray-500 hover:scrollbar-track-gray-200">
       <Logo size="md" />
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col gap-6 w-[500px] p-6 rounded shadow-custom"
+        className="flex flex-col gap-6 max-w-[500px] p-6 rounded shadow-custom"
       >
         <h2 className="text-lg text-center">
           Vous avez oublié votre mot de passe? Saisissez votre adresse mail pour
@@ -82,6 +82,6 @@ export default function ForgotPassword() {
           Revenir à la page de connexion
         </Link>
       </form>
-    </div>
+    </main>
   );
 }

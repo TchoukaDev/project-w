@@ -49,7 +49,6 @@ export function useCreateWave(uid, pseudo, photo) {
       const previousUser = queryClient.getQueryData(userKey);
 
       const optimisticWave = {
-        ...data,
         wid: Date.now(),
         pseudo,
         photo,
@@ -61,6 +60,7 @@ export function useCreateWave(uid, pseudo, photo) {
           month: "2-digit",
           year: "numeric",
         }),
+        ...data,
       };
       if (data.image) {
         optimisticWave.image = data.image;

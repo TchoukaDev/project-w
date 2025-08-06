@@ -1,5 +1,8 @@
 
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 header("Access-Control-Allow-Origin: *"); //autorise les requêtes cross-origin. Remplacer * par nom de domaine ou de l'hébergeur pour la production
 header("Access-Control-Allow-Methods: POST, OPTIONS");  // Indique les méthodes HTTP autorisées sur cette ressource.
 header("Access-Control-Allow-Headers: Content-Type"); //Indique quels en-têtes HTTP personnalisés sont autorisés dans la requête.
@@ -79,5 +82,6 @@ try {
     }
 } catch (Exception $e) {
     http_response_code(400);
-    echo $e->getMessage();
+    echo json_encode(['error' => $e->getMessage()]);
+    exit;
 }

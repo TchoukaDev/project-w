@@ -14,10 +14,10 @@ const RepliesCount = forwardRef(function RepliesCount(
     <div
       ref={showReplyBtnRef}
       onClick={onClickShowReplies}
-      className="hover:text-blue-600 hover:cursor-pointer text-xs text-center dark:text-gray-400 flex items-center gap-2"
+      className="hover:text-blue-600 hover:cursor-pointer shrink-0 text-xs text-center dark:text-gray-400 flex items-center gap-2"
     >
       {/* Affiche le nombre de réponses */}
-      💬 {replies.length} {replies.length === 1 ? "réponse" : "réponses"}{" "}
+      💬 {replies.length} {replies.length <= 1 ? "réponse" : "réponses"}{" "}
       {showReply === wid ? (
         <ChevronUp size={16} strokeWidth={2.75} />
       ) : (

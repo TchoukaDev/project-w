@@ -103,7 +103,7 @@ export default function Header() {
         </svg>
       </button>
 
-      {/* Navigation animée */}
+      {/* Navigation animée mobile */}
       <AnimatePresence>
         {showNav && (
           <motion.div
@@ -116,13 +116,6 @@ export default function Header() {
             className="absolute top-full left-1/2 -translate-x-1/2 w-full xl:hidden mt-4 transition-colors duration-300 bg-gray-400 dark:bg-gray-900 p-4 rounded shadow-md"
           >
             <div className="flex flex-col gap-3 items-center">
-              <div className="flex lg:hidden">
-                <SearchBar
-                  usersFounded={usersFounded}
-                  setResearch={setResearch}
-                  research={research}
-                />
-              </div>
               {Object.entries(navLinks).map(([label, path]) => (
                 <NavLink
                   key={label}
@@ -143,6 +136,14 @@ export default function Header() {
 
               <div className="flex lg:hidden">
                 <ToggleTheme />
+              </div>
+
+              <div className="flex lg:hidden">
+                <SearchBar
+                  usersFounded={usersFounded}
+                  setResearch={setResearch}
+                  research={research}
+                />
               </div>
             </div>
           </motion.div>
@@ -195,6 +196,7 @@ export default function Header() {
           <img
             src={user.photo ? user.photo : anonymeImage}
             alt="Profil"
+            referrerPolicy="no-referrer"
             className="cursor-pointer w-10 h-10 rounded-full object-cover border-2 border-transparent hover:border-2 hover:transform hover:scale-120 hover:border-blue-600 transition-all duration-300"
           />
           {/* Pseudo */}

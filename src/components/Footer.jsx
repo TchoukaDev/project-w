@@ -6,7 +6,7 @@ export default function Footer() {
       <div className=" mx-auto text-sm">
         © {date} Waves. Tout droit réservé.{" "}
       </div>
-      <div className="!font-pompiere text-xl text-blue-600 mx-auto">
+      <div className="!font-pompiere text-xl text-blue-800 dark:text-blue-600 mx-auto">
         ~ TchoukaDev ~
       </div>
     </div>

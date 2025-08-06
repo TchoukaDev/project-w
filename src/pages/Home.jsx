@@ -108,12 +108,19 @@ export default function Home() {
     }
   };
 
+  // Récupérer la base url selon l'environnement
+  const baseUrl =
+    import.meta.env.VITE_API_BASE_URL ||
+    (window.location.hostname === "localhost"
+      ? "http://localhost:8000/backend"
+      : "https://waves.romainwirth.fr/backend");
+
   // Téléchargement de l'image
   const uploadFile = async () => {
     const formData = new FormData();
     formData.append("image", selectedFile);
 
-    const response = await fetch("/backend/uploads.php", {
+    const response = await fetch(`${baseUrl}/uploads.php`, {
       method: "POST",
       body: formData,
     });
@@ -360,10 +367,10 @@ export default function Home() {
                 .map((wave) => (
                   <div
                     key={wave.wid}
-                    className="flex flex-col mb-6 p-6 relative"
+                    className="flex flex-col mb-6 py-6 relative"
                   >
                     {/* En-tête du message */}
-                    <div className="flex flex-col gap-5 border border-gray-800/60  transition-all dark:border-gray-300/60 rounded-t p-6">
+                    <div className="flex flex-col gap-5 border border-gray-800/60  transition-all dark:border-gray-300/60 rounded-t p-6 relative">
                       <div className="flex gap-5 items-center">
                         <div className="flex justify-between items-center grow">
                           <Link
@@ -376,6 +383,8 @@ export default function Home() {
                             <div className="flex items-center gap-3 hover:underline hover:text-blue-800 text-xl text-blue-600 !font-pompiere">
                               <img
                                 src={wave.photo}
+                                referrerPolicy="no-referrer"
+                                alt="photo de profil"
                                 className="w-[30px]  h-[30px] rounded-full"
                               />{" "}
                               {wave.pseudo}
@@ -386,7 +395,8 @@ export default function Home() {
                           </div>
                         </div>
                         {wave.uid === user.uid && (
-                          <div className="flex items-start">
+                          <div className="flex items-start absolute top-1 right-1">
+                            {/* Bouton de suppression */}
                             <X
                               onClick={() => setWavetoDelete(wave)}
                               className="hover:cursor-pointer hover:text-blue-600"
@@ -423,15 +433,15 @@ export default function Home() {
       {wavetoDelete && (
         <Modal
           isOpen={true}
-          className=" bg-gray-300 dark:bg-gray-800 border border-black dark:border-white shadow-custom-black dark:shadow-custom p-6 rounded w-1/3 h-1/3 mx-auto mt-40"
+          className=" bg-gray-300 dark:bg-gray-800 border border-black dark:border-white shadow-custom-black dark:shadow-custom p-6 rounded w-3/4 lg:w-1/3 h-1/3 mx-auto mt-40"
           overlayClassName="fixed inset-0 z-10 bg-black/60 flex justify-center items-center"
           onRequestClose={() => setWavetoDelete(null)}
         >
           <div className="flex flex-col justify-evenly h-full items-center-safe">
-            <p className="font-semibold">
+            <p className="font-semibold text-center">
               Voulez-vous vraiment supprimer ce post?{" "}
             </p>
-            <div className="flex gap-10 items-center">
+            <div className="flex flex-col md:flex-row gap-3 md:gap-10 items-center justify-center">
               <Button onClick={onDeleteClick} type="button">
                 {isLoadingDelete ? (
                   <div>

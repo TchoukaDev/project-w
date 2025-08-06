@@ -8,13 +8,17 @@ export default function Error() {
       <Logo size="md" />
       <div className="flex flex-col justify-evenly items-center">
         {/* Message */}
-        <p className="text-8xl italic font-bold font-pompiere opacity-30">
+        <p className="text-6xl md:text-8xl italic font-bold font-pompiere opacity-30">
           OUPS!
         </p>
-        <p className="my-24 text-xl font-semibold">
-          Il semblerait qu'il y ait une erreur... La page que vous avez demandée
-          n'existe pas.
-        </p>
+        <div className="my-24 space-y-3">
+          <p className=" text-xl text-center font-semibold">
+            Il semblerait qu'il y ait une erreur...
+          </p>
+          <p className="text-xl text-center font-semibold">
+            La page que vous avez demandée n'existe pas.
+          </p>
+        </div>
         {/* Lien vers l'accueil */}
         <Link
           to="/"
