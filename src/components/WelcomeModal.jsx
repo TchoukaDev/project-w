@@ -61,23 +61,24 @@ export default function WelcomeModal({ onCloseModal }) {
 
   // Contenu JSX de la modale
   const modalContent = (
-    <div className=" bg-black/70 fixed inset-0 flex justify-center items-center z-50 text-black">
-      <div className="bg-gray-300 dark:bg-gray-800 border border-black dark:border-white shadow-custom-black dark:shadow-custom text-xl p-8 rounded-lg  w-2/3 lg:w-1/2  relative">
-        <p className="my-7 text-center">
-          Bienvenue sur Waves. Avant de faire vos premiers pas, veuillez choisir
-          un pseudo. Ne vous inquiétez pas, vous pourrez le modifier par la
-          suite.
+    <div className=" bg-black/70 fixed inset-0 flex justify-center items-center z-50 text-black dark:!text-white">
+      <div className="bg-gray-300 dark:bg-gray-800 border border-black dark:border-white shadow-custom-black dark:shadow-custom text-xl p-8 rounded-lg  w-[90%] lg:w-1/2  relative">
+        <p className="my-7 text-center font-semibold">Bienvenue sur Waves! </p>
+        <p>
+          {" "}
+          Avant de faire vos premiers pas, veuillez choisir un pseudo. Ne vous
+          inquiétez pas, vous pourrez le modifier par la suite.
         </p>
 
         {/* Formulaire pour saisir le pseudo */}
         <form
-          className="w-1/3 mx-auto text-center"
+          className="xs:w-2/3 sm:w-1/2 xl:w-1/3 mx-auto text-center"
           onSubmit={handleSubmit(onSubmit, (error) =>
             toast.error(error.pseudo.message)
           )}
         >
           <input
-            className="w-full border border-gray-400 rounded-md p-2 placeholder:text-sm outline-none focus:border-2 focus:border-blue-500 my-7 text-white text-sm"
+            className="w-full border border-gray-400 rounded-md p-2 placeholder:text-sm placeholder:text-gray-600 dark:placeholder:text-gray-400 outline-none focus:border-2 focus:border-blue-500 my-7 text-black dark:text-white text-sm"
             type="text"
             name="pseudo"
             placeholder="Saisissez votre pseudo..."

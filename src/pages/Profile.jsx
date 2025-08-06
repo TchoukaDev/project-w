@@ -102,7 +102,7 @@ export default function Profile() {
         transition={{ duration: 0.2 }}
       >
         {/* Colonne de gauche : informations personnelles du profil */}
-        <div className="basis-1/3 py-5 px-5 overflow-auto scrollbar-thin scrollbar-thumb-transparent scrollbar-track-transparent hover:scrollbar-thumb-gray-500 hover:scrollbar-track-gray-200 md:px-16 border-b lg-border-b-0 lg:border-r border-gray-600 flex flex-col justify-start items-center">
+        <div className="basis-1/3 py-5 px-5 overflow-auto scrollbar-thin scrollbar-thumb-transparent scrollbar-track-transparent hover:scrollbar-thumb-gray-500 hover:scrollbar-track-gray-200 md:px-16 border-b lg-border-b-0 lg:border-r border-gray-600 flex flex-col justify-center items-center">
           {/* Affiche un message de chargement si UID manquant ou données en cours de chargement */}
           {(!profileUid || loadingUser || loadingWaves) && (
             <p>Chargement en cours...</p>
