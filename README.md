@@ -60,7 +60,7 @@ L’utilisateur a également la possibilité de s’inscrire directement en util
 
 Lors de la première connexion sur la page d’accueil, si aucun pseudo n’est défini, une fenêtre modale s’affiche demandant à l’utilisateur de saisir un pseudo. Le pseudo est la seule information obligatoire à renseigner au lors de la première connexion. L’utilisateur est libre de renseigner ou non d’autres informations le concernant.
 
-Le cas échéant il doit se rendre sur la partie « Préférences » de la barre de navigation, puis cliquer sur « Informations personnelles ». Dans cette partie il peut modifier son pseudo, saisir son prénom, nom, date de naissance, sa ville et son pays. Il peut également modifier sa photo de profil sur cette même page. L’adresse email utilisée pour l’inscription et la connexion apparait également, mais ne peut être modifiée.
+Le cas échéant il doit se rendre sur la partie « Préférences » accessible via le menu déroulant qui s'ouvre en cliquant sur la photo de profil de l'en-tête, puis cliquer sur « Informations personnelles ». Dans cette partie il peut modifier son pseudo, saisir son prénom, nom, date de naissance, sa ville et son pays. Il peut également modifier sa photo de profil sur cette même page. L’adresse email utilisée pour l’inscription et la connexion apparait également, mais ne peut être modifiée.
 
 Si l’utilisateur souhait modifier sa photo de profil, une prévisualisation de l’image téléchargée est visible immédiatement, avant validation. Les images sont téléchargées sur le serveur, puis supprimées à chaque changement de photo de profil. Si aucune photo de profil n’est sélectionnée, l’utilisateur aura une image de profil par défaut.
 
@@ -102,4 +102,4 @@ L’en-tête comporte également une barre de recherche, qui permet de recherche
 
 L’application possède également un bouton de changement de thème, pour alterner entre un thème sombre (par défaut) et un thème clair. La préférence de l’utilisateur est stockée sur le navigateur pour ses visites suivantes.
 
-Enfin pour se déconnecter de sa session, l’utilisateur peut cliquer sur le bouton « Se déconnecter » situé dans l’en tête de la page. Pour la version mobile, la barre de navigation, ainsi que le bouton de changement de thème et de déconnexion son accessibles dans le menu déroulant qui s’affiche en cliquant sur le bouton « hamburger » de l’en tête.
+Enfin pour se déconnecter de sa session, l’utilisateur peut cliquer sur le bouton « Se déconnecter » situé dans le menu déroulant accessible en cliquant sur la photo de profil dans l'en-tête de page. Pour la version mobile, la barre de navigation, ainsi que le bouton de changement de thème et de déconnexion son accessibles dans le menu déroulant qui s’affiche en cliquant sur le bouton « hamburger » de l’en tête.

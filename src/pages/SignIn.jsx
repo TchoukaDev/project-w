@@ -144,20 +144,22 @@ export default function SignIn() {
             <p className="text-red-400">{errors.password.message}</p>
           )}
 
-          {/* Boutons */}
-          <div className="flex flex-col gap-4 mt-6">
-            <Button type="submit">
-              {/* Affiche un loader si loading en cours */}
+          {/* Bouton de connexion et bouton Google */}
+          <div className="flex flex-col gap-4 mb-5">
+            <Button margin="mt-3 mb-2" type="submit" disabled={loading}>
               {loading ? (
                 <div>
-                  Connexion...
+                  Connexion en cours...
                   <ClipLoader size={10} color="white" />
                 </div>
               ) : (
                 "Se connecter"
               )}
             </Button>
-            {/* Bouton Google personnalisé */}
+            <hr className="text-gray-500" />
+            <p className="bg-gray-100 dark:bg-black mx-auto text-center w-1/6 mt-[-28px] z-10">
+              ou
+            </p>
             <GoogleBtn>Se connecter avec Google</GoogleBtn>
           </div>
         </form>
