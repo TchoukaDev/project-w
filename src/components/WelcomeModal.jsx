@@ -29,6 +29,10 @@ export default function WelcomeModal({ onCloseModal }) {
   // Enregistrement du champ "pseudo" avec règles de validation
   const pseudoRegister = register("pseudo", {
     validate: (value) => value.trim() !== "" || "Veuillez saisir un pseudo",
+    maxLength: {
+      value: 15,
+      message: "Votre pseudo ne peut excéder 15 caractères",
+    },
   });
 
   // Fonction appelée lors de la soumission du formulaire
@@ -81,6 +85,7 @@ export default function WelcomeModal({ onCloseModal }) {
             className="w-full border border-gray-400 rounded-md p-2 placeholder:text-sm placeholder:text-gray-600 dark:placeholder:text-gray-400 outline-none focus:border-2 focus:border-blue-500 my-7 text-black dark:text-white text-sm"
             type="text"
             name="pseudo"
+            maxLength={15}
             placeholder="Saisissez votre pseudo..."
             {...pseudoRegister}
             ref={(e) => {

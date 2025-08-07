@@ -12,13 +12,14 @@ import { useDeleteWave } from "../hooks/waves/useDeleteWave";
 import { useWaves } from "../hooks/waves/useWaves";
 import { Link } from "react-router";
 import Loader from "../components/Loader";
-import { dateToFr, insertEmoji } from "../utilities/functions";
+import { dateToFr, insertEmoji, shortDateToFr } from "../utilities/functions";
 import { ClipLoader } from "react-spinners";
 import EmojiPicker from "emoji-picker-react";
 import { useClickOutside } from "../hooks/utilities/useClickOutside";
 import WaveInteraction from "../components/WaveInteractions";
 import Zoom from "react-medium-image-zoom";
 import "react-medium-image-zoom/dist/styles.css";
+import { useMediaQuery } from "react-responsive";
 
 export default function Home() {
   // État pour afficher la modale de bienvenue si l'utilisateur n'a pas de pseudo
@@ -75,6 +76,11 @@ export default function Home() {
   // Hook de suppression de wave
   const { mutate: mutateDeletePost, isLoading: isLoadingDelete } =
     useDeleteWave(null);
+
+  // Hook personnalisé pour gérer le responsive
+  const isXs = useMediaQuery({
+    maxWidth: 576,
+  });
 
   // Récupère les props du champ message
   const { ref: registerRef, ...registerRest } = register("message", {
@@ -391,7 +397,9 @@ export default function Home() {
                             </div>
                           </Link>
                           <div className=" text-gray-600 dark:text-white/50 !font-pompiere">
-                            {dateToFr(wave.createdAt)}
+                            {isXs
+                              ? shortDateToFr(wave.createdAt)
+                              : dateToFr(wave.createdAt)}
                           </div>
                         </div>
                         {wave.uid === user.uid && (

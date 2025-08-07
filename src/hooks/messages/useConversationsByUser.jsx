@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 // Hook pour récupérer les conversations d’un utilisateur avec un champ hasUnread calculé
 export default function useConversationsByUser(currentUserId) {
   return useQuery({
-    queryKey: ["conversations", currentUserId],
+    queryKey: ["conversationsList", currentUserId],
     queryFn: async () => {
       // 1. Récupérer la liste des IDs des conversations de l'utilisateur
       const response = await fetch(

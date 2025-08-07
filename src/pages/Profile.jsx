@@ -14,10 +14,11 @@ import { useWaves } from "../hooks/waves/useWaves";
 import { Link } from "react-router";
 import Button from "../components/Button";
 import FollowingButton from "../components/FollowingButton";
-import { dateToFr } from "../utilities/functions";
+import { dateToFr, shortDateToFr } from "../utilities/functions";
 import { ClipLoader } from "react-spinners";
 import { useClickOutside } from "../hooks/utilities/useClickOutside";
 import WaveInteraction from "../components/WaveInteractions";
+import { useMediaQuery } from "react-responsive";
 
 export default function Profile() {
   // States
@@ -62,6 +63,8 @@ export default function Profile() {
     month: "long",
     year: "numeric",
   });
+
+  const isXs = useMediaQuery({ maxWidth: 576 });
 
   /**
    * Suppression d'un message sélectionné
@@ -199,7 +202,7 @@ export default function Profile() {
                     className="flex flex-col mb-6 py-6 relative"
                   >
                     {/* En-tête du message */}
-                    <div className=" flex flex-col gap-5 border  border-gray-800/60 transition-all dark:border-gray-300/60 w-full rounded-t p-6">
+                    <div className=" flex flex-col gap-5 border  border-gray-800/60 transition-all dark:border-gray-300/60 w-full rounded-t p-6 relative">
                       <div className="flex gap-5 items-center">
                         <div className="flex justify-between items-center grow">
                           {/* Lien vers le profil de l'auteur */}
@@ -221,12 +224,15 @@ export default function Profile() {
                           </Link>
                           {/* Date de publication */}
                           <div className="text-gray-600 dark:text-white/50 !font-pompiere">
-                            {dateToFr(wave.createdAt)}
+                            {isXs
+                              ? shortDateToFr(wave.createdAt)
+                              : dateToFr(wave.createdAt)}
                           </div>
                         </div>
                         {/* Bouton de suppression si c'est le message de l'utilisateur */}
                         {wave.uid === user.uid && (
-                          <div className="flex items-start">
+                          <div className="flex items-start absolute top-1 right-1">
+                            {/* Bouton de suppression */}
                             <X
                               onClick={() => setWavetoDelete(wave)}
                               className="hover:cursor-pointer hover:text-blue-600"

@@ -28,16 +28,16 @@ export default function useMarkToRead(currentUserId, conversationId) {
       if (!readingState) return; // si false, ne rien faire
 
       // Annuler les requêtes en cours sur cette conversation
-      await queryClient.cancelQueries(["conversations", conversationId]);
+      await queryClient.cancelQueries(["conversation", conversationId]);
 
       // Sauvegarder l’état précédent pour rollback en cas d’erreur
       const previous = queryClient.getQueryData([
-        "conversations",
+        "conversation",
         conversationId,
       ]);
 
       // Mise à jour locale optimiste : on met à jour readBy ET hasUnread
-      queryClient.setQueryData(["conversations", conversationId], (prev) => {
+      queryClient.setQueryData(["conversation", conversationId], (prev) => {
         if (!prev?.lastMessage) return prev;
         return {
           ...prev,
@@ -53,7 +53,7 @@ export default function useMarkToRead(currentUserId, conversationId) {
       });
 
       // Aussi mettre à jour la liste globale des conversations si elle est dans le cache
-      queryClient.setQueryData(["conversations", currentUserId], (convs) => {
+      queryClient.setQueryData(["conversation", currentUserId], (convs) => {
         if (!convs) return convs;
         return convs.map((conv) =>
           conv.id === conversationId ? { ...conv, hasUnread: false } : conv
@@ -67,7 +67,7 @@ export default function useMarkToRead(currentUserId, conversationId) {
       // Rollback du cache en cas d’erreur
       if (context?.previous) {
         queryClient.setQueryData(
-          ["conversations", conversationId],
+          ["conversation", conversationId],
           context.previous
         );
       }
@@ -76,8 +76,8 @@ export default function useMarkToRead(currentUserId, conversationId) {
 
     // Invalider les queries après succès pour forcer rechargement serveur
     onSuccess: () => {
-      queryClient.invalidateQueries(["conversations", conversationId]);
-      queryClient.invalidateQueries(["conversations", currentUserId]);
+      queryClient.invalidateQueries(["conversation", conversationId]);
+      queryClient.invalidateQueries(["conversation", currentUserId]);
     },
   });
 }

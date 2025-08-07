@@ -13,6 +13,24 @@ export const dateToFr = (wavedate) => {
   return dateFr;
 };
 
+// Conversion de la date en format français (jj/mm/aaaa) sans l'heure
+export const shortDateToFr = (wavedate) => {
+  const date = new Date(wavedate); // Conversion en objet Date
+
+  const dateFr = date.toLocaleDateString("fr-FR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
+
+  return dateFr;
+};
+
+// Récupérer id d'une conversation avec les id utilisateurs
+export function getConversationId(uid1, uid2) {
+  return [uid1, uid2].sort().join("_");
+}
+
 /**
  * Fonction pour insérer un emoji dans le textarea à la position actuelle du curseur
  * Elle utilise waveContentRef pour manipuler la sélection et le focus directement dans le DOM.

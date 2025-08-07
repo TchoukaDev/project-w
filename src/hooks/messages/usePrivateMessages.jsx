@@ -2,10 +2,11 @@ import { useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { database } from "../../utilities/firebase";
 import { ref, onValue, off } from "firebase/database";
+import { getConversationId } from "../../utilities/functions";
 
 export function usePrivateMessages(currentUserUid, otherUserUid) {
   const queryClient = useQueryClient();
-  const conversationId = [currentUserUid, otherUserUid].sort().join("_");
+  const conversationId = getConversationId(currentUserUid, otherUserUid);
 
   // On crée un effet qui installe un écouteur temps réel Firebase pour mettre à jour le cache React Query
   useEffect(() => {

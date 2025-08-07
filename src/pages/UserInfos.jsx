@@ -148,6 +148,10 @@ export default function UserInfos() {
                 validate: (value) =>
                   value.trim().length > 0 ||
                   "Le pseudo doit absolument être renseigné",
+                maxLength: {
+                  value: 15,
+                  message: "Votre pseudo ne peut excéder 15 caractères",
+                },
               })}
             />
           </p>

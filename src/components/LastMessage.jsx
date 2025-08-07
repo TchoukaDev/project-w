@@ -14,7 +14,6 @@ export default function LastMessage({ conversation }) {
     user?.id,
     conversation?.id
   );
-  // Récupération du statut de lecture du dernier message
 
   // Récupération du pseudo de l'autre utilisateur
   const participants = Object.keys(conversation?.participants);

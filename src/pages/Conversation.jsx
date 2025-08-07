@@ -4,7 +4,7 @@ import EmojiPicker from "emoji-picker-react";
 import { toast } from "react-toastify";
 import { useContext, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import { insertEmoji } from "../utilities/functions";
+import { getConversationId, insertEmoji } from "../utilities/functions";
 import { UserContext } from "../contexts/userContext";
 import { ClipLoader } from "react-spinners";
 import {
@@ -23,7 +23,7 @@ import { usePrivateMessages } from "../hooks/messages/usePrivateMessages";
 import Button from "../components/Button";
 import Zoom from "react-medium-image-zoom";
 import "react-medium-image-zoom/dist/styles.css";
-import { useConversationId } from "../hooks/messages/useConversationId";
+
 import useMarkToRead from "../hooks/messages/useMarkToRead";
 import { useConversationById } from "../hooks/messages/useConversationById";
 
@@ -46,10 +46,7 @@ export default function Conversation() {
   const { user, loading: userLoading } = useContext(UserContext);
 
   // Récupération id de la conversation
-  const { data: conversationId = [] } = useConversationId(
-    user?.id,
-    otherUser?.uid
-  );
+  const conversationId = getConversationId(user?.id, otherUser?.uid);
 
   const { data: conversation = [] } = useConversationById(conversationId);
 

@@ -1,11 +1,12 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { getConversationId } from "../../utilities/functions";
 
 export function useSendMessage(currentUserUid, otherUserUid) {
   const queryClient = useQueryClient();
   const databaseUrl =
     "https://waves-27b13-default-rtdb.europe-west1.firebasedatabase.app";
 
-  const conversationId = [currentUserUid, otherUserUid].sort().join("_");
+  const conversationId = getConversationId(currentUserUid, otherUserUid);
 
   return useMutation({
     mutationFn: async (messageData) => {
