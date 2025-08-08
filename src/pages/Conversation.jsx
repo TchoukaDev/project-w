@@ -223,7 +223,7 @@ export default function Conversation() {
 
   return (
     <motion.main
-      className="container !h-[120vh] flex flex-col overflow-auto scrollbar-thin scrollbar-thumb-transparent scrollbar-track-transparent hover:scrollbar-thumb-gray-500 hover:scrollbar-track-gray-200 lg:flex-row"
+      className="container !h-[100vh] sm:!h-[80vh] flex flex-col overflow-auto scrollbar-thin scrollbar-thumb-transparent scrollbar-track-transparent hover:scrollbar-thumb-gray-500 hover:scrollbar-track-gray-200 lg:flex-row"
       initial={{ y: 50, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.2 }}
