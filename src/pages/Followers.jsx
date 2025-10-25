@@ -46,7 +46,7 @@ export default function Followers() {
               <span className="flex items-center gap-3 hover:text-blue-600 text-gray-600 dark:text-gray-300 transition-colors duration:0.3">
                 <img
                   src={user?.photo}
-                  className="w-[30px] h-[30px] rounded-full"
+                  className="w-[30px] h-[30px] bg-white rounded-full"
                 />
                 {user?.firstName}
                 {user?.Name} ({user?.pseudo})

@@ -41,7 +41,7 @@ export default function LastMessage({ conversation }) {
           src={otherUser?.photo}
           referrerPolicy="no-referrer"
           alt="photo de profil"
-          className="rounded-full max-w-[30px] max-h-[30px]"
+          className="rounded-full bg-white max-w-[30px] max-h-[30px]"
         />
         <div
           className={`flex justify-between w-full ${

@@ -115,7 +115,7 @@ export default function Profile() {
           <div>
             {/* Photo de profil */}
             <img
-              className="w-[200px] h-[200px] rounded mb-5"
+              className="w-[200px] bg-white h-[200px] rounded mb-5"
               src={userData.photo}
               alt="photo de profil"
               referrerPolicy="no-referrer"

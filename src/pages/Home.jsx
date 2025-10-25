@@ -391,7 +391,7 @@ export default function Home() {
                                 src={wave.photo}
                                 referrerPolicy="no-referrer"
                                 alt="photo de profil"
-                                className="w-[30px]  h-[30px] rounded-full"
+                                className="w-[30px]  bg-white h-[30px] rounded-full"
                               />{" "}
                               {wave.pseudo}
                             </div>

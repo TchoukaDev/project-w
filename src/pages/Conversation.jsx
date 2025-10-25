@@ -250,7 +250,7 @@ export default function Conversation() {
               src={otherUser?.photo}
               referrerPolicy="no-referrer"
               alt="Photo de profil"
-              className=" w-[50px] lg:w-[150px] h-[50px] lg:h-[150px] rounded-full"
+              className=" w-[50px] bg-white lg:w-[150px] h-[50px] lg:h-[150px] rounded-full"
             ></img>
             <Link to={`/profile/${otherUser?.pseudo}`}>
               <Button type="button">Voir le profil</Button>
@@ -305,7 +305,7 @@ export default function Conversation() {
                       src={user.photo}
                       alt="photo de profil"
                       referrerPolicy="no-referrer"
-                      className="w-10 h-10 rounded-full self-start"
+                      className="w-10 h-10 bg-white rounded-full self-start"
                     ></img>
                     <div className=" bg-blue-500 relative w-fit max-w-1/2 max-h-fit break-words whitespace-pre-wrap my-3 p-2 rounded-2xl rounded-tl-none">
                       <p className="">{message.message}</p>

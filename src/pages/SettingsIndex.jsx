@@ -1,5 +1,4 @@
 import { Link } from "react-router";
-import { motion } from "framer-motion";
 
 export default function SettingsIndex() {
   // liens avec clés pour mapper dessus

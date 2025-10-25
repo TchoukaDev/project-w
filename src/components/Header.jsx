@@ -1,7 +1,7 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import { Link, NavLink, useLocation, useNavigate } from "react-router";
 import { toast } from "react-toastify";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
 import { UserContext } from "../contexts/userContext";
 import { useSearchUser } from "../hooks/users/useSearchUser";
 import { useDebounce } from "../hooks/utilities/useDebounce";
@@ -30,7 +30,7 @@ export default function Header() {
 
   // Récupérer le statut hasUnread dans au moins une des conversations en cours
   const hasUnread = conversations.some(
-    (conversation) => conversation.hasUnread
+    (conversation) => conversation.hasUnread,
   );
 
   const navLinks = {
@@ -197,7 +197,7 @@ export default function Header() {
             src={user.photo ? user.photo : anonymeImage}
             alt="Profil"
             referrerPolicy="no-referrer"
-            className="cursor-pointer w-10 h-10 rounded-full object-cover border-2 border-transparent hover:border-2 hover:transform hover:scale-120 hover:border-blue-600 transition-all duration-300"
+            className="cursor-pointer  w-10 h-10 rounded-full object-cover border-2 border-transparent hover:border-2 hover:transform hover:scale-120 hover:border-blue-600 transition-all duration-300"
           />
           {/* Pseudo */}
           <span className=" font-semibold text-sm">

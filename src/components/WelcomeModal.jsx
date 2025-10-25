@@ -44,7 +44,7 @@ export default function WelcomeModal({ onCloseModal }) {
       },
       onError: () => {
         toast.error(
-          "Une erreur est survenue lors de la mise à jour de votre pseudo"
+          "Une erreur est survenue lors de la mise à jour de votre pseudo",
         );
       },
     });
@@ -78,7 +78,7 @@ export default function WelcomeModal({ onCloseModal }) {
         <form
           className="xs:w-2/3 sm:w-1/2 xl:w-1/3 mx-auto text-center"
           onSubmit={handleSubmit(onSubmit, (error) =>
-            toast.error(error.pseudo.message)
+            toast.error(error.pseudo.message),
           )}
         >
           <input
