@@ -19,6 +19,7 @@ import Followers from "./pages/Followers";
 import ForgotPassword from "./pages/ForgotPassword";
 import Messages from "./pages/Messages";
 import Conversation from "./pages/Conversation";
+import { useBlockTranslation } from "./hooks/utilities/useBlockTranslation";
 
 // Importation des pages et layouts en lazy loading pour optimiser le chargement
 const SettingsLayout = lazy(() => import("./components/layout/SettingsLayout"));
@@ -33,6 +34,8 @@ const UserInfos = lazy(() => import("./pages/UserInfos"));
 function App() {
   // Récupère l'utilisateur et l'état de chargement depuis le contexte global
   const { user, loading } = useContext(UserContext);
+  // Bloquer la traduction automatique
+  useBlockTranslation();
 
   // Affiche un loader pendant le chargement des données utilisateur
   if (loading) {
